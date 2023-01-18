@@ -10,9 +10,7 @@
                   <v-row>
                     <v-col cols="12" md="12">
                       <v-card-text class="mt-12">
-                        <h1
-                          class="text-center display-2 teal--text text--accent-3"
-                        >
+                        <h1 class="text-center display-2 teal--text text--accent-3">
                           Sign in to Nobrain
                         </h1>
                         <div class="text-center mt-4"></div>
@@ -21,22 +19,11 @@
                         </h4>
                         <br />
                         <v-form>
-                          <v-text-field
-                            label="Email"
-                            name="Email"
-                            prepend-icon="email"
-                            type="text"
-                            color="teal accent-3"
-                          />
+                          <v-text-field label="Email" name="Email" prepend-icon="email" type="text"
+                            color="teal accent-3" />
 
-                          <v-text-field
-                            id="password"
-                            label="Password"
-                            name="password"
-                            prepend-icon="lock"
-                            type="password"
-                            color="teal accent-3"
-                          />
+                          <v-text-field id="password" label="Password" name="password" prepend-icon="lock"
+                            type="password" color="teal accent-3" />
                         </v-form>
                         <h3 class="text-center mt-4">Forgot your password ?</h3>
 
@@ -46,9 +33,7 @@
 
                         <br />
                         <div class="text-center">
-                          <v-btn rounded outlined dark @click="step++"
-                            >SIGN UP</v-btn
-                          >
+                          <v-btn rounded outlined dark @click="step++">SIGN UP</v-btn>
                         </div>
                       </v-card-text>
                     </v-col>
@@ -65,17 +50,13 @@
                         </h5>
                       </v-card-text>
                       <div class="text-center">
-                        <v-btn ounded outlined dark @click="step--"
-                          >Sign in</v-btn
-                        >
+                        <v-btn ounded outlined dark @click="step--">Sign in</v-btn>
                       </div>
                     </v-col>
 
                     <v-col cols="12" md="8">
                       <v-card-text class="mt-12">
-                        <h1
-                          class="text-center display-2 teal--text text--accent-3"
-                        >
+                        <h1 class="text-center display-2 teal--text text--accent-3">
                           Create Account
                         </h1>
                         <div class="text-center mt-4">
@@ -94,35 +75,17 @@
                           Ensure your email for registration
                         </h4>
                         <v-form>
-                          <v-text-field
-                            label="Name"
-                            name="Name"
-                            prepend-icon="person"
-                            type="text"
-                            color="teal accent-3"
-                          />
-                          <v-text-field
-                            label="Email"
-                            name="Email"
-                            prepend-icon="email"
-                            type="text"
-                            color="teal accent-3"
-                          />
+                          <v-text-field label="Name" name="Name" prepend-icon="person" type="text"
+                            color="teal accent-3" />
+                          <v-text-field label="Email" name="Email" prepend-icon="email" type="text"
+                            color="teal accent-3" />
 
-                          <v-text-field
-                            id="password"
-                            label="Password"
-                            name="password"
-                            prepend-icon="lock"
-                            type="password"
-                            color="teal accent-3"
-                          />
+                          <v-text-field id="password" label="Password" name="password" prepend-icon="lock"
+                            type="password" color="teal accent-3" />
                         </v-form>
                       </v-card-text>
                       <div class="text-center mt-n5">
-                        <v-btn rounded color="teal accent-3" dark
-                          >SIGN UP</v-btn
-                        >
+                        <v-btn rounded color="teal accent-3" dark>SIGN UP</v-btn>
                       </div>
                     </v-col>
                   </v-row>
