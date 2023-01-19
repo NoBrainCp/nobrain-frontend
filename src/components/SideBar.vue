@@ -2,15 +2,15 @@
     <v-col cols="2">
       <v-sheet rounded="lg">
         <v-list color="transparent">
+
           <v-list-item
               v-for="category in data.categories"
               :key="category"
               link
           >
-<!--            <router-link to=""-->
             <v-list-item-content>
               <v-list-item-title>
-                {{ category.name }}
+                # {{ category.name }}
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -23,7 +23,7 @@
           >
             <v-list-item-content>
               <v-list-item-title>
-                Star
+                # Star
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -47,6 +47,7 @@ export default {
 
     axios.get("/api/" + route.params.username + "/get-categories").then((res) => {
       data.categories = res.data.list;
+      console.log(res);
     });
 
     return {data}
@@ -55,6 +56,7 @@ export default {
 </script>
 
 <style scoped>
+
 .v-list-item {
   font-size: 30px;
 }

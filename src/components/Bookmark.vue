@@ -7,9 +7,18 @@
             <template v-slot:default="{ hover }">
               <v-card
                   class="mx-auto"
-                  max-width="344"
+                  max-width="388"
               >
-                <v-img src="https://cdn.vuetifyjs.com/images/cards/forest-art.jpg"></v-img>
+                <v-img src="https://cdn.vuetifyjs.com/images/cards/forest-art.jpg">
+                  <v-col>
+                    <v-btn
+                        icon="mdi-star"
+                        color="secondary"
+                        height="40"
+                        width="40"
+                    ></v-btn>
+                  </v-col>
+                </v-img>
 
                 <v-card-text>
                   <h2 class="text-h6 primary--text">
@@ -27,6 +36,8 @@
                       hover
                       class="mr-2"
                   ></v-rating>
+
+
                   <span class="primary--text text-subtitle-2">Date</span>
                 </v-card-title>
 
