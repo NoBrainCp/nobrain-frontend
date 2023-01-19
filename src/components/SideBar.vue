@@ -4,7 +4,7 @@
         <v-list color="transparent">
 
           <v-list-item
-              v-for="category in data.categories"
+              v-for="(category, idx) in data.categories"
               :key="category"
               link
           >
@@ -49,9 +49,8 @@ export default {
       data.categories = res.data.list;
       console.log(res);
     });
-
     return {data}
-  }
+  },
 }
 </script>
 

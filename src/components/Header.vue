@@ -2,7 +2,7 @@
   <v-app-bar
       app
       flat
-      height="100"
+      height="90"
   >
     <v-container class="py-0 fill-height">
       <v-avatar

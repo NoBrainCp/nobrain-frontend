@@ -1,58 +1,53 @@
 <template>
   <v-col>
     <v-row>
-      <v-col v-for="n in 7" :key="n" cols="auto">
+      <v-col v-for="(bookmark, idx) in data.bookmarks"
+             :key="bookmark"
+             cols="auto">
 
-          <v-hover>
-            <template v-slot:default="{ hover }">
-              <v-card
-                  class="mx-auto"
-                  max-width="388"
+        <div>
+          <v-hover v-slot="{ isHovering, props }">
+            <v-card
+                class="mx-auto"
+                max-width="344"
+                v-bind="props"
+            >
+              <v-img src="https://cdn.vuetifyjs.com/images/cards/forest-art.jpg"></v-img>
+
+              <v-card-text>
+                <h2 class="text-h6 text-primary">
+                  {{bookmark.title}}
+                </h2>
+                  {{bookmark.description}}
+              </v-card-text>
+
+              <v-card-title>
+                <v-rating
+                    :model-value="4"
+                    dense
+                    color="orange"
+                    background-color="orange"
+                    hover
+                    class="me-2"
+                ></v-rating>
+                <span class="text-primary text-subtitle-2">Date</span>
+              </v-card-title>
+
+              <v-overlay
+                  :model-value="isHovering"
+                  contained
+                  scrim="#424242"
+                  class="align-center justify-center"
               >
-                <v-img src="https://cdn.vuetifyjs.com/images/cards/forest-art.jpg">
-                  <v-col>
-                    <v-btn
-                        icon="mdi-star"
-                        color="secondary"
-                        height="40"
-                        width="40"
-                    ></v-btn>
-                  </v-col>
-                </v-img>
-
-                <v-card-text>
-                  <h2 class="text-h6 primary--text">
-                    Title
-                  </h2>
-                  Description
-                </v-card-text>
-
-                <v-card-title>
-                  <v-rating
-                      :value="4"
-                      dense
-                      color="orange"
-                      background-color="orange"
-                      hover
-                      class="mr-2"
-                  ></v-rating>
-
-
-                  <span class="primary--text text-subtitle-2">Date</span>
-                </v-card-title>
-
-                <v-fade-transition>
-                  <v-overlay
-                      v-if="hover"
-                      absolute
-                      color="#036358"
-                  >
-                    <v-btn>See more info</v-btn>
-                  </v-overlay>
-                </v-fade-transition>
-              </v-card>
-            </template>
+                <v-btn
+                    :href="bookmark.url"
+                    target="_blank"
+                    color="#29B6F6"
+                    variant="flat">Move</v-btn>
+              </v-overlay>
+            </v-card>
           </v-hover>
+        </div>
 
       </v-col>
     </v-row>
@@ -60,24 +55,32 @@
 </template>
 
 <script>
+  import {useRoute} from "vue-router";
+  import {reactive} from "vue";
+  import axios from "axios";
+
   export default {
     name: 'Bookmark',
-    data: () => ({
-      overlay: false,
-    }),
+    setup() {
+      const route = useRoute();
+      const data = reactive({
+        bookmarks:[]
+      });
+      axios.get("/api/" + route.params.username + "/" + route.params.category + "/bookmarks").then((res) => {
+        data.bookmarks = res.data.list;
+        console.log(res.data.list);
+      })
+      return {data}
+    },
   }
 </script>
 
 <style scoped>
-.v-card:hover {
-  transition: opacity .4s ease-in-out;
+.v-btn {
+  color: white
 }
 
-/*.v-card:not(.on-hover) {*/
-/*  opacity: 0.6;*/
-/*}*/
-
-.show-btns {
-  color: rgba(255, 255, 255, 1) !important;
+.v-card {
+  margin-top: 25px
 }
 </style>
