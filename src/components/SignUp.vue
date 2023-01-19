@@ -4,22 +4,7 @@
       <v-col cols="12" sm="10">
         <v-card class="elevation-6 mt-8">
           <v-row>
-            <v-col cols="12" md="4" class="blue rounded-br-xl">
-              <div style="text-align: center; padding: 180px 0">
-                <v-card-text class="white--text">
-                  <h3 class="text-center">Alredy Signed up?</h3>
-                  <h6 class="text-center">
-                    Log in to your account so you can continue building
-                    and<br />
-                    editing your onboarding flows
-                  </h6>
-                </v-card-text>
-                <div class="text-center">
-                  <br />
-                  <v-btn tile outlined dark @click="step--">Log in</v-btn>
-                </div>
-              </div>
-            </v-col>
+            <v-col cols="12" md="2" class="blue rounded-br-xl"> </v-col>
 
             <v-col cols="12" md="8">
               <v-card-text class="mt-12">
@@ -28,59 +13,114 @@
                 <h6 class="text-center grey--text">
                   Let's get you all set up so you can start creatin your
                   <br />
-                  first onboarding experiance
+                  <br />
                 </h6>
                 <v-row align-center justify="center">
-                  <v-col cols="12" sm="8">
+                  <v-col cols="12" sm="12">
+                    <v-row>
+                      <v-col col="12" sm="9">
+                        <v-text-field
+                          v-model="name"
+                          label="Nickname"
+                          id="name"
+                          outlined
+                          dense
+                          color="blue"
+                          autocomplete="false"
+                        />
+                      </v-col>
+                      <v-col col="12" sm="3">
+                        <v-btn
+                          color="blue"
+                          class="ml-4 mt-2"
+                          @click="NicknameCheck()"
+                        >
+                          check
+                        </v-btn>
+                      </v-col>
+                    </v-row>
                     <v-text-field
-                        label="Name"
-                        outlined
-                        dense
-                        color="blue"
-                        autocomplete="false"
-                        class="mt-4"
+                      v-model="email"
+                      label="Email"
+                      id="email"
+                      outlined
+                      dense
+                      color="blue"
+                      autocomplete="false"
+                    />
+                    <v-row>
+                      <v-col col="12" sm="9">
+                        <v-text-field
+                          v-model="id"
+                          label="Id"
+                          id="id"
+                          outlined
+                          dense
+                          color="blue"
+                          autocomplete="false"
+                        />
+                      </v-col>
+                      <v-col col="12" sm="3">
+                        <v-btn
+                          color="blue"
+                          class="ml-4 mt-2"
+                          @click="IdCheck()"
+                        >
+                          check
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+
+                    <v-text-field
+                      v-model="password"
+                      label="Password"
+                      id="password"
+                      outlined
+                      dense
+                      hint="숫자와 특수문자를 포함한 8글자 이상"
+                      color="blue"
+                      autocomplete="false"
+                      type="password"
+                    />
+                    <v-text-field
+                      v-model="passwordcheck"
+                      label="Password check"
+                      outlined
+                      dense
+                      color="blue"
+                      autocomplete="false"
+                      type="password"
                     />
 
                     <v-text-field
-                        label="Email"
-                        outlined
-                        dense
-                        color="blue"
-                        autocomplete="false"
+                      v-model="phonenumber"
+                      label="Phone number"
+                      id="phonenumber"
+                      outlined
+                      dense
+                      hint="-를 제외한 핸드폰 번호"
+                      color="blue"
+                      autocomplete="false"
                     />
-                    <v-text-field
-                        label="Id"
-                        outlined
-                        dense
-                        color="blue"
-                        autocomplete="false"
-                    />
-                    <v-text-field
-                        label="Password"
-                        outlined
-                        dense
-                        color="blue"
-                        autocomplete="false"
-                        type="password"
-                    />
+                    <v-row>
+                      <label
+                        for="Date"
+                        class="ma-5"
+                        style="font-size: 18px; color: grey"
+                        >BirthDay</label
+                      >
+                      <input
+                        type="date"
+                        name="date"
+                        id="currentDate"
+                        style="margin: 0 5px; float: right"
+                      />
+                    </v-row>
 
-                    <v-text-field
-                        label="PhoneNumber"
-                        outlined
-                        dense
-                        color="blue"
-                        autocomplete="false"
-                    />
-                    <v-text-field
-                        label="Birthdate"
-                        outlined
-                        dense
-                        color="blue"
-                        autocomplete="false"
-                    />
                     <div style="padding: 10px 0"></div>
-                    <v-btn color="blue" dark block tile>Sign up</v-btn>
-
+                    <v-btn color="blue" dark block tile @click="send()"
+                      >Sign up</v-btn
+                    >
                     <div style="padding: 10px 0"></div>
                   </v-col>
                 </v-row>
@@ -94,11 +134,24 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
-  name: 'SignUp',
-}
+  name: "SignUp",
+
+  data: () => ({
+    name: "",
+    email: "",
+    id: "",
+    password: "",
+    phonenumber: "",
+  }),
+  methods: {
+    send() {
+      console.log(data);
+      axios.post("/api/signup", this.data);
+    },
+  },
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
