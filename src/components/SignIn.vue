@@ -39,6 +39,7 @@
                       >Log in</v-btn
                     >
                     <v-col cols="12" sm="10">
+                      <!-- 비밀번호 찾기 링크 추가 <필요> -->
                       <span
                         class="caption text"
                         style="font-size: 15px; font-weight: bold"
@@ -132,6 +133,4 @@ export default {
 .v-text-field label {
   font-weight: bold;
 }
-
-/* <img calss = "src="../assets/imges/background.jpg"  style=""/> */
 </style>
