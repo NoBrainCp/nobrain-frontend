@@ -2,72 +2,55 @@
   <v-container>
     <v-row align-content="center" justify="center">
       <v-col cols="12" sm="10">
-        <v-card class="elevation-6 mt-8">
+        <v-card class="elevation-6 mt-8" id="back">
           <v-row>
             <v-col cols="12" md="2" class="blue rounded-br-xl"> </v-col>
 
             <v-col cols="12" md="8">
               <v-card-text class="mt-12">
-                <h2 class="text-center">Sign Up for an Account</h2>
+                <h1 class="text-center">Sign Up for an Account</h1>
                 <br />
-                <h6 class="text-center grey--text">
+                <h5 class="text-center grey--text">
                   Let's get you all set up so you can start creatin your
                   <br />
                   <br />
-                </h6>
+                </h5>
                 <v-row align-center justify="center">
                   <v-col cols="12" sm="12">
                     <v-row>
-                      <v-col col="12" sm="9">
+                      <v-col col="12" sm="10">
                         <v-text-field
                           v-model="name"
                           label="Nickname"
                           id="name"
-                          outlined
-                          dense
+                          bg-color="white"
                           color="blue"
-                          autocomplete="false"
                         />
                       </v-col>
-                      <v-col col="12" sm="3">
-                        <v-btn
-                          color="blue"
-                          class="ml-4 mt-2"
-                          @click="NicknameCheck()"
-                        >
-                          check
-                        </v-btn>
+                      <v-col col="12" sm="2">
+                        <v-btn color="#BBDEFB" class="mt-2"> check </v-btn>
                       </v-col>
                     </v-row>
+
                     <v-text-field
                       v-model="email"
                       label="Email"
                       id="email"
-                      outlined
-                      dense
+                      bg-color="white"
                       color="blue"
-                      autocomplete="false"
                     />
                     <v-row>
-                      <v-col col="12" sm="9">
+                      <v-col col="12" sm="10">
                         <v-text-field
                           v-model="id"
                           label="Id"
                           id="id"
-                          outlined
-                          dense
+                          bg-color="white"
                           color="blue"
-                          autocomplete="false"
                         />
                       </v-col>
-                      <v-col col="12" sm="3">
-                        <v-btn
-                          color="blue"
-                          class="ml-4 mt-2"
-                          @click="IdCheck()"
-                        >
-                          check
-                        </v-btn>
+                      <v-col col="12" sm="2">
+                        <v-btn color="#BBDEFB" class="mt-2"> check </v-btn>
                       </v-col>
                     </v-row>
 
@@ -75,20 +58,16 @@
                       v-model="password"
                       label="Password"
                       id="password"
-                      outlined
-                      dense
+                      bg-color="white"
                       hint="숫자와 특수문자를 포함한 8글자 이상"
                       color="blue"
-                      autocomplete="false"
                       type="password"
                     />
                     <v-text-field
                       v-model="passwordcheck"
                       label="Password check"
-                      outlined
-                      dense
+                      bg-color="white"
                       color="blue"
-                      autocomplete="false"
                       type="password"
                     />
 
@@ -96,17 +75,15 @@
                       v-model="phonenumber"
                       label="Phone number"
                       id="phonenumber"
-                      outlined
-                      dense
+                      bg-color="white"
                       hint="-를 제외한 핸드폰 번호"
                       color="blue"
-                      autocomplete="false"
                     />
                     <v-row>
                       <label
                         for="Date"
                         class="ma-5"
-                        style="font-size: 18px; color: grey"
+                        style="font-size: 22px; color: #363636"
                         >BirthDay</label
                       >
                       <input
@@ -154,4 +131,26 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+#back {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+}
+
+#back::after {
+  width: 100%;
+  height: 100%;
+  content: "";
+  background-image: url("../assets/imges/background.jpg");
+  background-size: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  opacity: 0.5;
+}
+#currentDate {
+  size: 10px;
+}
+</style>

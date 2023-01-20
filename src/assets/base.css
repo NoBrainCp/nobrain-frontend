@@ -56,7 +56,7 @@
   box-sizing: border-box;
   margin: 0;
   position: relative;
-  font-weight: normal;
+  font-weight: bold;
 }
 
 body {
@@ -72,14 +72,4 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-input[type="date"]::-webkit-calendar-picker-indicator {
-  color: rgba(0, 0, 0, 0);
-  opacity: 1;
-  display: block;
-  background: url(https://mywildalberta.ca/images/GFX-MWA-Parks-Reservations.png)
-    no-repeat;
-  width: 20px;
-  height: 20px;
-  border-width: thin;
 }

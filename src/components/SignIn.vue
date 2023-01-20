@@ -2,14 +2,11 @@
   <v-container>
     <v-row align-content="center" justify="center">
       <v-col pcols="12" sm="12">
-        <!-- <v-card
+        <v-card
+          id="back"
           class="elevation-6 mt-10"
-          style="width: 1200px"
-          height="600px"
-          align-center
-        > -->
-        <!-- <v-card class="elevation-6 mt-10"> -->
-        <v-card class="elevation-6 mt-10" style="aspect-ratio: 16 / 8">
+          style="aspect-ratio: 16 / 8"
+        >
           <v-row>
             <v-col cols="12" md="6">
               <v-card-text class="mt-15">
@@ -19,21 +16,12 @@
                   Log in to your account so you can continue builiding
                 </h6>
                 <v-row align-center justify="center">
-                  <v-col cols="12" sm="8">
-                    <v-text-field
-                      label="Id"
-                      outlined
-                      dense
-                      color="blue"
-                      autocomplete="fasle"
-                      class="mt-8"
-                    />
+                  <v-col cols="12" sm="8" class="mt-8">
+                    <v-text-field label="Id" bg-color="white" color="blue" />
                     <v-text-field
                       label="Password"
-                      outlined
-                      dense
+                      bg-color="white"
                       color="blue"
-                      autocomplete="false"
                       type="password"
                     />
                     <v-row>
@@ -51,7 +39,9 @@
                       >Log in</v-btn
                     >
                     <v-col cols="12" sm="10">
-                      <span class="caption blue--text"
+                      <span
+                        class="caption text"
+                        style="font-size: 15px; font-weight: bold"
                         >Did you forget your password?</span
                       >
                     </v-col>
@@ -65,12 +55,11 @@
               <div class="text-center">
                 <img
                   class="center"
-                  src="../assets/nobrainlogo.png"
+                  src="../assets/imges/nobrainlogo.png"
                   alt="NobrainLogo"
                   style="width: 200px"
                 />
               </div>
-
               <div style="text-align: center">
                 <v-card-text class="white--text">
                   <h3 class="text-center">Don't Have an Account Yet?</h3>
@@ -118,4 +107,31 @@ export default {
   width: 100%;
   height: 100%;
 }
+.titlebackground {
+  background-image: url("../assets/imges/background.jpg");
+  background-size: cover;
+}
+#back {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+}
+
+#back::after {
+  width: 100%;
+  height: 100%;
+  content: "";
+  background-image: url("../assets/imges/background.jpg");
+  background-size: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  opacity: 0.5;
+}
+.v-text-field label {
+  font-weight: bold;
+}
+
+/* <img calss = "src="../assets/imges/background.jpg"  style=""/> */
 </style>
