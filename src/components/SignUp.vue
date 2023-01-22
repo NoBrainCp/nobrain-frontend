@@ -28,7 +28,13 @@
                         />
                       </v-col>
                       <v-col col="12" sm="2">
-                        <v-btn color="#BBDEFB" class="mt-2"> check </v-btn>
+                        <v-btn
+                          color="#BBDEFB"
+                          class="mt-2"
+                          @click="namecheck()"
+                        >
+                          check
+                        </v-btn>
                       </v-col>
                     </v-row>
 
@@ -88,8 +94,8 @@
                       >
                       <input
                         type="date"
-                        name="date"
-                        id="currentDate"
+                        name="Currentdate"
+                        id="date"
                         style="margin: 0 5px; float: right"
                       />
                     </v-row>
@@ -120,12 +126,22 @@ export default {
     email: "",
     id: "",
     password: "",
+    passwordcheck: "",
     phonenumber: "",
+    date: "",
   }),
   methods: {
-    send() {
-      console.log(data);
-      axios.post("/api/signup", this.data);
+    async send() {
+      let result = await axios.post("http://localhost:3001/memo", {
+        name: this.name,
+        email: this.email,
+        id: this.id,
+        password: this.password,
+        passwordcheck: this.passwordcheck,
+        phonenumber: this.phonenumber,
+        date: document.querySelector("#date").value,
+      });
+      console.log(date);
     },
   },
 };

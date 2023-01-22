@@ -34,7 +34,6 @@
                         </v-checkbox>
                       </v-col>
                     </v-row>
-
                     <v-btn color="blue" class="mt-n7" dark block tile
                       >Log in</v-btn
                     >
