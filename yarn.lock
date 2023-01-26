@@ -1039,6 +1039,11 @@
   dependencies:
     "@vue/devtools-api" "^6.4.5"
 
+"vue-universal-modal@^1.1.4":
+  "integrity" "sha512-MCSVz5bS614LfbDzo2/VDu0DWVUAQws00aPourSduGTzhbm0SpvmRJX/mUI/a+2LkJdcchHd2jpH0JK5Mh0rHg=="
+  "resolved" "https://registry.npmjs.org/vue-universal-modal/-/vue-universal-modal-1.1.4.tgz"
+  "version" "1.1.4"
+
 "vue@^3.0.0", "vue@^3.2.0", "vue@^3.2.25", "vue@^3.2.45", "vue@3.2.45":
   "integrity" "sha512-9Nx/Mg2b2xWlXykmCwiTUCWHbWIj53bnkizBxKai1g61f2Xit700A1ljowpTIM11e3uipOeiPcSqnmBg6gyiaA=="
   "resolved" "https://registry.npmjs.org/vue/-/vue-3.2.45.tgz"

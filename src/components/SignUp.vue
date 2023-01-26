@@ -20,7 +20,7 @@
                     <v-row>
                       <v-col col="12" sm="10">
                         <v-text-field
-                          v-model="name"
+                          v-model="user.name"
                           label="Nickname"
                           id="name"
                           bg-color="white"
@@ -31,15 +31,21 @@
                         <v-btn
                           color="#BBDEFB"
                           class="mt-2"
-                          @click="namecheck()"
+                          @click="namecheck(user.name)"
                         >
                           check
                         </v-btn>
                       </v-col>
                     </v-row>
-
+                    <!-- <div>{{ isExistsName }}</div> -->
+                    <p id="exists-name" v-if="isExistsName === true">
+                      이미 존재하는 닉네임 입니다.
+                    </p>
+                    <p id="notexists-name" v-if="isExistsName === false">
+                      사용 가능한 닉네임 입니다.
+                    </p>
                     <v-text-field
-                      v-model="email"
+                      v-model="user.email"
                       label="Email"
                       id="email"
                       bg-color="white"
@@ -48,20 +54,23 @@
                     <v-row>
                       <v-col col="12" sm="10">
                         <v-text-field
-                          v-model="id"
+                          v-model="user.loginId"
                           label="Id"
-                          id="id"
+                          id="account"
                           bg-color="white"
                           color="blue"
                         />
                       </v-col>
                       <v-col col="12" sm="2">
-                        <v-btn color="#BBDEFB" class="mt-2"> check </v-btn>
+                        <v-btn color="#BBDEFB" class="mt-2">
+                          <!-- @click="idcheck" -->
+                          check
+                        </v-btn>
                       </v-col>
                     </v-row>
 
                     <v-text-field
-                      v-model="password"
+                      v-model="user.password"
                       label="Password"
                       id="password"
                       bg-color="white"
@@ -70,7 +79,7 @@
                       type="password"
                     />
                     <v-text-field
-                      v-model="passwordcheck"
+                      v-model="user.passwordcheck"
                       label="Password check"
                       bg-color="white"
                       color="blue"
@@ -78,7 +87,7 @@
                     />
 
                     <v-text-field
-                      v-model="phonenumber"
+                      v-model="user.phoneNumber"
                       label="Phone number"
                       id="phonenumber"
                       bg-color="white"
@@ -101,9 +110,35 @@
                     </v-row>
 
                     <div style="padding: 10px 0"></div>
+
                     <v-btn color="blue" dark block tile @click="send()"
-                      >Sign up</v-btn
-                    >
+                      >Sign up
+                      <v-dialog v-model="dialog" activator="parent">
+                        <v-card
+                          v-if="isSubmit === true"
+                          class="mx-auto"
+                          max-width="500"
+                          style="width: 500px; height: 200px"
+                        >
+                          <v-card-title
+                            class="text-center"
+                            style="margin-top: 10%"
+                          >
+                            Welcome to Nobrain
+                          </v-card-title>
+                          <v-card-actions style="margin-top: 10%">
+                            <v-btn
+                              color="primary"
+                              block
+                              @click="dialog = false"
+                              to="/signin"
+                              >로그인 창으로 이동</v-btn
+                            >
+                          </v-card-actions>
+                        </v-card>
+                      </v-dialog>
+                    </v-btn>
+                    <p></p>
                     <div style="padding: 10px 0"></div>
                   </v-col>
                 </v-row>
@@ -118,30 +153,71 @@
 
 <script>
 import axios from "axios";
+import { reactive } from "@vue/reactivity";
+import { ref, onMounted } from "vue";
 export default {
   name: "SignUp",
 
+  data() {
+    return {
+      dialog: false,
+    };
+  },
   data: () => ({
-    name: "",
-    email: "",
-    id: "",
-    password: "",
-    passwordcheck: "",
-    phonenumber: "",
-    date: "",
+    user: {
+      name: "",
+      email: "",
+      loginId: "",
+      password: "",
+      passwordcheck: "",
+      phoneNumber: "",
+      birthDate: "",
+    },
+    isExistsName: "",
+    isSubmit: "",
   }),
   methods: {
+    // goSignIn(){
+    //   this.$router.push("")
+    // }
+    async namecheck(name) {
+      let result = axios
+        .get("/api/username/" + name + "/exists")
+        .then((res) => {
+          this.isExistsName = res.data.data;
+          console.log(this.isExistsName);
+          console.log(res.data.data);
+        });
+      // return data.isExistsName;
+    },
+    // async idcheck() {
+    //   let result = axios.post("http://localhost:3000/memo", {
+    //     loginId: this.loginId,
+    //   });
+    // },
     async send() {
-      let result = await axios.post("http://localhost:3001/memo", {
-        name: this.name,
-        email: this.email,
-        id: this.id,
-        password: this.password,
-        passwordcheck: this.passwordcheck,
-        phonenumber: this.phonenumber,
-        date: document.querySelector("#date").value,
-      });
-      console.log(date);
+      // const data = reactive({
+      //   success: false,
+      //   messeage: "",
+      // });
+      let result = await axios
+        .post("/api/signup", {
+          name: this.user.name,
+          email: this.user.email,
+          loginId: this.user.loginId,
+          password: this.user.password,
+          passwordcheck: this.user.passwordcheck,
+          phoneNumber: this.user.phoneNumber,
+          birthDate: document.querySelector("#date").value,
+        })
+        .then((res) => {
+          console.log(res.data);
+          console.log(res.data.success);
+          this.isSubmit = res.data.success;
+
+          // console.log(data.message);
+        });
+      // return { data };
     },
   },
 };
@@ -168,5 +244,23 @@ export default {
 }
 #currentDate {
   size: 10px;
+}
+
+#exists-name {
+  color: red;
+  font-size: 15px;
+  font-weight: bold;
+  text-align: left;
+  top: 3;
+}
+
+#notexists-name {
+  color: blue;
+  font-size: 15px;
+  font-weight: bold;
+  text-align: left;
+}
+.v-input__details {
+  display: none;
 }
 </style>
