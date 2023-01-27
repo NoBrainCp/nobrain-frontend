@@ -10,7 +10,7 @@
           >
             <v-list-item-content>
               <v-list-item-title>
-                # {{ category.name }}
+                - {{ category.name }}
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -23,7 +23,7 @@
           >
             <v-list-item-content>
               <v-list-item-title>
-                # Star
+                - Star
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -36,16 +36,22 @@
 import axios from "axios";
 import {onMounted, reactive} from "vue";
 import {useRoute} from "vue-router";
+import bookmark from "./Bookmark.vue";
 
 export default {
   name: 'SideBar',
+  computed: {
+    bookmark() {
+      return bookmark
+    }
+  },
   setup() {
     const route = useRoute();
     const data = reactive({
       categories:[]
     });
 
-    axios.get("/api/" + route.params.username + "/get-categories").then((res) => {
+    axios.get("/api/" + route.params.username + "/categories").then((res) => {
       data.categories = res.data.list;
       console.log(res);
     });
@@ -55,7 +61,6 @@ export default {
 </script>
 
 <style scoped>
-
 .v-list-item {
   font-size: 30px;
 }
