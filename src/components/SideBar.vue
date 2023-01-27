@@ -97,6 +97,8 @@ export default {
 .category-title-container {
   display: flex;
   justify-content: space-between;
+  border-bottom: 1px solid gray;
+  margin-bottom: 10px;
 }
 
 #category-title {
@@ -111,5 +113,6 @@ export default {
 
 #plusbox-icon:hover {
   background: #cccccc;
+  border-radius: 5px;
 }
 </style>

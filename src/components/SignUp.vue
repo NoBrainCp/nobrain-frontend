@@ -153,7 +153,6 @@
 
 <script>
 import axios from "axios";
-import { reactive } from "@vue/reactivity";
 import { ref, onMounted } from "vue";
 export default {
   name: "SignUp",
