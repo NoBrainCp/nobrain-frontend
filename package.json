@@ -9,7 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@mdi/font": "5.9.55",
+    "@jamescoyle/vue-icon": "^0.1.2",
+    "@mdi/js": "^7.1.96",
     "axios": "^1.2.3",
     "roboto-fontface": "*",
     "vue": "^3.2.45",
@@ -19,6 +20,7 @@
     "webfontloader": "^1.0.0"
   },
   "devDependencies": {
+    "@mdi/font": "^7.1.96",
     "@vitejs/plugin-vue": "^4.0.0",
     "vite": "^4.0.0",
     "vite-plugin-vuetify": "^1.0.0-alpha.12",
