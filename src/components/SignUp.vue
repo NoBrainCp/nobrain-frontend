@@ -37,13 +37,14 @@
                         </v-btn>
                       </v-col>
                     </v-row>
-                    <!-- <div>{{ isExistsName }}</div> -->
-                    <p id="exists-name" v-if="isExistsName === true">
+                    <p id="exists" v-if="isExistsName === true">
                       이미 존재하는 닉네임 입니다.
                     </p>
-                    <p id="notexists-name" v-if="isExistsName === false">
+                    <p id="notexists" v-if="isExistsName === false">
                       사용 가능한 닉네임 입니다.
                     </p>
+                    <!-- <div>{{ isExistsName }}</div> -->
+
                     <v-text-field
                       v-model="user.email"
                       label="Email"
@@ -62,13 +63,21 @@
                         />
                       </v-col>
                       <v-col col="12" sm="2">
-                        <v-btn color="#BBDEFB" class="mt-2">
-                          <!-- @click="idcheck" -->
+                        <v-btn
+                          color="#BBDEFB"
+                          class="mt-2"
+                          @click="idcheck(user.loginId)"
+                        >
                           check
                         </v-btn>
                       </v-col>
                     </v-row>
-
+                    <p id="exists" v-if="isExistsId === true">
+                      이미 존재하는 아이디 입니다.
+                    </p>
+                    <p id="notexists" v-if="isExistsId === false">
+                      사용 가능한 아이디 입니다.
+                    </p>
                     <v-text-field
                       v-model="user.password"
                       label="Password"
@@ -114,6 +123,51 @@
                     <v-btn color="blue" dark block tile @click="send()"
                       >Sign up
                       <v-dialog v-model="dialog" activator="parent">
+                        <!-- 로그인 실패: (id or name) not check  -->
+                        <v-card
+                          v-if="
+                            isExistsId === true ||
+                            isExistsId === '' ||
+                            isExistsName === true ||
+                            isExistsName === ''
+                          "
+                          class="mx-auto"
+                          max-width="500"
+                          style="width: 500px; height: 200px"
+                        >
+                          <v-card-title
+                            class="text-center"
+                            style="margin-top: 10%"
+                          >
+                            이메일 중복 | 전화번호 중복
+                            <!-- {{ message }} -->
+                          </v-card-title>
+                          <v-card-actions style="margin-top: 10%">
+                            <v-btn color="primary" block @click="dialog = false"
+                              >Close</v-btn
+                            >
+                          </v-card-actions>
+                        </v-card>
+                        <!-- 이메일과 전화번호 중복 -->
+                        <v-card
+                          v-if="errormessage === 'Email is Duplication'"
+                          class="mx-auto"
+                          max-width="500"
+                          style="width: 500px; height: 200px"
+                        >
+                          <v-card-title
+                            class="text-center"
+                            style="margin-top: 10%"
+                          >
+                            이메일 또는 전화번호가 중복 되었습니다.
+                          </v-card-title>
+                          <v-card-actions style="margin-top: 10%">
+                            <v-btn color="primary" block @click="dialog = false"
+                              >Close</v-btn
+                            >
+                          </v-card-actions>
+                        </v-card>
+                        <!-- 로그인 성공 -->
                         <v-card
                           v-if="isSubmit === true"
                           class="mx-auto"
@@ -157,7 +211,6 @@ import { reactive } from "@vue/reactivity";
 import { ref, onMounted } from "vue";
 export default {
   name: "SignUp",
-
   data() {
     return {
       dialog: false,
@@ -174,33 +227,27 @@ export default {
       birthDate: "",
     },
     isExistsName: "",
+    isExistsId: "",
     isSubmit: "",
+    isError: "",
   }),
   methods: {
-    // goSignIn(){
-    //   this.$router.push("")
-    // }
     async namecheck(name) {
       let result = axios
         .get("/api/username/" + name + "/exists")
         .then((res) => {
           this.isExistsName = res.data.data;
-          console.log(this.isExistsName);
-          console.log(res.data.data);
         });
-      // return data.isExistsName;
     },
-    // async idcheck() {
-    //   let result = axios.post("http://localhost:3000/memo", {
-    //     loginId: this.loginId,
-    //   });
-    // },
+    async idcheck(loginId) {
+      let result = axios
+        .get("/api/loginId/" + loginId + "/exists")
+        .then((res) => {
+          this.isExistsId = res.data.data;
+        });
+    },
     async send() {
-      // const data = reactive({
-      //   success: false,
-      //   messeage: "",
-      // });
-      let result = await axios
+      let result = axios
         .post("/api/signup", {
           name: this.user.name,
           email: this.user.email,
@@ -214,8 +261,12 @@ export default {
           console.log(res.data);
           console.log(res.data.success);
           this.isSubmit = res.data.success;
-
-          // console.log(data.message);
+          console.log(data.message);
+          console.log(errormessage);
+        })
+        .catch(function (error) {
+          const errormessage = error.response.data.message;
+          console.log(errormessage);
         });
       // return { data };
     },
@@ -246,7 +297,7 @@ export default {
   size: 10px;
 }
 
-#exists-name {
+#exists {
   color: red;
   font-size: 15px;
   font-weight: bold;
@@ -254,7 +305,7 @@ export default {
   top: 3;
 }
 
-#notexists-name {
+#notexists {
   color: blue;
   font-size: 15px;
   font-weight: bold;
