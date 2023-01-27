@@ -9,6 +9,7 @@
           <v-hover v-slot="{ isHovering, props }">
             <v-card
                 class="mx-auto"
+                min-width="250"
                 max-width="344"
                 v-bind="props"
             >
@@ -22,15 +23,7 @@
               </v-card-text>
 
               <v-card-title>
-                <v-rating
-                    :model-value="4"
-                    dense
-                    color="orange"
-                    background-color="orange"
-                    hover
-                    class="me-2"
-                ></v-rating>
-                <span class="text-primary text-subtitle-2">Date</span>
+                <div class="text-primary text-subtitle-2">{{bookmark.createdAt}}</div>
               </v-card-title>
 
               <v-overlay
@@ -69,7 +62,6 @@
 
       axios.get("/api/" + route.params.username + "/" + route.params.category + "/bookmarks").then((res) => {
         data.bookmarks = res.data.list;
-        console.log(res.data.list);
       });
       return {data}
     },
