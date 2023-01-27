@@ -341,6 +341,7 @@ export default {
     },
     async send() {
       try {
+        this.isError = 200;
         if (this.isExistsId === false && this.isExistsName === false) {
           let result = await axios.post("/api/signup", {
             name: this.user.name,
