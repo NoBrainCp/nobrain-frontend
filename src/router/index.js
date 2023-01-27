@@ -3,6 +3,7 @@ import MainView from "../views/MainView.vue";
 import SignUp from "../components/SignUp.vue";
 import SignIn from "../components/SignIn.vue";
 import Bookmark from "../components/Bookmark.vue";
+import Header from "../components/Header.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -11,28 +12,30 @@ const router = createRouter({
       path: "/signin",
       name: "signin",
       component: SignIn,
+      alias: "/"
     },
     {
       path: "/signup",
       name: "signup",
       component: SignUp
     },
-    {
-      path: "/",
-      name: "main",
-      component: MainView,
-    },
+    // {
+    //   path: "/",
+    //   name: "main",
+    //   component: MainView
+    // },
     {
       path: "/:username",
       name: "main",
       component: MainView,
-      props: true
+      props: true,
     },
-    {
-      path: "/:username/:category",
-      name: "main",
-      component: MainView
-    },
+    // {
+    //   path: "/:username/:category",
+    //   name: "main",
+    //   component: MainView,
+    //   props: true
+    // },
   ],
 });
 
