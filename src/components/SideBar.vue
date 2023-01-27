@@ -2,11 +2,11 @@
     <v-col cols="2">
       <v-sheet rounded="lg">
         <v-list color="transparent">
-
           <v-list-item
               v-for="(category, idx) in data.categories"
               :key="category"
               link
+              @click="moveToCategory(category.name)"
           >
             <v-list-item-content>
               <v-list-item-title>
@@ -35,8 +35,9 @@
 <script>
 import axios from "axios";
 import {onMounted, reactive} from "vue";
-import {useRoute} from "vue-router";
+import {loadRouteLocation, useRoute} from "vue-router";
 import bookmark from "./Bookmark.vue";
+import router from "../router";
 
 export default {
   name: 'SideBar',
@@ -45,6 +46,7 @@ export default {
       return bookmark
     }
   },
+
   setup() {
     const route = useRoute();
     const data = reactive({
@@ -57,6 +59,12 @@ export default {
     });
     return {data}
   },
+
+  methods: {
+    moveToCategory(category) {
+      router.push('/' + this.$route.params.username + '/' + category);
+    }
+  }
 }
 </script>
 

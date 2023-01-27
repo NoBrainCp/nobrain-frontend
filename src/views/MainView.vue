@@ -7,7 +7,10 @@
         <v-row>
           <SideBar/>
 
-          <Bookmark/>
+          <router-view :key="$route.fullPath">
+            <Bookmark/>
+          </router-view>
+
         </v-row>
       </v-container>
     </v-main>

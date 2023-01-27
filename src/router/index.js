@@ -19,14 +19,10 @@ const router = createRouter({
       name: "signup",
       component: SignUp
     },
-    // {
-    //   path: "/",
-    //   name: "main",
-    //   component: MainView
-    // },
     {
-      path: "/:username",
+      path: "/:username/:category",
       name: "main",
+      alias: "/:username",
       component: MainView,
       props: true,
     },

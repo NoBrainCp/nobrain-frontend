@@ -69,7 +69,6 @@
 
       axios.get("/api/" + route.params.username + "/" + route.params.category + "/bookmarks").then((res) => {
         data.bookmarks = res.data.list;
-        console.log(res.data.list);
       });
       return {data}
     },
