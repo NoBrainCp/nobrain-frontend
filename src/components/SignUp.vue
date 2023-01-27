@@ -34,16 +34,59 @@
                           @click="namecheck(user.name)"
                         >
                           check
+                          <!-- namecheck dialog -->
+                          <v-dialog
+                            v-model="dialogname"
+                            activator="parent"
+                            transition="dialog-top-transition"
+                          >
+                            <v-card
+                              v-if="isExistsName === true"
+                              class="mx-auto"
+                              max-width="500"
+                              style="width: 500px; height: 200px"
+                            >
+                              <v-card-title
+                                class="text-center"
+                                style="margin-top: 10%; color: red"
+                              >
+                                이미 사용하는 닉네임 입니다.
+                              </v-card-title>
+                              <v-card-actions style="margin-top: 10%">
+                                <v-btn
+                                  color="black"
+                                  block
+                                  @click="dialogname = false"
+                                  >Close
+                                </v-btn>
+                              </v-card-actions>
+                            </v-card>
+
+                            <v-card
+                              v-else
+                              class="mx-auto"
+                              max-width="500"
+                              style="width: 500px; height: 200px"
+                            >
+                              <v-card-title
+                                class="text-center"
+                                style="margin-top: 10%; color: #3333ff"
+                              >
+                                사용가능한 닉네임 입니다.
+                              </v-card-title>
+                              <v-card-actions style="margin-top: 10%">
+                                <v-btn
+                                  color="black"
+                                  block
+                                  @click="dialogname = false"
+                                  >Close</v-btn
+                                >
+                              </v-card-actions>
+                            </v-card>
+                          </v-dialog>
                         </v-btn>
                       </v-col>
                     </v-row>
-                    <!-- <div>{{ isExistsName }}</div> -->
-                    <p id="exists-name" v-if="isExistsName === true">
-                      이미 존재하는 닉네임 입니다.
-                    </p>
-                    <p id="notexists-name" v-if="isExistsName === false">
-                      사용 가능한 닉네임 입니다.
-                    </p>
                     <v-text-field
                       v-model="user.email"
                       label="Email"
@@ -62,13 +105,66 @@
                         />
                       </v-col>
                       <v-col col="12" sm="2">
-                        <v-btn color="#BBDEFB" class="mt-2">
-                          <!-- @click="idcheck" -->
+                        <v-btn
+                          color="#BBDEFB"
+                          class="mt-2"
+                          @click="idcheck(user.loginId)"
+                        >
                           check
+
+                          <!-- idcheck dialog -->
+                          <v-dialog
+                            v-model="dialogid"
+                            activator="parent"
+                            transition="dialog-top-transition"
+                          >
+                            <v-card
+                              v-if="isExistsId === true"
+                              class="mx-auto"
+                              max-width="500"
+                              style="width: 500px; height: 200px"
+                            >
+                              <v-card-title
+                                class="text-center"
+                                style="margin-top: 10%; color: red"
+                              >
+                                이미 존재하는 아이디 입니다.
+                              </v-card-title>
+                              <v-card-actions style="margin-top: 10%">
+                                <v-btn
+                                  color="black"
+                                  block
+                                  @click="dialogid = false"
+                                  >Close
+                                </v-btn>
+                              </v-card-actions>
+                            </v-card>
+
+                            <v-card
+                              v-else
+                              class="mx-auto"
+                              max-width="500"
+                              style="width: 500px; height: 200px"
+                            >
+                              <v-card-title
+                                class="text-center"
+                                style="margin-top: 10%; color: #3333ff"
+                              >
+                                사용가능한 아이디 입니다.
+                              </v-card-title>
+                              <v-card-actions style="margin-top: 10%">
+                                <v-btn
+                                  color="black"
+                                  block
+                                  @click="dialogid = false"
+                                  >Close</v-btn
+                                >
+                              </v-card-actions>
+                            </v-card>
+                          </v-dialog>
                         </v-btn>
                       </v-col>
                     </v-row>
-
                     <v-text-field
                       v-model="user.password"
                       label="Password"
@@ -108,14 +204,62 @@
                         style="margin: 0 5px; float: right"
                       />
                     </v-row>
-
                     <div style="padding: 10px 0"></div>
-
                     <v-btn color="blue" dark block tile @click="send()"
                       >Sign up
                       <v-dialog v-model="dialog" activator="parent">
+                        <!-- 로그인 실패: (id or name) not check  -->
                         <v-card
-                          v-if="isSubmit === true"
+                          v-if="
+                            isExistsId === true ||
+                            isExistsId === '' ||
+                            isExistsName === true ||
+                            isExistsName === ''
+                          "
+                          class="mx-auto"
+                          max-width="500"
+                          style="width: 500px; height: 200px"
+                        >
+                          <v-card-title
+                            class="text-center"
+                            style="margin-top: 10%"
+                          >
+                            닉네임 혹은 아이디 체크를 해주세요.
+                          </v-card-title>
+                          <v-card-actions style="margin-top: 10%">
+                            <v-btn color="primary" block @click="dialog = false"
+                              >Close</v-btn
+                            >
+                          </v-card-actions>
+                        </v-card>
+
+                        <!-- 이메일과 전화번호 중복 -->
+                        <v-card
+                          v-if="isError === 400"
+                          class="mx-auto"
+                          max-width="500"
+                          style="width: 500px; height: 200px"
+                        >
+                          <v-card-title
+                            class="text-center"
+                            style="margin-top: 10%"
+                          >
+                            이메일 또는 전화번호가 중복 되었습니다.
+                          </v-card-title>
+                          <v-card-actions style="margin-top: 10%">
+                            <v-btn color="primary" block @click="dialog = false"
+                              >Close</v-btn
+                            >
+                          </v-card-actions>
+                        </v-card>
+
+                        <!-- 로그인 성공 -->
+                        <v-card
+                          v-if="
+                            isSubmit === true &&
+                            isExistsId === false &&
+                            isExistsName === false
+                          "
                           class="mx-auto"
                           max-width="500"
                           style="width: 500px; height: 200px"
@@ -138,7 +282,7 @@
                         </v-card>
                       </v-dialog>
                     </v-btn>
-                    <p></p>
+                    <!-- <p>{{ isError }}</p> -->
                     <div style="padding: 10px 0"></div>
                   </v-col>
                 </v-row>
@@ -153,14 +297,15 @@
 
 <script>
 import axios from "axios";
-import { reactive } from "@vue/reactivity";
 import { ref, onMounted } from "vue";
+
 export default {
   name: "SignUp",
-
   data() {
     return {
       dialog: false,
+      dialogid: false,
+      dialogname: false,
     };
   },
   data: () => ({
@@ -174,50 +319,43 @@ export default {
       birthDate: "",
     },
     isExistsName: "",
+    isExistsId: "",
+    isExistsEmail: "",
     isSubmit: "",
+    isError: "",
   }),
   methods: {
-    // goSignIn(){
-    //   this.$router.push("")
-    // }
     async namecheck(name) {
       let result = axios
         .get("/api/username/" + name + "/exists")
         .then((res) => {
           this.isExistsName = res.data.data;
-          console.log(this.isExistsName);
-          console.log(res.data.data);
         });
-      // return data.isExistsName;
     },
-    // async idcheck() {
-    //   let result = axios.post("http://localhost:3000/memo", {
-    //     loginId: this.loginId,
-    //   });
-    // },
-    async send() {
-      // const data = reactive({
-      //   success: false,
-      //   messeage: "",
-      // });
-      let result = await axios
-        .post("/api/signup", {
-          name: this.user.name,
-          email: this.user.email,
-          loginId: this.user.loginId,
-          password: this.user.password,
-          passwordcheck: this.user.passwordcheck,
-          phoneNumber: this.user.phoneNumber,
-          birthDate: document.querySelector("#date").value,
-        })
+    async idcheck(loginId) {
+      let result = axios
+        .get("/api/loginId/" + loginId + "/exists")
         .then((res) => {
-          console.log(res.data);
-          console.log(res.data.success);
-          this.isSubmit = res.data.success;
-
-          // console.log(data.message);
+          this.isExistsId = res.data.data;
         });
-      // return { data };
+    },
+    async send() {
+      try {
+        if (this.isExistsId === false && this.isExistsName === false) {
+          let result = await axios.post("/api/signup", {
+            name: this.user.name,
+            email: this.user.email,
+            loginId: this.user.loginId,
+            password: this.user.password,
+            passwordcheck: this.user.passwordcheck,
+            phoneNumber: this.user.phoneNumber,
+            birthDate: document.querySelector("#date").value,
+          });
+          this.isSubmit = result.data.success;
+        }
+      } catch (err) {
+        this.isError = err.response.data.status;
+      }
     },
   },
 };
@@ -246,7 +384,7 @@ export default {
   size: 10px;
 }
 
-#exists-name {
+#exists {
   color: red;
   font-size: 15px;
   font-weight: bold;
@@ -254,7 +392,7 @@ export default {
   top: 3;
 }
 
-#notexists-name {
+#notexists {
   color: blue;
   font-size: 15px;
   font-weight: bold;
