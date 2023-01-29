@@ -5,6 +5,8 @@ import SignIn from "../components/SignIn.vue";
 import Bookmark from "../components/Bookmark.vue";
 import Header from "../components/Header.vue";
 import CreateCategory from "../components/CreateCategoryForm.vue";
+import ForgetPassword from "../components/ForgetPassword.vue";
+import ForgetId from "../components/ForgetId.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,12 +15,12 @@ const router = createRouter({
       path: "/signin",
       name: "signin",
       component: SignIn,
-      alias: "/"
+      alias: "/",
     },
     {
       path: "/signup",
       name: "signup",
-      component: SignUp
+      component: SignUp,
     },
     {
       path: "/:username/:category",
@@ -26,6 +28,16 @@ const router = createRouter({
       alias: "/:username",
       component: MainView,
       props: true,
+    },
+    {
+      path: "/forgetpassword",
+      name: "forgetpassword",
+      component: ForgetPassword,
+    },
+    {
+      path: "/forgetid",
+      name: "forgetid",
+      component: ForgetId,
     },
   ],
 });

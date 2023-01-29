@@ -1,46 +1,46 @@
 <template>
-    <v-col cols="2">
-      <v-sheet rounded="lg">
-        <v-list color="transparent">
-          <div class="category-title-container">
-            <div id="category-title">카테고리</div>
-            <CreateCategoryForm id="plusbox-icon"/>
-          </div>
+  <v-col cols="2">
+    <v-sheet rounded="lg">
+      <v-list color="transparent">
+        <div class="category-title-container">
+          <div id="category-title">카테고리</div>
+          <CreateCategoryForm id="plusbox-icon"/>
+        </div>
 
-          <v-list-item
-              v-for="(category, idx) in data.categories"
-              :key="category"
-              link
-              @click="moveToCategory(category.name)"
-          >
-            <v-list-item-content>
-              <v-list-item-title>
-                <IconDocumentation width="20"/>
-                <div class="category-name">
-                  {{ category.name }}
-                </div>
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
+        <v-list-item
+            v-for="(category, idx) in data.categories"
+            :key="category"
+            link
+            @click="moveToCategory(category.name)"
+        >
+          <v-list-item-content>
+            <v-list-item-title>
+              <IconDocumentation width="20"/>
+              <div class="category-name">
+                {{ category.name }}
+              </div>
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
 
-          <v-divider class="my-2"></v-divider>
+        <v-divider class="my-2"></v-divider>
 
-          <v-list-item
-              link
-              color="grey lighten-4"
-          >
-            <v-list-item-content>
-              <v-list-item-title>
-                <IconStar width="15"/>
-                <div class="category-name" id="star">
-                  Star
-                </div>
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-sheet>
-    </v-col>
+        <v-list-item
+            link
+            color="grey lighten-4"
+        >
+          <v-list-item-content>
+            <v-list-item-title>
+              <IconStar width="15"/>
+              <div class="category-name" id="star">
+                Star
+              </div>
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-sheet>
+  </v-col>
 </template>
 
 <script>
@@ -49,36 +49,46 @@ import {reactive} from "vue";
 import {useRoute} from "vue-router";
 import bookmark from "./Bookmark.vue";
 import router from "../router";
+import { onMounted, reactive } from "vue";
+import { loadRouteLocation, useRoute } from "vue-router";
+import bookmark from "./Bookmark.vue";
+import router from "../router";
 import IconDocumentation from "./icons/IconDocumentation.vue";
 import IconStar from "./icons/IconStar.vue";
 import IconPlusBox from "./icons/IconPlusBox.vue";
 import CreateCategoryForm from "./CreateCategoryForm.vue";
 
 export default {
-  name: 'SideBar',
-  components: {CreateCategoryForm, IconPlusBox, IconStar, IconDocumentation},
+  name: "SideBar",
+  components: {
+    IconPlusBox,
+    IconStar,
+    IconFolder,
+    IconDocumentation,
+  },
+
   computed: {
     bookmark() {
-      return bookmark
-    }
+      return bookmark;
+    },
   },
 
   setup() {
     const route = useRoute();
     const data = reactive({
-      categories:[],
+      categories: [],
     });
 
     axios.get("/api/" + route.params.username + "/categories").then((res) => {
       data.categories = res.data.list;
       console.log(res);
     });
-    return {data}
+    return { data };
   },
 
   methods: {
     moveToCategory(category) {
-      router.push('/' + this.$route.params.username + '/' + category);
+      router.push("/" + this.$route.params.username + "/" + category);
     },
   }
 }

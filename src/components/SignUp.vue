@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-row align-content="center" justify="center">
+    <v-row align-content="center" justify="center" id="all">
       <v-col cols="12" sm="10">
         <v-card class="elevation-6 mt-8" id="back">
           <v-row>
@@ -401,5 +401,8 @@ export default {
 }
 .v-input__details {
   display: none;
+}
+#all {
+  margin-top: 3%;
 }
 </style>

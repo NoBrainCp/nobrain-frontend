@@ -1,13 +1,13 @@
 <template>
   <v-container>
-    <v-row align-content="center" justify="center">
+    <v-row align-content="center" justify="center" id="all">
       <v-col pcols="12" sm="12">
         <v-card
           id="back"
           class="elevation-6 mt-10"
-          style="aspect-ratio: 16 / 8"
+          style="aspect-ratio: 16 / 7"
         >
-          <v-row>
+          <v-row id="row">
             <v-col cols="12" md="6">
               <v-card-text class="mt-15">
                 <h2 class="text-center">Login in to Your Account</h2>
@@ -38,11 +38,11 @@
                       >Log in</v-btn
                     >
                     <v-col cols="12" sm="10">
-                      <!-- 비밀번호 찾기 링크 추가 <필요> -->
-                      <span
+                      <a
                         class="caption text"
-                        style="font-size: 15px; font-weight: bold"
-                        >Did you forget your password?</span
+                        id="forgetpassword"
+                        href="/forgetpassword"
+                        >Did you forget your password?</a
                       >
                     </v-col>
                   </v-col>
@@ -60,7 +60,7 @@
                   style="width: 200px"
                 />
               </div>
-              <div style="text-align: center">
+              <div class="text-center">
                 <v-card-text class="white--text">
                   <h3 class="text-center">Don't Have an Account Yet?</h3>
                   <h6 class="text-center">Sign up here</h6>
@@ -131,5 +131,22 @@ export default {
 }
 .v-text-field label {
   font-weight: bold;
+}
+#row {
+  margin-top: 7%;
+}
+#forgetpassword {
+  align-content: left;
+  color: black;
+  font-weight: bold;
+  font-size: 17px;
+  text-decoration-line: none;
+}
+#forgetpassword:hover {
+  color: rgb(101, 104, 189);
+  text-decoration-line: underline;
+}
+#all {
+  margin-top: 3%;
 }
 </style>
