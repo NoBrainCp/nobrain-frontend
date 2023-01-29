@@ -49,10 +49,6 @@ import {reactive} from "vue";
 import {useRoute} from "vue-router";
 import bookmark from "./Bookmark.vue";
 import router from "../router";
-import { onMounted, reactive } from "vue";
-import { loadRouteLocation, useRoute } from "vue-router";
-import bookmark from "./Bookmark.vue";
-import router from "../router";
 import IconDocumentation from "./icons/IconDocumentation.vue";
 import IconStar from "./icons/IconStar.vue";
 import IconPlusBox from "./icons/IconPlusBox.vue";
@@ -61,9 +57,9 @@ import CreateCategoryForm from "./CreateCategoryForm.vue";
 export default {
   name: "SideBar",
   components: {
+    CreateCategoryForm,
     IconPlusBox,
     IconStar,
-    IconFolder,
     IconDocumentation,
   },
 
