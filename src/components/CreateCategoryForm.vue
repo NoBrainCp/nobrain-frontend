@@ -6,13 +6,8 @@
   >
     <template v-slot:activator="{ props }">
       <IconPlusBox id="plusbox-icon" width="30" v-bind="props"/>
-<!--        <v-btn-->
-<!--            v-bind="props"-->
-<!--        >-->
-<!--          btn-->
-<!--        </v-btn>-->
-
     </template>
+
     <v-card>
       <v-card-title id="card-title">
         <IconDocumentation width="35"/>
@@ -23,20 +18,23 @@
           <v-row>
             <v-col cols="12">
               <v-text-field
+                  v-model="category.name"
                   label="카테고리 이름*"
                   required
               ></v-text-field>
             </v-col>
             <v-col cols="12">
               <v-text-field
+                  v-model="category.description"
                   label="설명"
                   type="text"
                   required
               ></v-text-field>
               <v-checkbox
+                  v-model="category.isPublic"
                   label="비공개"
                   color="info"
-                  value="info"
+                  value="true"
                   hide-details
               ></v-checkbox>
             </v-col>
@@ -56,7 +54,7 @@
         <v-btn
             color="blue-darken-1"
             variant="text"
-            @click="dialog = false"
+            @click="submitCategory"
         >
           저장
         </v-btn>
@@ -68,15 +66,42 @@
 <script>
 import IconPlusBox from "./icons/IconPlusBox.vue";
 import IconDocumentation from "./icons/IconDocumentation.vue";
+import {useRoute} from "vue-router";
+import axios from 'axios';
 
 export default {
   name: 'CreateCategoryForm',
   components: {IconDocumentation, IconPlusBox},
 
   data: () => ({
+    route: useRoute(),
     dialog: false,
+    category: {
+      name: "",
+      description: "",
+      isPublic: false
+    }
   }),
 
+  methods: {
+    async submitCategory() {
+      this.dialog = false;
+      axios.post("/api/" + this.route.params.username + "/category",
+          { name: this.category.name,
+            description: this.category.description,
+            isPublic: this.category.isPublic
+          })
+          .then((res) => {
+            this.category.name = "";
+            this.category.description = "";
+            this.category.isPublic = false;
+            location.reload();
+          })
+          .catch((err) => {
+            console.log(err.data);
+          });
+    }
+  }
 }
 </script>
 
