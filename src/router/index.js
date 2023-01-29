@@ -4,7 +4,7 @@ import SignUp from "../components/SignUp.vue";
 import SignIn from "../components/SignIn.vue";
 import Bookmark from "../components/Bookmark.vue";
 import Header from "../components/Header.vue";
-import CreateCategory from "../components/CreateCategory.vue";
+import CreateCategory from "../components/CreateCategoryForm.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,11 +26,6 @@ const router = createRouter({
       alias: "/:username",
       component: MainView,
       props: true,
-    },
-    {
-      path: "/add-category",
-      name: "add-category",
-      component: CreateCategory
     },
   ],
 });
