@@ -2,9 +2,9 @@
   <v-dialog
       v-model="dialog"
       persistent
-      id="category-dialog"
+      width="30%"
   >
-    <template v-slot:activator="{ props }" id="category-form-btn">
+    <template v-slot:activator="{ props }">
       <IconPlusBox id="plusbox-icon" width="30" v-bind="props"/>
 <!--        <v-btn-->
 <!--            v-bind="props"-->
@@ -14,60 +14,35 @@
 
     </template>
     <v-card>
-      <v-card-title>
-        <span class="text-h5">카테고리 추가</span>
+      <v-card-title id="card-title">
+        <IconDocumentation width="35"/>
+        <span class="text-h5" id="card-title-text">카테고리 추가</span>
       </v-card-title>
       <v-card-text>
         <v-container>
           <v-row>
-            <v-col
-                cols="12"
-                sm="6"
-                md="4"
-            >
+            <v-col cols="12">
               <v-text-field
-                  label="Legal last name*"
-                  hint="example of persistent helper text"
-                  persistent-hint
+                  label="카테고리 이름*"
                   required
               ></v-text-field>
             </v-col>
             <v-col cols="12">
               <v-text-field
-                  label="Email*"
+                  label="설명"
+                  type="text"
                   required
               ></v-text-field>
+              <v-checkbox
+                  label="비공개"
+                  color="info"
+                  value="info"
+                  hide-details
+              ></v-checkbox>
             </v-col>
-            <v-col cols="12">
-              <v-text-field
-                  label="Password*"
-                  type="password"
-                  required
-              ></v-text-field>
-            </v-col>
-            <v-col
-                cols="12"
-                sm="6"
-            >
-              <v-select
-                  :items="['0-17', '18-29', '30-54', '54+']"
-                  label="Age*"
-                  required
-              ></v-select>
-            </v-col>
-            <v-col
-                cols="12"
-                sm="6"
-            >
-              <v-autocomplete
-                  :items="['Skiing', 'Ice hockey', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Basejump']"
-                  label="Interests"
-                  multiple
-              ></v-autocomplete>
-            </v-col>
+
           </v-row>
         </v-container>
-        <small>*indicates required field</small>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -76,14 +51,14 @@
             variant="text"
             @click="dialog = false"
         >
-          Close
+          닫기
         </v-btn>
         <v-btn
             color="blue-darken-1"
             variant="text"
             @click="dialog = false"
         >
-          Save
+          저장
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -92,10 +67,11 @@
 
 <script>
 import IconPlusBox from "./icons/IconPlusBox.vue";
+import IconDocumentation from "./icons/IconDocumentation.vue";
 
 export default {
   name: 'CreateCategoryForm',
-  components: {IconPlusBox},
+  components: {IconDocumentation, IconPlusBox},
 
   data: () => ({
     dialog: false,
@@ -105,9 +81,20 @@ export default {
 </script>
 
 <style scoped>
+#card-title {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  border-bottom: 1px solid #d3d1d1;
+  margin-top: 10px
+}
+
+#card-title-text {
+  color: #4f4d4d;
+  font-weight: bold;
+}
+
 #plusbox-icon:hover {
   cursor: pointer;
-  background: #cccccc;
-  border-radius: 5px;
 }
 </style>
