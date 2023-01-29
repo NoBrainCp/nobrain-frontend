@@ -4,17 +4,18 @@
       <v-list color="transparent">
         <div class="category-title-container">
           <div id="category-title">카테고리</div>
-          <IconPlusBox id="plusbox-icon" width="30" @click="" />
+          <CreateCategoryForm id="plusbox-icon"/>
         </div>
+
         <v-list-item
-          v-for="(category, idx) in data.categories"
-          :key="category"
-          link
-          @click="moveToCategory(category.name)"
+            v-for="(category, idx) in data.categories"
+            :key="category"
+            link
+            @click="moveToCategory(category.name)"
         >
           <v-list-item-content>
             <v-list-item-title>
-              <IconDocumentation width="20" />
+              <IconDocumentation width="20"/>
               <div class="category-name">
                 {{ category.name }}
               </div>
@@ -24,11 +25,16 @@
 
         <v-divider class="my-2"></v-divider>
 
-        <v-list-item link color="grey lighten-4">
+        <v-list-item
+            link
+            color="grey lighten-4"
+        >
           <v-list-item-content>
             <v-list-item-title>
-              <IconStar width="15" />
-              <div class="category-name">Star</div>
+              <IconStar width="15"/>
+              <div class="category-name" id="star">
+                Star
+              </div>
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
@@ -39,15 +45,18 @@
 
 <script>
 import axios from "axios";
+import {reactive} from "vue";
+import {useRoute} from "vue-router";
+import bookmark from "./Bookmark.vue";
+import router from "../router";
 import { onMounted, reactive } from "vue";
 import { loadRouteLocation, useRoute } from "vue-router";
 import bookmark from "./Bookmark.vue";
 import router from "../router";
-
 import IconDocumentation from "./icons/IconDocumentation.vue";
-import IconFolder from "./icons/IconStar.vue";
 import IconStar from "./icons/IconStar.vue";
 import IconPlusBox from "./icons/IconPlusBox.vue";
+import CreateCategoryForm from "./CreateCategoryForm.vue";
 
 export default {
   name: "SideBar",
@@ -57,6 +66,7 @@ export default {
     IconFolder,
     IconDocumentation,
   },
+
   computed: {
     bookmark() {
       return bookmark;
@@ -80,10 +90,8 @@ export default {
     moveToCategory(category) {
       router.push("/" + this.$route.params.username + "/" + category);
     },
-
-    moveToAddCategory() {},
-  },
-};
+  }
+}
 </script>
 
 <style scoped>
@@ -94,6 +102,9 @@ export default {
 .category-title-container {
   display: flex;
   justify-content: space-between;
+  /*border-bottom: 1px solid gray;*/
+  text-decoration: none;
+  margin-bottom: 10px;
 }
 
 #category-title {
@@ -104,9 +115,5 @@ export default {
 
 .category-name {
   margin-left: 10px;
-}
-
-#plusbox-icon:hover {
-  background: #cccccc;
 }
 </style>
