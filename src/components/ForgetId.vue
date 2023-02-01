@@ -37,7 +37,7 @@
                         </div>
                         <v-col cols="12" sm="7" id="textfild">
                           <v-text-field
-                            v-model="user.name"
+                            v-model="user.phoneName"
                             id="name"
                             label="Nickname"
                             color="blue"
@@ -57,12 +57,46 @@
                             <v-btn
                               id="submit"
                               color="blue"
-                              @click="sendPhone(user.name, user.phoneNumber)"
+                              @click="
+                                sendPhone(user.phoneName, user.phoneNumber)
+                              "
                             >
                               인증번호 받기
                             </v-btn>
                           </v-col>
                         </v-row>
+                        <v-dialog
+                          v-if="isStatus === 200"
+                          activator="parent"
+                          transition="dialog-top-transition"
+                        >
+                          <v-card
+                            class="mx-auto"
+                            max-width="500"
+                            style="width: 500px; height: 200px"
+                          >
+                            <v-row id="rowfild" style="margin-top: 8%">
+                              <v-col col="12" sm="8">
+                                <v-text-field
+                                  v-model="num"
+                                  label="인증번호"
+                                  id="num"
+                                  bg-color="white"
+                                  color="blue"
+                                >
+                                </v-text-field>
+                              </v-col>
+                              <v-col col="12" sm="3">
+                                <v-btn color="blue" block>확인</v-btn>
+                              </v-col>
+                            </v-row>
+                            <v-row id="rowfild">
+                              <v-col col="12" sm="5">
+                                남은시간 : {{ timeStr }}
+                              </v-col>
+                            </v-row>
+                          </v-card>
+                        </v-dialog>
                       </v-card>
                       <v-radio
                         label="본인확인 이메일로 인증"
@@ -81,7 +115,7 @@
                         </div>
                         <v-col cols="12" sm="7" id="textfild">
                           <v-text-field
-                            v-model="user.name"
+                            v-model="user.emailName"
                             id="name"
                             label="Nickname"
                             color="blue"
@@ -135,60 +169,97 @@ export default {
 
   data: () => ({
     user: {
-      name: "",
+      phoneName: "",
+      emailName: "",
       email: "",
       password: "",
       phoneNumber: "",
     },
+    //timeCount
+    restSec: "",
+    restTimeData: "",
+    timeStr: "",
+    isText: "",
+    timerObject: null,
+
     radios: "radio1",
-    isExistsName: "",
     isExistsPhone: "",
     isExistsEmail: "",
     isSubmit: "",
-    isError: "",
+    isStatus: "",
   }),
-
   methods: {
-    async sendPhone(name, phoneNumber) {
-      let result = await axios.post("/api/forget/loginId", {
-        name: this.user.name,
-        phoneNumber: this.user.phoneNumber,
-      });
-      console.log(result);
+    async sendPhone(phoneName, phoneNumber) {
+      try {
+        this.isStatus = 200;
+        let result = await axios.post("/api/forget/loginId", {
+          name: this.user.phoneName,
+          phoneNumber: this.user.phoneNumber,
+        });
+        console.log(result.status);
+        if (result.status === 200) {
+          this.startTimer();
+        }
+      } catch (err) {
+        this.isStatus = err.response.data.staus;
+        console.log(this.isError);
+      }
+    },
+    startTimer() {
+      this.restSec = 180;
+      this.timerObject = setInterval(() => {
+        this.restSec--;
+        this.timeStr = this.prettyTime();
+        if (this.restSec <= 0) {
+          this.timerStop(this.timerObject);
+        }
+      }, 1000);
+      return this.timerObject;
+    },
+    prettyTime() {
+      let time = this.restSec / 60;
+      let minutes = parseInt(time);
+      let seconds = Math.round((time - minutes) * 60);
+      return (
+        minutes.toString().padStart(2, "0") +
+        " : " +
+        seconds.toString().padStart(2, "0")
+      );
+    },
+    timerStop() {
+      clearInterval(this.timerObject);
+      this.isStatus = "";
     },
 
     clickradio1() {
       this.radios = "radio1";
+      this.user.emailName = "";
+      this.user.email = "";
     },
     clickradio2() {
       this.radios = "radio2";
+      this.user.phoneName = "";
+      this.user.phoneNumber = "";
     },
-    async idcheck(loginId) {
-      let result = axios
-        .get("/api/loginId/" + loginId + "/exists")
-        .then((res) => {
-          this.isExistsId = res.data.data;
-        });
-    },
-    async send() {
-      try {
-        this.isError = 200;
-        if (this.isExistsId === false && this.isExistsName === false) {
-          let result = await axios.post("/api/signup", {
-            name: this.user.name,
-            email: this.user.email,
-            loginId: this.user.loginId,
-            password: this.user.password,
-            passwordcheck: this.user.passwordcheck,
-            phoneNumber: this.user.phoneNumber,
-            birthDate: document.querySelector("#date").value,
-          });
-          this.isSubmit = result.data.success;
-        }
-      } catch (err) {
-        this.isError = err.response.data.status;
-      }
-    },
+    // async send() {
+    //   try {
+    //     this.isError = 200;
+    //     if (this.isExistsId === false && this.isExistsName === false) {
+    //       let result = await axios.post("/api/signup", {
+    //         name: this.user.name,
+    //         email: this.user.email,
+    //         loginId: this.user.loginId,
+    //         password: this.user.password,
+    //         passwordcheck: this.user.passwordcheck,
+    //         phoneNumber: this.user.phoneNumber,
+    //         birthDate: document.querySelector("#date").value,
+    //       });
+    //       this.isSubmit = result.data.success;
+    //     }
+    //   } catch (err) {
+    //     this.isError = err.response.data.status;
+    //   }
+    // },
   },
 };
 </script>
@@ -211,10 +282,6 @@ export default {
   left: 0;
   z-index: -1;
   opacity: 0.5;
-}
-
-.v-input__details {
-  display: none;
 }
 
 #maintext {
@@ -240,12 +307,6 @@ export default {
 }
 #rowfild {
   margin-left: 0px;
-}
-.movepassword {
-  margin-top: 25%;
-  margin-left: 20%;
-  font-size: large;
-  color: black;
 }
 hr {
   background-color: black;
