@@ -163,13 +163,13 @@ export default {
     clickradio2() {
       this.radios = "radio2";
     },
-    // async namecheck(name) {
-    //   let result = axios
-    //     .get("/api/username/" + name + "/exists")
-    //     .then((res) => {
-    //       this.isExistsName = res.data.data;
-    //     });
-    // },
+    async namecheck(name) {
+      let result = axios
+        .get("/api/username/" + name + "/exists")
+        .then((res) => {
+          this.isExistsName = res.data.data;
+        });
+    },
     async idcheck(loginId) {
       let result = axios
         .get("/api/loginId/" + loginId + "/exists")
