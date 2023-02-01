@@ -77,7 +77,6 @@ export default {
 
     axios.get("/api/" + route.params.username + "/categories").then((res) => {
       data.categories = res.data.list;
-      console.log(res);
     });
     return { data };
   },
