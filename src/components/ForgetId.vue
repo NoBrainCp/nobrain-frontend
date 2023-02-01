@@ -189,6 +189,7 @@ export default {
     isStatus: "",
   }),
   methods: {
+    // 이메일 구현하기
     async sendPhone(phoneName, phoneNumber) {
       try {
         this.isStatus = 200;
@@ -235,11 +236,13 @@ export default {
       this.radios = "radio1";
       this.user.emailName = "";
       this.user.email = "";
+      this.timerStop(this.timerObject);
     },
     clickradio2() {
       this.radios = "radio2";
       this.user.phoneName = "";
       this.user.phoneNumber = "";
+      this.timerStop(this.timerObject);
     },
     // async send() {
     //   try {
