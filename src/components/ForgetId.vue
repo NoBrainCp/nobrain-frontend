@@ -43,18 +43,22 @@
                             color="blue"
                           />
                         </v-col>
-                        <v-row class="ml-0.5">
+                        <v-row id="rowfild">
                           <v-col cols="12" sm="7" id="textfild">
                             <v-text-field
                               v-model="user.phoneNumber"
-                              id="subtext1"
+                              id="phonenumber"
                               label="phonenumber"
                               color="blue"
                               hint="-를 제외한 핸드폰 번호"
                             />
                           </v-col>
                           <v-col cols="12" sm="4">
-                            <v-btn id="submit" color="blue">
+                            <v-btn
+                              id="submit"
+                              color="blue"
+                              @click="sendPhone(user.name, user.phoneNumber)"
+                            >
                               인증번호 받기
                             </v-btn>
                           </v-col>
@@ -83,7 +87,7 @@
                             color="blue"
                           />
                         </v-col>
-                        <v-row>
+                        <v-row id="rowfild">
                           <v-col cols="12" sm="7" id="textfild">
                             <v-text-field
                               v-model="user.email"
@@ -110,6 +114,7 @@
                   @click="idcheck(user.loginId)"
                   class="btn"
                 >
+                  <!--인증번호  -->
                   다음
                 </v-btn>
               </v-col>
@@ -137,25 +142,26 @@ export default {
     },
     radios: "radio1",
     isExistsName: "",
-    isExistsId: "",
+    isExistsPhone: "",
     isExistsEmail: "",
     isSubmit: "",
     isError: "",
   }),
 
   methods: {
+    async sendPhone(name, phoneNumber) {
+      let result = await axios.post("/api/forget/loginId", {
+        name: this.user.name,
+        phoneNumber: this.user.phoneNumber,
+      });
+      console.log(result);
+    },
+
     clickradio1() {
       this.radios = "radio1";
     },
     clickradio2() {
       this.radios = "radio2";
-    },
-    async namecheck(name) {
-      let result = axios
-        .get("/api/username/" + name + "/exists")
-        .then((res) => {
-          this.isExistsName = res.data.data;
-        });
     },
     async idcheck(loginId) {
       let result = axios
@@ -231,6 +237,9 @@ export default {
 }
 #textfild {
   margin-left: 30px;
+}
+#rowfild {
+  margin-left: 0px;
 }
 .movepassword {
   margin-top: 25%;
