@@ -66,7 +66,7 @@
                           </v-col>
                         </v-row>
                         <v-dialog
-                          v-if="isStatus === 200"
+                          v-if="isPhonecheck === true"
                           activator="parent"
                           transition="dialog-top-transition"
                         >
@@ -130,11 +130,47 @@
                             />
                           </v-col>
                           <v-col cols="12" sm="4">
-                            <v-btn id="submit" color="blue">
+                            <v-btn
+                              id="submit"
+                              color="blue"
+                              @click="sendEmail(user.emailName, user.email)"
+                            >
                               인증번호 받기
                             </v-btn>
                           </v-col>
                         </v-row>
+                        <v-dialog
+                          v-if="isEmailcheck === true"
+                          activator="parent"
+                          transition="dialog-top-transition"
+                        >
+                          <v-card
+                            class="mx-auto"
+                            max-width="500"
+                            style="width: 500px; height: 200px"
+                          >
+                            <v-row id="rowfild" style="margin-top: 8%">
+                              <v-col col="12" sm="8">
+                                <v-text-field
+                                  v-model="num"
+                                  label="인증번호"
+                                  id="num"
+                                  bg-color="white"
+                                  color="blue"
+                                >
+                                </v-text-field>
+                              </v-col>
+                              <v-col col="12" sm="3">
+                                <v-btn color="blue" block>확인</v-btn>
+                              </v-col>
+                            </v-row>
+                            <v-row id="rowfild">
+                              <v-col col="12" sm="5">
+                                남은시간 : {{ timeStr }}
+                              </v-col>
+                            </v-row>
+                          </v-card>
+                        </v-dialog>
                       </v-card>
                     </v-radio-group>
                   </v-card-text>
@@ -164,6 +200,7 @@
 <script>
 import axios from "axios";
 import { ref, onMounted } from "vue";
+
 export default {
   name: "ForgetId",
 
@@ -176,42 +213,57 @@ export default {
       phoneNumber: "",
     },
     //timeCount
-    restSec: "",
+    restSec: 180,
     restTimeData: "",
     timeStr: "",
-    isText: "",
-    timerObject: null,
 
+    //radio btn
     radios: "radio1",
-    isExistsPhone: "",
-    isExistsEmail: "",
-    isSubmit: "",
-    isStatus: "",
+    //send
+    isPhonecheck: "",
+    isEmailcheck: "",
   }),
   methods: {
     async sendPhone(phoneName, phoneNumber) {
       try {
-        this.isStatus = 200;
-        let result = await axios.post("/api/forget/loginId", {
+        let result = await axios.post("/api/forget/loginId/phoneNumber", {
           name: this.user.phoneName,
           phoneNumber: this.user.phoneNumber,
         });
-        console.log(result.status);
-        if (result.status === 200) {
-          this.startTimer();
-        }
+        this.isPhonecheck = true;
+        //click 한번으로 다이어로그 창을 띄어야함
+        //2번 누르게 되서 시간이 2초씩 지나감
+        this.startTimer();
       } catch (err) {
-        this.isStatus = err.response.data.staus;
-        console.log(this.isError);
+        this.isPhonecheck = false;
+        alert("닉네임 혹은 전화번호를 확인해주세요.");
       }
     },
-    startTimer() {
-      this.restSec = 180;
-      this.timerObject = setInterval(() => {
-        this.restSec--;
+    async sendEmail(emailName, email) {
+      try {
+        let result = axios.post("/api/forget/loginId/email", {
+          name: this.user.emailName,
+          email: this.user.email,
+        });
+
+        if (result.status === 200) {
+          this.startTimer();
+          this.isEmailcheck = true;
+          return;
+        }
+      } catch (err) {
+        this.isEmailcheck = false;
+        alert("닉네임 혹은 이메일을 확인해주세요.");
+      }
+    },
+    async startTimer() {
+      this.restSec = 30;
+      var timerObject = setInterval(() => {
         this.timeStr = this.prettyTime();
-        if (this.restSec <= 0) {
-          this.timerStop(this.timerObject);
+        this.restSec--;
+        console.log(this.restSec);
+        if (this.restSec == 0) {
+          this.timerStop(timerObject);
         }
       }, 1000);
       return this.timerObject;
@@ -226,21 +278,25 @@ export default {
         seconds.toString().padStart(2, "0")
       );
     },
-    timerStop() {
-      clearInterval(this.timerObject);
-      this.isStatus = "";
+    timerStop(timerObject) {
+      clearInterval(timerObject);
+      this.isEmailcheck = false;
+      this.isPhonecheck = false;
     },
 
     clickradio1() {
       this.radios = "radio1";
       this.user.emailName = "";
       this.user.email = "";
+      this.isEmailcheck = false;
     },
     clickradio2() {
       this.radios = "radio2";
       this.user.phoneName = "";
       this.user.phoneNumber = "";
+      this.isPhonecheck = false;
     },
+
     // async send() {
     //   try {
     //     this.isError = 200;
@@ -269,6 +325,11 @@ export default {
   width: 100%;
   height: 100%;
   text-align: center;
+}
+
+.movepassword {
+  margin-top: 15%;
+  margin-left: 5%;
 }
 
 #back::after {
