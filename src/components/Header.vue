@@ -6,19 +6,7 @@
       id="app-bar"
   >
     <v-container class="py-2 fill-height">
-<!--      <v-avatar color="info">-->
       <v-icon icon="mdi-account-circle" size="60" id="user-img" color="black"></v-icon>
-<!--      </v-avatar>-->
-
-      <v-btn
-          v-for="link in links"
-          :key="link"
-          text
-      >
-        {{ link }}
-      </v-btn>
-
-      <v-spacer></v-spacer>
 
       <v-card
           class="mx-auto"
@@ -46,13 +34,6 @@
   export default {
     name: 'Headers',
     data: () => ({
-      links: [
-        'Dashboard',
-        'Messages',
-        'Profile',
-        'Updates',
-      ],
-
       loaded: false,
       loading: false,
     }),

@@ -1,6 +1,6 @@
 <template>
   <v-col>
-    <v-row>
+    <v-row id="category-sub-bar">
       <CategorySubBar/>
     </v-row>
     <v-row>
@@ -78,6 +78,10 @@
 </script>
 
 <style scoped>
+#category-sub-bar {
+  border: 1px solid black;
+}
+
 .v-btn {
   color: white
 }
