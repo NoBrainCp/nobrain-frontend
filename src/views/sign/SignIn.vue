@@ -55,7 +55,7 @@
               <div class="text-center">
                 <img
                   class="center"
-                  src="../assets/imges/nobrainlogo.png"
+                  src="../../assets/imges/nobrainlogo.png"
                   alt="NobrainLogo"
                   style="width: 200px"
                 />
@@ -108,7 +108,7 @@ export default {
   height: 100%;
 }
 .titlebackground {
-  background-image: url("../assets/imges/background.jpg");
+  background-image: url("../../assets/imges/background.jpg");
   background-size: cover;
 }
 #back {
@@ -121,7 +121,7 @@ export default {
   width: 100%;
   height: 100%;
   content: "";
-  background-image: url("../assets/imges/background.jpg");
+  background-image: url("../../assets/imges/background.jpg");
   background-size: cover;
   position: absolute;
   top: 0;

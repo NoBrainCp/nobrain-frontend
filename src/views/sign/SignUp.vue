@@ -31,59 +31,11 @@
                         <v-btn
                           color="#BBDEFB"
                           class="mt-2"
-                          @click="namecheck(user.name)"
+                          @click="checkDuplicationName(user.name)"
                         >
                           check
                           <!-- namecheck dialog -->
-                          <v-dialog
-                            v-model="dialogname"
-                            activator="parent"
-                            transition="dialog-top-transition"
-                          >
-                            <v-card
-                              v-if="isExistsName === true"
-                              class="mx-auto"
-                              max-width="500"
-                              style="width: 500px; height: 200px"
-                            >
-                              <v-card-title
-                                class="text-center"
-                                style="margin-top: 10%; color: red"
-                              >
-                                이미 사용하는 닉네임 입니다.
-                              </v-card-title>
-                              <v-card-actions style="margin-top: 10%">
-                                <v-btn
-                                  color="black"
-                                  block
-                                  @click="dialogname = false"
-                                  >Close
-                                </v-btn>
-                              </v-card-actions>
-                            </v-card>
-
-                            <v-card
-                              v-else
-                              class="mx-auto"
-                              max-width="500"
-                              style="width: 500px; height: 200px"
-                            >
-                              <v-card-title
-                                class="text-center"
-                                style="margin-top: 10%; color: #3333ff"
-                              >
-                                사용가능한 닉네임 입니다.
-                              </v-card-title>
-                              <v-card-actions style="margin-top: 10%">
-                                <v-btn
-                                  color="black"
-                                  block
-                                  @click="dialogname = false"
-                                  >Close</v-btn
-                                >
-                              </v-card-actions>
-                            </v-card>
-                          </v-dialog>
+                          <SignUpDialog v-bind:dialog="dialogObj"/>
                         </v-btn>
                       </v-col>
                     </v-row>
@@ -108,11 +60,11 @@
                         <v-btn
                           color="#BBDEFB"
                           class="mt-2"
-                          @click="idcheck(user.loginId)"
+                          @click="checkDuplicationId(user.loginId)"
                         >
                           check
                           <!-- idcheck dialog -->
-                          <SignUpDialog v-bind:text="'Dksud'"> </SignUpDialog>
+                          <SignUpDialog v-bind:dialog="dialogObj"/>
                         </v-btn>
                       </v-col>
                     </v-row>
@@ -126,7 +78,7 @@
                       type="password"
                     />
                     <v-text-field
-                      v-model="user.passwordcheck"
+                      v-model="user.passwordCheck"
                       label="Password check"
                       bg-color="white"
                       color="blue"
@@ -249,7 +201,7 @@
 <script>
 import axios from "axios";
 import { ref, onMounted } from "vue";
-import SignUpDialog from "./SignUpDialog.vue";
+import SignUpDialog from "../../components/dialog/SignUpDialog.vue";
 
 export default {
   name: "SignUp",
@@ -260,9 +212,14 @@ export default {
       email: "",
       loginId: "",
       password: "",
-      passwordcheck: "",
+      passwordCheck: "",
       phoneNumber: "",
       birthDate: "",
+    },
+    dialogObj: {
+      title: "",
+      isShow: false,
+      isExist: false,
     },
     isExistsName: "",
     isExistsId: "",
@@ -270,24 +227,44 @@ export default {
     isSubmit: "",
     isError: "",
     dialog: false,
-    dialogid: false,
-    dialogname: false,
+    dialogId: false,
+    dialogName: false,
   }),
   methods: {
-    async namecheck(name) {
-      let result = axios
-        .get("/api/username/" + name + "/exists")
-        .then((res) => {
-          this.isExistsName = res.data.data;
-        });
+    checkDuplicationName(name) {
+      axios.get("/api/username/" + name + "/exists")
+          .then((res) => {
+            this.isExistsName = res.data.data;
+            this.dialogObj.isExist = res.data.data;
+            if (this.dialogObj.isExist) {
+              this.dialogObj.title = "이미 존재하는 닉네임 입니다.";
+            } else {
+              this.dialogObj.title = "사용 가능한 닉네임 입니다.";
+            }
+          })
+          .catch((err) => {
+            this.dialogObj.isExist = true;
+            this.dialogObj.title = "가입할 수 없는 닉네임 입니다.";
+          });
     },
-    async idcheck(loginId) {
-      let result = axios
-        .get("/api/loginId/" + loginId + "/exists")
-        .then((res) => {
-          this.isExistsId = res.data.data;
-        });
+
+    checkDuplicationId(loginId) {
+      axios.get("/api/loginId/" + loginId + "/exists")
+          .then((res) => {
+            this.isExistsId = res.data.data;
+            this.dialogObj.isExist = res.data.data;
+            if (this.dialogObj.isExist) {
+              this.dialogObj.title = "이미 존재하는 아이디 입니다.";
+            } else {
+              this.dialogObj.title = "사용 가능한 아이디 입니다.";
+            }
+          })
+          .catch((err) => {
+            this.dialogObj.isExist = true;
+            this.dialogObj.title = "가입할 수 없는 아이디 입니다.";
+          });
     },
+
     async send() {
       try {
         this.isError = 200;
@@ -297,7 +274,7 @@ export default {
             email: this.user.email,
             loginId: this.user.loginId,
             password: this.user.password,
-            passwordcheck: this.user.passwordcheck,
+            passwordCheck: this.user.passwordCheck,
             phoneNumber: this.user.phoneNumber,
             birthDate: document.querySelector("#date").value,
           });
@@ -322,7 +299,7 @@ export default {
   width: 100%;
   height: 100%;
   content: "";
-  background-image: url("../assets/imges/background.jpg");
+  background-image: url("../../assets/imges/background.jpg");
   background-size: cover;
   position: absolute;
   top: 0;

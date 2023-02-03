@@ -88,7 +88,7 @@
   </v-dialog>
 </template>
 <script>
-import IconDocumentation from "./icons/IconDocumentation.vue";
+import IconDocumentation from "../icons/IconDocumentation.vue";
 import axios from "axios";
 
 export default {
