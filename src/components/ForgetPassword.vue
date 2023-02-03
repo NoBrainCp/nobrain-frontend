@@ -76,11 +76,8 @@ export default {
   }),
   methods: {
     async idcheck(loginId) {
-      let result = axios
-        .get("/api/loginId/" + loginId + "/exists")
-        .then((res) => {
-          this.isExistsId = res.data.data;
-        });
+      let result = axios.get("/api/loginId/" + loginId + "/exists");
+      console.log(result);
     },
   },
 };
