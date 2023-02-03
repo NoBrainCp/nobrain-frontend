@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
 import MainView from "../views/MainView.vue";
-import SignUp from "../components/sign/SignUp.vue";
-import SignIn from "../components/sign/SignIn.vue";
-import ForgetPassword from "../components/find/ForgetPassword.vue";
-import ForgetId from "../components/find/ForgetId.vue";
-import FindByPassword from "../components/find/FIndByPassword.vue";
+import SignUp from "../views/sign/SignUp.vue";
+import SignIn from "../views/sign/SignIn.vue";
+import ForgetPassword from "../views/find/ForgetPassword.vue";
+import ForgetId from "../views/find/ForgetId.vue";
+import FindByPassword from "../views/find/FIndByPassword.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

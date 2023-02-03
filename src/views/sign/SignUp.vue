@@ -249,7 +249,7 @@
 <script>
 import axios from "axios";
 import { ref, onMounted } from "vue";
-import SignUpDialog from "../dialog/SignUpDialog.vue";
+import SignUpDialog from "../../components/dialog/SignUpDialog.vue";
 
 export default {
   name: "SignUp",

@@ -18,7 +18,7 @@
 </template>
 
 <script>
-  import Headers from "../components/Header.vue";
+  import Headers from "../components/main/Header.vue";
   import SideBar from "../components/main/SideBar.vue";
   import Bookmark from "../components/main/Bookmark.vue";
 
