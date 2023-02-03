@@ -111,57 +111,8 @@
                           @click="idcheck(user.loginId)"
                         >
                           check
-
                           <!-- idcheck dialog -->
-                          <v-dialog
-                            v-model="dialogid"
-                            activator="parent"
-                            transition="dialog-top-transition"
-                          >
-                            <v-card
-                              v-if="isExistsId === true"
-                              class="mx-auto"
-                              max-width="500"
-                              style="width: 500px; height: 200px"
-                            >
-                              <v-card-title
-                                class="text-center"
-                                style="margin-top: 10%; color: red"
-                              >
-                                이미 존재하는 아이디 입니다.
-                              </v-card-title>
-                              <v-card-actions style="margin-top: 10%">
-                                <v-btn
-                                  color="black"
-                                  block
-                                  @click="dialogid = false"
-                                  >Close
-                                </v-btn>
-                              </v-card-actions>
-                            </v-card>
-
-                            <v-card
-                              v-else
-                              class="mx-auto"
-                              max-width="500"
-                              style="width: 500px; height: 200px"
-                            >
-                              <v-card-title
-                                class="text-center"
-                                style="margin-top: 10%; color: #3333ff"
-                              >
-                                사용가능한 아이디 입니다.
-                              </v-card-title>
-                              <v-card-actions style="margin-top: 10%">
-                                <v-btn
-                                  color="black"
-                                  block
-                                  @click="dialogid = false"
-                                  >Close</v-btn
-                                >
-                              </v-card-actions>
-                            </v-card>
-                          </v-dialog>
+                          <SignUpDialog v-bind:text="'Dksud'"> </SignUpDialog>
                         </v-btn>
                       </v-col>
                     </v-row>
@@ -298,16 +249,11 @@
 <script>
 import axios from "axios";
 import { ref, onMounted } from "vue";
+import SignUpDialog from "./SignUpDialog.vue";
 
 export default {
   name: "SignUp",
-  data() {
-    return {
-      dialog: false,
-      dialogid: false,
-      dialogname: false,
-    };
-  },
+  components: { SignUpDialog },
   data: () => ({
     user: {
       name: "",
@@ -323,6 +269,9 @@ export default {
     isExistsEmail: "",
     isSubmit: "",
     isError: "",
+    dialog: false,
+    dialogid: false,
+    dialogname: false,
   }),
   methods: {
     async namecheck(name) {

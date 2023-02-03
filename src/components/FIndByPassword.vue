@@ -24,7 +24,7 @@
                         @click="clickradio1()"
                       ></v-radio>
                       <v-card
-                        class="mx-12 cardbox"
+                        class="mx-12"
                         id="kindscard"
                         variant="outlined"
                         v-if="radios === 'radio1'"
@@ -100,7 +100,7 @@
                         @click="clickradio2()"
                       ></v-radio>
                       <v-card
-                        class="mx-12 cardbox"
+                        class="mx-12"
                         id="kindscard"
                         variant="outlined"
                         v-if="radios === 'radio2'"
@@ -198,7 +198,7 @@ import axios from "axios";
 import { ref, onMounted } from "vue";
 
 export default {
-  name: "ForgetId",
+  name: "FindByPassword",
 
   data: () => ({
     user: {
@@ -346,8 +346,7 @@ export default {
   margin-left: 0px;
 }
 hr {
-  background-color: rgba(56, 51, 51, 0.257);
-
+  background-color: black;
   height: 2pt;
 }
 #card {
@@ -355,12 +354,10 @@ hr {
   background-color: white;
 }
 #kindscard {
-  background-color: rgb(240, 245, 243);
+  background-color: white;
 }
 #submit {
   margin-right: 150px;
   margin-top: 10px;
-}
-.cardbox {
 }
 </style>
