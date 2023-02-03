@@ -19,8 +19,8 @@
 
 <script>
   import Headers from "../components/Header.vue";
-  import SideBar from "../components/SideBar.vue";
-  import Bookmark from "../components/Bookmark.vue";
+  import SideBar from "../components/main/SideBar.vue";
+  import Bookmark from "../components/main/Bookmark.vue";
 
   export default {
     components: {Bookmark, SideBar, Headers},

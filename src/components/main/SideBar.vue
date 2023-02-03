@@ -48,11 +48,11 @@ import axios from "axios";
 import {reactive} from "vue";
 import {useRoute} from "vue-router";
 import bookmark from "./Bookmark.vue";
-import router from "../router";
-import IconDocumentation from "./icons/IconDocumentation.vue";
-import IconStar from "./icons/IconStar.vue";
-import IconPlusBox from "./icons/IconPlusBox.vue";
-import CreateCategoryForm from "./CreateCategoryForm.vue";
+import router from "../../router";
+import IconDocumentation from "../icons/IconDocumentation.vue";
+import IconStar from "../icons/IconStar.vue";
+import IconPlusBox from "../icons/IconPlusBox.vue";
+import CreateCategoryForm from "../form/CreateCategoryForm.vue";
 
 export default {
   name: "SideBar",

@@ -20,11 +20,11 @@
 </template>
 
 <script>
-  import CreateBookmarkForm from "./CreateBookmarkForm.vue";
+  import CreateBookmarkForm from "../form/CreateBookmarkForm.vue";
   import {useRoute} from "vue-router";
   import {reactive} from "vue";
   import axios from "axios";
-  import IconDocumentation from "./icons/IconDocumentation.vue";
+  import IconDocumentation from "../icons/IconDocumentation.vue";
 
   export default {
     name: 'CategorySubBar',

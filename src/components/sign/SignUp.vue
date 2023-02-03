@@ -249,7 +249,7 @@
 <script>
 import axios from "axios";
 import { ref, onMounted } from "vue";
-import SignUpDialog from "./SignUpDialog.vue";
+import SignUpDialog from "../dialog/SignUpDialog.vue";
 
 export default {
   name: "SignUp",
@@ -322,7 +322,7 @@ export default {
   width: 100%;
   height: 100%;
   content: "";
-  background-image: url("../assets/imges/background.jpg");
+  background-image: url("../../assets/imges/background.jpg");
   background-size: cover;
   position: absolute;
   top: 0;
