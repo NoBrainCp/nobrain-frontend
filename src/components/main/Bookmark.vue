@@ -58,7 +58,7 @@
   import {reactive} from "vue";
   import axios from "axios";
   import CategorySubBar from "./CategorySubBar.vue";
-  import CreateBookmarkForm from "./CreateBookmarkForm.vue";
+  import CreateBookmarkForm from "../form/CreateBookmarkForm.vue";
 
   export default {
     name: 'Bookmark',

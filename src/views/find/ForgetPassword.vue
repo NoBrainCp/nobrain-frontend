@@ -20,7 +20,7 @@
                       <v-text-field
                         variant="outlined"
                         prepend-inner-icon="mdi-account"
-                        v-model="user.loginId"
+                        v-model="loginId"
                         label="Id"
                         id="account"
                         bg-color="white"
@@ -34,18 +34,17 @@
                         block
                         height="50px"
                         color="blue"
-                        @click="idcheck(user.loginId)"
+                        @click="idcheck(loginId)"
                         class="btn"
                       >
                         다음
                       </v-btn>
                     </v-col>
                     <div style="padding: 20px 0"></div>
-
                     <div class="link_wrap">
                       <span
                         >아이디가 기억나지 않는다면?
-                        <a href="/forgetid" class="link" onclick="idInquiry();"
+                        <a href="/forgetid" class="link"
                           ><div class="txt">아이디 찾기</div></a
                         >
                       </span>
@@ -72,60 +71,20 @@ export default {
     return {};
   },
   data: () => ({
-    user: {
-      name: "",
-      email: "",
-      loginId: "",
-      password: "",
-      passwordcheck: "",
-      phoneNumber: "",
-      birthDate: "",
-    },
-    isExistsName: "",
+    loginId: "",
     isExistsId: "",
-    isExistsEmail: "",
-    isSubmit: "",
-    isError: "",
   }),
   methods: {
-    async namecheck(name) {
-      let result = axios
-        .get("/api/username/" + name + "/exists")
-        .then((res) => {
-          this.isExistsName = res.data.data;
-        });
-    },
     async idcheck(loginId) {
-      let result = axios
-        .get("/api/loginId/" + loginId + "/exists")
-        .then((res) => {
-          this.isExistsId = res.data.data;
-        });
-    },
-    async send() {
-      try {
-        this.isError = 200;
-        if (this.isExistsId === false && this.isExistsName === false) {
-          let result = await axios.post("/api/signup", {
-            name: this.user.name,
-            email: this.user.email,
-            loginId: this.user.loginId,
-            password: this.user.password,
-            passwordcheck: this.user.passwordcheck,
-            phoneNumber: this.user.phoneNumber,
-            birthDate: document.querySelector("#date").value,
-          });
-          this.isSubmit = result.data.success;
-        }
-      } catch (err) {
-        this.isError = err.response.data.status;
-      }
+      let result = axios.get("/api/loginId/" + loginId + "/exists");
+      console.log(result);
     },
   },
 };
 </script>
 
 <style scoped>
+/* 배경화면 */
 #back {
   width: 100%;
   height: 800px;
@@ -136,17 +95,13 @@ export default {
   width: 100%;
   height: 100%;
   content: "";
-  background-image: url("../assets/imges/background.jpg");
+  background-image: url("../../assets/imges/background.jpg");
   background-size: cover;
   position: absolute;
   top: 0;
   left: 0;
   z-index: -1;
   opacity: 0.5;
-}
-
-.v-input__details {
-  display: none;
 }
 
 #maintext {
