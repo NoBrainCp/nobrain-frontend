@@ -29,12 +29,13 @@
                     </v-col>
                     <v-col col="12" sm="12">
                       <v-btn
+                        v-moel="button"
                         id="nextbtn"
                         flat="true"
                         block
                         height="50px"
                         color="blue"
-                        @click="idcheck(loginId)"
+                        @click="checkDuplicationsId(loginId)"
                         class="btn"
                       >
                         다음
@@ -44,7 +45,7 @@
                     <div class="link_wrap">
                       <span
                         >아이디가 기억나지 않는다면?
-                        <a href="/forgetid" class="link"
+                        <a href="/findbyid" class="link"
                           ><div class="txt">아이디 찾기</div></a
                         >
                       </span>
@@ -62,22 +63,23 @@
 
 <script>
 import axios from "axios";
-import { ref, onMounted } from "vue";
 
 export default {
   name: "ForgetPassword",
 
-  data() {
-    return {};
-  },
   data: () => ({
     loginId: "",
-    isExistsId: "",
+    isExistsId: false,
   }),
   methods: {
-    async idcheck(loginId) {
-      let result = axios.get("/api/loginId/" + loginId + "/exists");
-      console.log(result);
+    async checkDuplicationsId(loginId) {
+      let result = await axios.get("/api/loginId/" + loginId + "/exists");
+      this.isExistsId = result.data.data;
+      if (this.isExistsId === false) {
+        alert("아이디를 확인해주세요.");
+      } else {
+        this.$router.push("/findbypassword");
+      }
     },
   },
 };
