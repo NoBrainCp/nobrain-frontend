@@ -4,7 +4,6 @@
       <v-col cols="12" sm="10">
         <v-card class="elevation-6 mt-8" id="back">
           <v-row>
-            <!-- chohbin -->
             <v-col cols="12" md="2" class="blue rounded-br-xl"> </v-col> 
             <v-col cols="12" md="8">
               <v-card-text class="mt-12">
@@ -31,8 +30,11 @@
                         <v-btn
                           color="#BBDEFB"
                           class="mt-2"
-                          @click="checkDuplicationName(user.name)"
-                        >
+                          @click="checkDuplicationName()"
+                          >
+                          <!-- TODO: CHECK! 함수에 user.name 지운 이유는 script 단에서 vue라는 spa의 특징중 하나인 데이터의 양방향 바인딩이 가능해서 
+                             script 단에서 user.value.name으로 바로 사용 가능함-->
+                          <!-- @click="checkDuplicationName(user.name)" -->
                           check
                           <!-- namecheck dialog -->
                           <SignUpDialog v-bind:dialog="dialogObj"/>
@@ -103,6 +105,7 @@
                       <input
                         type="date"
                         name="Currentdate"
+                        v-model=user.birthDate
                         id="date"
                         style="margin: 0 5px; float: right"
                       />
@@ -198,93 +201,120 @@
   </v-container>
 </template>
 
-<script>
+<script setup>
+/**
+ * vue 페이지 구성중 Vue3의 script단은 options API와 composition API를 사용하여 개발 진행할 수 있음
+ * 여기서 options API와 composition API를 혼용하여 사용하게 되면 lifecycle hook이 뒤틀려 에러를 뿜어낼수 있음
+ * lifecycle hook 참고 -> https://vuejs.org/guide/essentials/lifecycle.html#lifecycle-diagram
+ * 
+ * 현재 NoBrain은 Vue3의 composition 과 options 둘 다 사용하고 있기 때문에 코드의 일관성이 떨어짐
+ * 그래서 composition API로 통일하여 개발 진행 하고자함
+ * 
+ * composition API 샘플코드 -> https://vuejs.org/examples/#simple-component
+ * props 샘플 코드 -> https://vuejs.org/tutorial/#step-12
+ * emit 샘플 코드 -> https://vuejs.org/tutorial/#step-13
+ * 
+ * #compostions api 사용시 주의사항
+ * this는 사용할 수 없음 
+ * script단에서 ref로 선언한 변수를 사용시 .value를 써줘야 사용가능
+ * ex) const testNm = ref('테스트 네임');
+ *     console.log("textNm 호출" , testNm.value);
+ */
+
+ /**
+  * TODO:
+  * 1. axios 는 src/api 폴더 만든후 공통으로 사용 
+  * 2. SignUpDialog 쪽도 composition 적용 해야함
+  * 3. dialog 같은 건 공통으로 뺴는 연습 -> 현재 validation 부분의 dialog가 하드코딩 되있음
+  * 4. 일단은 composition api의 구조로 변경했을떄의 소스이니 구조만 익히셈
+  */
 import axios from "axios";
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import SignUpDialog from "../../components/dialog/SignUpDialog.vue";
 
-export default {
-  name: "SignUp",
-  components: { SignUpDialog },
-  data: () => ({
-    user: {
-      name: "",
-      email: "",
-      loginId: "",
-      password: "",
-      passwordCheck: "",
-      phoneNumber: "",
-      birthDate: "",
-    },
-    dialogObj: {
-      title: "",
-      isShow: false,
-      isExist: false,
-    },
-    isExistsName: "",
-    isExistsId: "",
-    isExistsEmail: "",
-    isSubmit: "",
-    isError: "",
-    dialog: false,
-    dialogId: false,
-    dialogName: false,
-  }),
-  methods: {
-    checkDuplicationName(name) {
-      axios.get("/api/username/" + name + "/exists")
-          .then((res) => {
-            this.isExistsName = res.data.data;
-            this.dialogObj.isExist = res.data.data;
-            if (this.dialogObj.isExist) {
-              this.dialogObj.title = "이미 존재하는 닉네임 입니다.";
-            } else {
-              this.dialogObj.title = "사용 가능한 닉네임 입니다.";
-            }
-          })
-          .catch((err) => {
-            this.dialogObj.isExist = true;
-            this.dialogObj.title = "가입할 수 없는 닉네임 입니다.";
-          });
-    },
+const user = ref({
+  name: "",
+  email: "",
+  loginId: "",
+  password: "",
+  passwordCheck: "",
+  phoneNumber: "",
+  birthDate: "",
+});
 
-    checkDuplicationId(loginId) {
-      axios.get("/api/loginId/" + loginId + "/exists")
-          .then((res) => {
-            this.isExistsId = res.data.data;
-            this.dialogObj.isExist = res.data.data;
-            if (this.dialogObj.isExist) {
-              this.dialogObj.title = "이미 존재하는 아이디 입니다.";
-            } else {
-              this.dialogObj.title = "사용 가능한 아이디 입니다.";
-            }
-          })
-          .catch((err) => {
-            this.dialogObj.isExist = true;
-            this.dialogObj.title = "가입할 수 없는 아이디 입니다.";
-          });
-    },
-
-    async send() {
-      try {
-        this.isError = 200;
-        if (this.isExistsId === false && this.isExistsName === false) {
-          let result = await axios.post("/api/signup", {
-            name: this.user.name,
-            email: this.user.email,
-            loginId: this.user.loginId,
-            password: this.user.password,
-            passwordCheck: this.user.passwordCheck,
-            phoneNumber: this.user.phoneNumber,
-            birthDate: document.querySelector("#date").value,
-          });
-          this.isSubmit = result.data.success;
-        }
-      } catch (err) {
-        this.isError = err.response.data.status;
-      }
-    },
+const dialogObj = ref(
+  {
+    title: "",
+    isShow: false,
+    isExist: false,
   },
+)
+
+const isExistsName = ref("");
+const isExistsId = ref("");
+const isExistsEmail = ref("");
+const isSubmit = ref("");
+const isError = ref("");
+const dialog = ref(false);
+const dialogId = ref(false);
+const dialogName = ref(false);
+
+const checkDuplicationName = () => {
+  console.log("check Dupli name : ", user.value.name);
+  axios.get("/api/username/" + user.value.name + "/exists")
+      .then((res) => {
+        isExistsName.value = res.data.data;
+        dialogObj.value.isExist = res.data.data;
+        if (dialogObj.value.isExist) {
+          dialogObj.value.title = "이미 존재하는 닉네임 입니다.";
+        } else {
+          dialogObj.value.title = "사용 가능한 닉네임 입니다.";
+        }
+      })
+      .catch((err) => {
+        dialogObj.value.isExist = true;
+        dialogObj.value.title = "가입할 수 없는 닉네임 입니다.";
+      });
+};
+
+const checkDuplicationId = (loginId) => {
+  axios.get("/api/loginId/" + loginId + "/exists")
+      .then((res) => {
+        isExistsId.value = res.data.data;
+        dialogObj.value.isExist = res.data.data;
+        if (dialogObj.value.isExist) {
+          dialogObj.value.title = "이미 존재하는 아이디 입니다.";
+        } else {
+          dialogObj.value.title = "사용 가능한 아이디 입니다.";
+        }
+      })
+      .catch((err) => {
+        dialogObj.value.isExist = true;
+        dialogObj.value.title = "가입할 수 없는 아이디 입니다.";
+      });
+}
+
+const send = async () => {
+  try {
+    // isError.value = 200;
+    if (isExistsId.value === false && isExistsName.value === false) {
+      const params = {
+        name: user.value.name,
+        email: user.value.email,
+        loginId: user.value.loginId,
+        password: user.value.password,
+        passwordCheck: user.value.passwordCheck,
+        phoneNumber: user.value.phoneNumber,
+        //birthDate: document.querySelector("#date").value,
+        birthDate: user.value.birthDate,
+      }
+      console.log("Methods Send Param : ", params)
+      let result = await axios.post("/api/signup", params );
+      isSubmit.value = result.data.success;
+    }
+  } catch (err) {
+    isError.value = err.response.data.status;
+  }
 };
 </script>
 
