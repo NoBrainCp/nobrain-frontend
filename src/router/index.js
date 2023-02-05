@@ -3,7 +3,7 @@ import MainView from "../views/MainView.vue";
 import SignUp from "../views/sign/SignUp.vue";
 import SignIn from "../views/sign/SignIn.vue";
 import ForgetPassword from "../views/find/ForgetPassword.vue";
-import ForgetId from "../views/find/ForgetId.vue";
+import FindById from "../views/find/FindById.vue";
 import FindByPassword from "../views/find/FIndByPassword.vue";
 
 const router = createRouter({
@@ -33,12 +33,12 @@ const router = createRouter({
       component: ForgetPassword,
     },
     {
-      path: "/forgetid",
-      name: "forgetid",
-      component: ForgetId,
+      path: "/findbyid",
+      name: "findbyid",
+      component: FindById,
     },
     {
-      path: "/findbyapassword",
+      path: "/findbypassword",
       name: "findbypassword",
       component: FindByPassword,
     },
