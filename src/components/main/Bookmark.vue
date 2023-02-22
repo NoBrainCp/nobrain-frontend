@@ -1,6 +1,6 @@
 <template>
   <v-col>
-    <v-row>
+    <v-row id="category-sub-bar" v-if="data.isSubBarShow === true">
       <CategorySubBar/>
     </v-row>
     <v-row>
@@ -63,15 +63,33 @@
   export default {
     name: 'Bookmark',
     components: {CreateBookmarkForm, CategorySubBar},
+
+    data: () => ({
+      isSubBarShow: true,
+    }),
+
     setup() {
       const route = useRoute();
       const data = reactive({
-        bookmarks:[]
+        bookmarks:[],
       });
 
-      axios.get("/api/" + route.params.username + "/" + route.params.category + "/bookmarks").then((res) => {
-        data.bookmarks = res.data.list;
-      });
+      const category = route.params.category;
+      console.log(category);
+      if (category === undefined) {
+        axios.get("/api/" + route.params.username + "/bookmarks").then((res) => {
+          data.bookmarks = res.data.list;
+          data.isSubBarShow = false;
+          console.log(data.isSubBarShow);
+        })
+      }
+      else {
+        axios.get("/api/" + route.params.username + "/" + route.params.category + "/bookmarks").then((res) => {
+          data.bookmarks = res.data.list;
+          data.isSubBarShow = true;
+          console.log(data.isSubBarShow);
+        });
+      }
       return {data}
     },
   }
