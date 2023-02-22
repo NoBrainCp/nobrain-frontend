@@ -236,6 +236,7 @@ export default {
           .then((res) => {
             this.isExistsName = res.data.data;
             this.dialogObj.isExist = res.data.data;
+            console.log(this.dialogObj.isExist);
             if (this.dialogObj.isExist) {
               this.dialogObj.title = "이미 존재하는 닉네임 입니다.";
             } else {

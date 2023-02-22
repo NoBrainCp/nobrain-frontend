@@ -1,8 +1,8 @@
 <template>
   <v-col>
-    <span id="category-name">
-      <IconDocumentation/> {{$route.params.category}}
-    </span>
+  <span id="category-name">
+    <IconDocumentation/> {{$route.params.category}}
+  </span>
   </v-col>
   <v-col>
     <CreateBookmarkForm v-bind:categoryNames="data.categoryNames"/>
