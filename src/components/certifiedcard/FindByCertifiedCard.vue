@@ -254,7 +254,7 @@ export default {
     },
     timerStop(timerObject) {
       clearInterval(timerObject);
-      this.timeStr = "시간이 경과 되었습니다.";
+      this.timeStr = "";
       this.dialog = false;
       this.isEmailcheck = false;
       this.isPhonecheck = false;

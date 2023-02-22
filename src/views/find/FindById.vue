@@ -26,7 +26,9 @@
 </template>
 
 <script>
+import { ref } from "vue";
 import FindByCertifiedCard from "../../components/certifiedcard/FindByCertifiedCard.vue";
+
 export default {
   name: "FindById",
   components: { FindByCertifiedCard },

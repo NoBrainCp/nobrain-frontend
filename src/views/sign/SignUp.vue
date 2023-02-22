@@ -35,7 +35,7 @@
                         >
                           check
                           <!-- namecheck dialog -->
-                          <SignUpDialog v-bind:dialog="dialogObj"/>
+                          <SignUpDialog v-bind:dialog="dialogObj" />
                         </v-btn>
                       </v-col>
                     </v-row>
@@ -64,7 +64,7 @@
                         >
                           check
                           <!-- idcheck dialog -->
-                          <SignUpDialog v-bind:dialog="dialogObj"/>
+                          <SignUpDialog v-bind:dialog="dialogObj" />
                         </v-btn>
                       </v-col>
                     </v-row>
@@ -113,12 +113,7 @@
                       <v-dialog v-model="dialog" activator="parent">
                         <!-- 로그인 실패: (id or name) not check  -->
                         <v-card
-                          v-if="
-                            isExistsId === true ||
-                            isExistsId === '' ||
-                            isExistsName === true ||
-                            isExistsName === ''
-                          "
+                          v-if="isExistsName === true"
                           class="mx-auto"
                           max-width="500"
                           style="width: 500px; height: 200px"
@@ -127,7 +122,7 @@
                             class="text-center"
                             style="margin-top: 10%"
                           >
-                            닉네임 혹은 아이디 체크를 해주세요.
+                            닉네임 체크를 해주세요.
                           </v-card-title>
                           <v-card-actions style="margin-top: 10%">
                             <v-btn color="primary" block @click="dialog = false"
@@ -135,8 +130,25 @@
                             >
                           </v-card-actions>
                         </v-card>
-
-                        <!-- 이메일과 전화번호 중복 -->
+                        <v-card
+                          v-if="isExistsId === true"
+                          class="mx-auto"
+                          max-width="500"
+                          style="width: 500px; height: 200px"
+                        >
+                          <v-card-title
+                            class="text-center"
+                            style="margin-top: 10%"
+                          >
+                            아이디 체크를 해주세요.
+                          </v-card-title>
+                          <v-card-actions style="margin-top: 10%">
+                            <v-btn color="primary" block @click="dialog = false"
+                              >Close</v-btn
+                            >
+                          </v-card-actions>
+                        </v-card>
+                        <!-- 이메일 중복, 전화번호 중복, 패스워드 불일치 -->
                         <v-card
                           v-if="isError === 400"
                           class="mx-auto"
@@ -147,7 +159,7 @@
                             class="text-center"
                             style="margin-top: 10%"
                           >
-                            이메일 또는 전화번호가 중복 되었습니다.
+                            {{ errorMessage }}
                           </v-card-title>
                           <v-card-actions style="margin-top: 10%">
                             <v-btn color="primary" block @click="dialog = false"
@@ -200,7 +212,6 @@
 
 <script>
 import axios from "axios";
-import { ref, onMounted } from "vue";
 import SignUpDialog from "../../components/dialog/SignUpDialog.vue";
 
 export default {
@@ -221,49 +232,52 @@ export default {
       isShow: false,
       isExist: false,
     },
-    isExistsName: "",
-    isExistsId: "",
+    isExistsName: true,
+    isExistsId: true,
     isExistsEmail: "",
     isSubmit: "",
     isError: "",
     dialog: false,
     dialogId: false,
     dialogName: false,
+    errorMessage: "",
   }),
   methods: {
     checkDuplicationName(name) {
-      axios.get("/api/username/" + name + "/exists")
-          .then((res) => {
-            this.isExistsName = res.data.data;
-            this.dialogObj.isExist = res.data.data;
-            console.log(this.dialogObj.isExist);
-            if (this.dialogObj.isExist) {
-              this.dialogObj.title = "이미 존재하는 닉네임 입니다.";
-            } else {
-              this.dialogObj.title = "사용 가능한 닉네임 입니다.";
-            }
-          })
-          .catch((err) => {
-            this.dialogObj.isExist = true;
-            this.dialogObj.title = "가입할 수 없는 닉네임 입니다.";
-          });
+      axios
+        .get("/api/username/" + name + "/exists")
+        .then((res) => {
+          this.isExistsName = res.data.data;
+          this.dialogObj.isExist = res.data.data;
+          console.log(res);
+          if (this.dialogObj.isExist) {
+            this.dialogObj.title = "이미 존재하는 닉네임 입니다.";
+          } else {
+            this.dialogObj.title = "사용 가능한 닉네임 입니다.";
+          }
+        })
+        .catch((err) => {
+          this.dialogObj.isExist = true;
+          this.dialogObj.title = "가입할 수 없는 닉네임 입니다.";
+        });
     },
 
     checkDuplicationId(loginId) {
-      axios.get("/api/loginId/" + loginId + "/exists")
-          .then((res) => {
-            this.isExistsId = res.data.data;
-            this.dialogObj.isExist = res.data.data;
-            if (this.dialogObj.isExist) {
-              this.dialogObj.title = "이미 존재하는 아이디 입니다.";
-            } else {
-              this.dialogObj.title = "사용 가능한 아이디 입니다.";
-            }
-          })
-          .catch((err) => {
-            this.dialogObj.isExist = true;
-            this.dialogObj.title = "가입할 수 없는 아이디 입니다.";
-          });
+      axios
+        .get("/api/loginId/" + loginId + "/exists")
+        .then((res) => {
+          this.isExistsId = res.data.data;
+          this.dialogObj.isExist = res.data.data;
+          if (this.dialogObj.isExist) {
+            this.dialogObj.title = "이미 존재하는 아이디 입니다.";
+          } else {
+            this.dialogObj.title = "사용 가능한 아이디 입니다.";
+          }
+        })
+        .catch((err) => {
+          this.dialogObj.isExist = true;
+          this.dialogObj.title = "가입할 수 없는 아이디 입니다.";
+        });
     },
 
     async send() {
@@ -283,6 +297,8 @@ export default {
         }
       } catch (err) {
         this.isError = err.response.data.status;
+        this.errorMessage = err.response.data.message;
+        console.log(err);
       }
     },
   },
