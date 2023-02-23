@@ -124,7 +124,7 @@
                     <v-row id="rowfild" style="margin-top: 8%">
                       <v-col col="12" sm="8">
                         <v-text-field
-                          v-model="num"
+                          v-model="authCode"
                           label="인증번호"
                           id="num"
                           bg-color="white"
@@ -133,7 +133,7 @@
                         </v-text-field>
                       </v-col>
                       <v-col col="12" sm="3">
-                        <v-btn color="blue" block >확인</v-btn>
+                        <v-btn color="blue" block @click="checkAuthCode(user.email, authCode)">확인</v-btn>
                       </v-col>
                     </v-row>
                     <v-row id="rowfild">
@@ -189,6 +189,7 @@ export default {
     //send
     isPhonecheck: false,
     isEmailcheck: "",
+    authCode: "",
   }),
   methods: {
     clickradio1() {
@@ -218,15 +219,25 @@ export default {
     },
     async sendEmail(emailName, email) {
       try {
-        let result = await axios.get("api/mail/"+email+"/authcode", {
-          name: emailName,
-          email: email,
-        });
+        let result = await axios.get("/api/mail/"+email+"/authcode");
         this.isEmailcheck = true;
         this.startTimer();
       } catch (err) {
         alert("닉네임 혹은 이메일을 확인해주세요.");
         this.dialog = !this.dialog;
+      }
+    },
+    async checkAuthCode(email, authCode) {
+      let result = await axios.post("/api/mail/" + email + "/authcode", {
+        code: authCode,
+      });
+
+      const isSuccess = result.data.success;
+      if (isSuccess) {
+        alert("인증이 완료 되었습니다.");
+        this.isEmailcheck = false;
+      } else {
+        alert(result.data.message);
       }
     },
 
