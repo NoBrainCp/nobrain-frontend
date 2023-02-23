@@ -90,7 +90,6 @@
 <script>
 import IconDocumentation from "../icons/IconDocumentation.vue";
 import axios from "axios";
-import {useRoute} from "vue-router";
 
 export default {
   name: 'CreateBookmarkForm',
@@ -98,7 +97,6 @@ export default {
   components: {IconDocumentation},
 
   data: () => ({
-    route: useRoute(),
     dialog: false,
     bookmark: {
       url: "",
@@ -113,8 +111,7 @@ export default {
   methods: {
     async submitBookmark() {
       this.dialog = false;
-      console.log("/api/" + this.route.params.username + "/bookmark");
-      axios.post("/api/" + this.route.params.username + "/bookmark",
+      axios.post("/api/bookmark",
           { url: this.bookmark.url,
             title: this.bookmark.title,
             description: this.bookmark.description,
