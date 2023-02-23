@@ -133,7 +133,7 @@
                         </v-text-field>
                       </v-col>
                       <v-col col="12" sm="3">
-                        <v-btn color="blue" block>확인</v-btn>
+                        <v-btn color="blue" block >확인</v-btn>
                       </v-col>
                     </v-row>
                     <v-row id="rowfild">
@@ -218,7 +218,7 @@ export default {
     },
     async sendEmail(emailName, email) {
       try {
-        let result = await axios.post("/api/find/loginId/email", {
+        let result = await axios.get("api/mail/"+email+"/authcode", {
           name: emailName,
           email: email,
         });

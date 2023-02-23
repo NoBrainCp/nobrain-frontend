@@ -38,9 +38,10 @@ const router = createRouter({
       component: FindById,
     },
     {
-      path: "/findbypassword",
+      path: "/findbypassword/:loginId",
       name: "findbypassword",
       component: FindByPassword,
+      props: true,
     },
   ],
 });

@@ -78,7 +78,7 @@ export default {
       if (this.isExistsId === false) {
         alert("아이디를 확인해주세요.");
       } else {
-        this.$router.push("/findbypassword");
+        this.$router.push("/findbypassword/"+loginId);
       }
     },
   },
