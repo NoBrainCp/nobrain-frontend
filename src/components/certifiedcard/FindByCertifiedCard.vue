@@ -219,7 +219,7 @@ export default {
     },
     async sendEmail(emailName, email) {
       try {
-        let result = await axios.get("/api/mail/"+email+"/authcode");
+        let result = await axios.get("/api/mail/" + email + "/authcode");
         this.isEmailcheck = true;
         this.startTimer();
       } catch (err) {

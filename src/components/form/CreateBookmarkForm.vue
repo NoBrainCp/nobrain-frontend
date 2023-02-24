@@ -89,6 +89,7 @@
 </template>
 <script>
 import IconDocumentation from "../icons/IconDocumentation.vue";
+import {useRoute} from "vue-router";
 import axios from "axios";
 
 export default {
@@ -97,6 +98,7 @@ export default {
   components: {IconDocumentation},
 
   data: () => ({
+    route: useRoute(),
     dialog: false,
     bookmark: {
       url: "",
@@ -111,7 +113,7 @@ export default {
   methods: {
     async submitBookmark() {
       this.dialog = false;
-      axios.post("/api/bookmark",
+      axios.post("/api/"+this.route.params.username+"/bookmark",
           { url: this.bookmark.url,
             title: this.bookmark.title,
             description: this.bookmark.description,
