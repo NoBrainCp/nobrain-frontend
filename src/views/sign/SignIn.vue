@@ -17,12 +17,17 @@
                 </h6>
                 <v-row align-center justify="center">
                   <v-col cols="12" sm="8" class="mt-8">
-                    <v-text-field label="Id" bg-color="white" color="blue" />
+                    <v-text-field
+                      label="Id"
+                      bg-color="white"
+                      color="blue"
+                      v-model="id"/>
                     <v-text-field
                       label="Password"
                       bg-color="white"
                       color="blue"
                       type="password"
+                      v-model="password"
                     />
                     <v-row>
                       <v-col cols="12" sm="7">
@@ -30,13 +35,19 @@
                           label="Remember Me"
                           class="mt-n5"
                           color="blue"
+                          v-model="isRememberId"
                         >
                         </v-checkbox>
                       </v-col>
                     </v-row>
-                    <v-btn color="blue" class="mt-n7" dark block tile
-                      >Log in</v-btn
+                    <v-btn
+                      color="blue"
+                      class="mt-n7"
+                      dark block tile
+                      @click="signIn()"
                     >
+                      Log in
+                    </v-btn>
                     <v-col cols="12" sm="10">
                       <a
                         class="caption text"
@@ -86,8 +97,49 @@
 </template>
 
 <script>
+import axios from "axios";
+import router from "../../router";
+
 export default {
   name: "SignIn",
+  data() {
+    return {
+      id: this.$cookies.get("loginIdCookie"),
+      password: "",
+      isRememberId: true
+    }
+  },
+
+  methods: {
+    async signIn() {
+      try {
+        let result = await axios.post("/api/signin", {
+          loginId: this.id,
+          password: this.password
+        }).then((res) => {
+          console.log(res.data.data);
+          if (res.status === 200) {
+            let id = this.id;
+            let password = this.password;
+            this.store.dispatch("login", {id, password});
+
+            if (this.isRememberId) {
+              this.$cookies.set("loginIdCookie", this.id);
+            }
+            router.push({
+              name: "main",
+              params: {
+                "username" : "yoon",
+              }
+            })
+          }
+        });
+      } catch (err) {
+        alert(err.response.data.message);
+        console.log(err);
+      }
+    }
+  }
 };
 </script>
 

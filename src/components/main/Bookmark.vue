@@ -75,19 +75,16 @@
         bookmarks:[],
       });
       const category = route.params.category;
-      console.log(category);
       if (category === undefined) {
         axios.get("/api/" + route.params.username + "/bookmarks").then((res) => {
           data.bookmarks = res.data.list;
           data.isSubBarShow = false;
-          console.log(data.isSubBarShow);
         })
       }
       else {
         axios.get("/api/" + route.params.username + "/" + route.params.category + "/bookmarks").then((res) => {
           data.bookmarks = res.data.list;
           data.isSubBarShow = true;
-          console.log(data.isSubBarShow);
         });
       }
       return {data}

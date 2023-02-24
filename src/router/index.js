@@ -21,9 +21,9 @@ const router = createRouter({
       component: SignUp,
     },
     {
-      path: "/:username/:category",
+      path: "/:username",
       name: "main",
-      alias: "/:username",
+      alias: "/:username/:category",
       component: MainView,
       props: true,
     },
