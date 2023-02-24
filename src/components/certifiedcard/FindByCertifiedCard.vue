@@ -17,14 +17,14 @@
             회원정보에 등록한 휴대전화 번호와 입력한 번호가 같아야, 인증번호를
             받을 수 있습니다.
           </div>
-          <v-col cols="12" sm="7" id="textfild">
+          <!-- <v-col cols="12" sm="7" id="textfild">
             <v-text-field
               v-model="user.name"
               id="name"
               label="Nickname"
               color="blue"
             />
-          </v-col>
+          </v-col> -->
           <v-row id="rowfild">
             <v-col cols="12" sm="7" id="textfild">
               <v-text-field
@@ -39,7 +39,7 @@
               <v-btn
                 id="submit"
                 color="blue"
-                @click="sendPhone(user.name, user.phoneNumber)"
+                @click="sendPhone(user.phoneNumber)"
               >
                 인증번호 받기
                 <v-dialog
@@ -91,14 +91,14 @@
             본인확인 이메일 주소와 입력한 이메일 주소가 같아야, 인증번호를 받을
             수 있습니다.
           </div>
-          <v-col cols="12" sm="7" id="textfild">
+          <!-- <v-col cols="12" sm="7" id="textfild">
             <v-text-field
               v-model="user.name"
               id="name"
               label="Nickname"
               color="blue"
             />
-          </v-col>
+          </v-col> -->
           <v-row id="rowfild">
             <v-col cols="12" sm="7" id="textfild">
               <v-text-field v-model="user.email" label="Email" color="blue" />
@@ -107,7 +107,7 @@
               <v-btn
                 id="submit"
                 color="blue"
-                @click="sendEmail(user.name, user.email)"
+                @click="sendEmail(user.email)"
               >
                 인증번호 받기
                 <v-dialog
@@ -162,19 +162,15 @@
 </template>
 <script>
 import axios from "axios";
+import {useRoute} from "vue-router";
 export default {
   data: () => ({
+    route : useRoute(),
     user: {
-      name: "",
       email: "",
       password: "",
       phoneNumber: "",
     },
-    // findbyid -> data
-    id: {},
-    //findbypassword -> data
-    password: {},
-
     //dialog
     dialog: false,
 
@@ -193,33 +189,31 @@ export default {
   }),
   methods: {
     clickradio1() {
-      this.radios = "radio1";
-      this.user.name = "";
+      this.radios = "radio1"; 
       this.user.phoneNumber = "";
       this.isEmailcheck = false;
     },
     clickradio2() {
       this.radios = "radio2";
-      this.user.name = "";
       this.user.email = "";
       this.isPhonecheck = false;
     },
-    async sendPhone(phoneName, phoneNumber) {
+    // 전화번호로 인증 구현하기
+    // async sendPhone(phoneNumber) {
+    //   try {
+    //     let result = await axios.get("/api/find/loginId/phone-number", {
+    //       phoneNumber: phoneNumber,
+    //     });
+    //     this.isPhonecheck = true;
+    //     this.startTimer();
+    //   } catch (err) {
+    //     alert("닉네임 혹은 전화번호를 확인해주세요.");
+    //     this.dialog = !this.dialog;
+    //   }
+    // },
+    async sendEmail(email) {
       try {
-        let result = await axios.post("/api/find/loginId/phone-number", {
-          name: phoneName,
-          phoneNumber: phoneNumber,
-        });
-        this.isPhonecheck = true;
-        this.startTimer();
-      } catch (err) {
-        alert("닉네임 혹은 전화번호를 확인해주세요.");
-        this.dialog = !this.dialog;
-      }
-    },
-    async sendEmail(emailName, email) {
-      try {
-        let result = await axios.get("/api/mail/" + email + "/authcode");
+        await axios.get("/api/mail/" + email + "/authcode");
         this.isEmailcheck = true;
         this.startTimer();
       } catch (err) {
@@ -227,23 +221,56 @@ export default {
         this.dialog = !this.dialog;
       }
     },
-    async checkAuthCode(email, authCode) {
-      let result = await axios.post("/api/mail/" + email + "/authcode", {
-        code: authCode,
-      });
 
-      const isSuccess = result.data.success;
-      if (isSuccess) {
-        alert("인증이 완료 되었습니다.");
-        this.isEmailcheck = false;
-      } else {
-        alert(result.data.message);
+     checkAuthCode(email, authCode) {
+      const loginId = this.route.params.loginId;
+      
+      if (loginId === undefined) {
+        this.findId(email, authCode);
+      }else {
+        this.findPassword(loginId, email, authCode);
+      }
+    }, 
+
+    async findId(email, authCode) {
+      try{
+        let result = await axios.post("/api/mail/" + email + "/authcode/email", {
+        code: authCode,
+      }).then((res) => {
+        if(res.data.success) {
+          alert("인증한 이메일로 본인의 아이디가 전송되었습니다.");
+          this.$router.push("/");
+          this.dialog = !this.dialog;
+        }else{
+          alert(res.data.message);  
+        }
+      });
+      }catch(err) {
+        alert(err.data.message);
       }
     },
 
+    async findPassword(loginId, email, authCode) {
+      try{
+        let result = await axios.post("/api/mail/" + email + "/authcode", {
+        code: this.authCode,
+      }).then((res) => {
+        if(res.data.success) {
+          alert("인증이 완료 되었습니다.");
+          this.$router.push("/changepassword/"+loginId);  
+        }else {
+          alert(res.data.message);
+        }
+      });
+    }catch(err) {
+        // alert(err.data.message);
+        console.log(err);
+    }
+  },
+
     //타이머 기능 구현
     startTimer() {
-      this.restSec = 30;
+      this.restSec = 180;
       var timerObject = setInterval(() => {
         this.timeStr = this.prettyTime();
         this.restSec--;
@@ -253,6 +280,7 @@ export default {
       }, 1000);
       return this.timerObject;
     },
+
     prettyTime() {
       let time = this.restSec / 60;
       let minutes = parseInt(time);
@@ -263,6 +291,7 @@ export default {
         seconds.toString().padStart(2, "0")
       );
     },
+
     timerStop(timerObject) {
       clearInterval(timerObject);
       this.timeStr = "";
@@ -270,8 +299,9 @@ export default {
       this.isEmailcheck = false;
       this.isPhonecheck = false;
     },
-  },
+  }
 };
+
 </script>
 <style>
 #maintext {

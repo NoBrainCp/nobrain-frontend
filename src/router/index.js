@@ -4,7 +4,8 @@ import SignUp from "../views/sign/SignUp.vue";
 import SignIn from "../views/sign/SignIn.vue";
 import ForgetPassword from "../views/find/ForgetPassword.vue";
 import FindById from "../views/find/FindById.vue";
-import FindByPassword from "../views/find/FIndByPassword.vue";
+import FindByPassword from "../views/find/FindByPassword.vue";
+import ChangePassword from "../views/change/ChangePassword.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -43,6 +44,12 @@ const router = createRouter({
       component: FindByPassword,
       props: true,
     },
+    {
+      path: "/changepassword/:loginId",
+      name: "changepassword",
+      component: ChangePassword,
+      props: true,
+    }
   ],
 });
 
