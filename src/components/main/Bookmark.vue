@@ -18,20 +18,8 @@
                     max-width="344"
                     v-bind="props"
                 >
-                  <v-img src="https://cdn.vuetifyjs.com/images/cards/forest-art.jpg"></v-img>
-
-                  <v-card-text>
-                    <h2 class="text-h6 text-primary">
-                      {{bookmark.title}}
-                    </h2>
-                    {{bookmark.description}}
-                  </v-card-text>
-
-                  <v-card-title>
-                    <div class="text-primary text-subtitle-2">{{bookmark.createdAt}}</div>
-                  </v-card-title>
-
-                  <v-overlay
+                  <v-img src="https://cdn.vuetifyjs.com/images/cards/forest-art.jpg">
+                    <v-overlay
                       :model-value="isHovering"
                       contained
                       scrim="#424242"
@@ -43,6 +31,18 @@
                         color="#29B6F6"
                         variant="flat">Move</v-btn>
                   </v-overlay>
+                  </v-img>
+                  <v-card-text>
+                    <h2 class="text-h6 text-primary">
+                      {{bookmark.title}}
+                    </h2>
+                    {{bookmark.description}}
+                    <v-icon id = 'sstar' size = "35" :color = "temp" class = "mdi mdi-star" @click = "isStar()"></v-icon>
+                    <v-icon id = "lock" size = "35" class = "mdi mdi-lock-open-variant" @click="unLock()"></v-icon>
+                  </v-card-text>
+                  <v-card-title>
+                    <div class="text-primary text-subtitle-2">{{bookmark.createdAt}}</div>
+                  </v-card-title>
                 </v-card>
               </v-hover>
             </div>
@@ -66,6 +66,7 @@
 
     data: () => ({
       isSubBarShow: true,
+      temp: "black",
     }),
 
     setup() {
@@ -73,7 +74,6 @@
       const data = reactive({
         bookmarks:[],
       });
-
       const category = route.params.category;
       console.log(category);
       if (category === undefined) {
@@ -92,6 +92,26 @@
       }
       return {data}
     },
+    methods: {
+
+      isStar(){
+        // document.getElementById('sstar').style.colo="black"
+        if(this.temp ==="yellow"){
+          this.temp = "black"
+        }else{
+          this.temp = "yellow"
+        }
+        
+      },
+
+      unLock() {
+        if(document.getElementById('lock').className==="mdi mdi-lock"){
+          document.getElementById('lock').className="mdi mdi-lock-open-variant";  
+        }else{
+          document.getElementById('lock').className="mdi mdi-lock";
+        }
+      }
+    }
   }
 </script>
 
@@ -103,4 +123,5 @@
 .v-card {
   margin-top: 25px
 }
+
 </style>
