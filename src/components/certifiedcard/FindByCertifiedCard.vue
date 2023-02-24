@@ -267,7 +267,6 @@ export default {
         console.log(err);
     }
   },
-
     //타이머 기능 구현
     startTimer() {
       this.restSec = 180;

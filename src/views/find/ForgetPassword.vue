@@ -107,12 +107,11 @@ export default {
 }
 
 #maintext {
-  margin-top: 7%;
   font-size: 50px;
   margin-bottom: 10%;
 }
 #subtext {
-  margin-bottom: 10%;
+  margin-bottom: 5%;
 }
 .btn {
   font-size: 18px;

@@ -1,13 +1,12 @@
 <template>
   <v-container>
     <v-row align-content="center" justify="center" id="all">
-      <v-col pcols="12" sm="12">
+      <v-col cols="12" sm="12">
         <v-card
           id="back"
           class="elevation-6 mt-10"
-          style="aspect-ratio: 16 / 7"
         >
-          <v-row id="row">
+          <div id="row">
             <v-col cols="12" md="6">
               <v-card-text class="mt-15">
                 <h2 class="text-center">Login in to Your Account</h2>
@@ -89,7 +88,7 @@
                 </div>
               </div>
             </v-col>
-          </v-row>
+          </div>
         </v-card>
       </v-col>
     </v-row>
@@ -121,7 +120,7 @@ export default {
           if (res.status === 200) {
             let id = this.id;
             let password = this.password;
-            this.store.dispatch("login", {id, password});
+            // this.store.dispatch("login", {id, password});
 
             if (this.isRememberId) {
               this.$cookies.set("loginIdCookie", this.id);
@@ -135,7 +134,7 @@ export default {
           }
         });
       } catch (err) {
-        alert(err.response.data.message);
+        // alert(err.response.data.message);
         console.log(err);
       }
     }
@@ -144,25 +143,6 @@ export default {
 </script>
 
 <style scoped>
-#box-wrap {
-  position: relative;
-  width: 100%;
-  height: 0;
-  overflow: hidden;
-  padding-bottom: 100%;
-}
-
-#box-wrap .box {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-.titlebackground {
-  background-image: url("../../assets/imges/background.jpg");
-  background-size: cover;
-}
 #back {
   width: 100%;
   height: 100%;
@@ -185,7 +165,11 @@ export default {
   font-weight: bold;
 }
 #row {
-  margin-top: 7%;
+  /* margin-top: 7%; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
 }
 #forgetpassword {
   align-content: left;
@@ -200,5 +184,8 @@ export default {
 }
 #all {
   margin-top: 3%;
+}
+.v-col-sm-12{
+  height: 800px;
 }
 </style>
