@@ -25,6 +25,10 @@
                           id="name"
                           bg-color="white"
                           color="blue"
+                          clearable
+                          :rules="[
+                            v => !!v || 'Field is required'
+                          ]"
                         />
                       </v-col>
                       <v-col col="12" sm="2">
@@ -41,10 +45,14 @@
                     </v-row>
                     <v-text-field
                       v-model="user.email"
-                      label="Email"
+                      label="E-mail"
                       id="email"
                       bg-color="white"
                       color="blue"
+                      clearable
+                      :rules="[
+                        v => !!v || 'Field is required'
+                      ]"
                     />
                     <v-row>
                       <v-col col="12" sm="10">
@@ -54,6 +62,10 @@
                           id="account"
                           bg-color="white"
                           color="blue"
+                          clearable
+                          :rules="[
+                            v => !!v || 'Field is required'
+                          ]"
                         />
                       </v-col>
                       <v-col col="12" sm="2">
@@ -76,6 +88,10 @@
                       hint="숫자와 특수문자를 포함한 8글자 이상"
                       color="blue"
                       type="password"
+                      clearable
+                      :rules="[
+                        v => !!v || 'Field is required'
+                      ]"
                     />
                     <v-text-field
                       v-model="user.passwordCheck"
@@ -83,6 +99,10 @@
                       bg-color="white"
                       color="blue"
                       type="password"
+                      clearable
+                      :rules="[
+                        v => !!v || 'Field is required'
+                      ]"
                     />
 
                     <v-text-field
@@ -92,7 +112,11 @@
                       bg-color="white"
                       hint="-를 제외한 핸드폰 번호"
                       color="blue"
-                      type="number"
+                      type="tel"
+                      clearable
+                      :rules="[
+                        v => !!v || 'Field is required'
+                      ]"
                     />
                     <v-row>
                       <label
@@ -246,7 +270,7 @@ export default {
   methods: {
     checkDuplicationName(name) {
       axios
-        .get("/api/user/" + name + "/exists")
+        .get("/api/user/username/" + name + "/exists")
         .then((res) => {
           this.isExistsName = res.data.data;
           this.dialogObj.isExist = res.data.data;
@@ -265,7 +289,7 @@ export default {
 
     checkDuplicationId(loginId) {
       axios
-        .get("/api/user/" + loginId + "/exists")
+        .get("/api/user/loginid/" + loginId + "/exists")
         .then((res) => {
           this.isExistsId = res.data.data;
           this.dialogObj.isExist = res.data.data;
@@ -291,9 +315,10 @@ export default {
             loginId: this.user.loginId,
             password: this.user.password,
             passwordCheck: this.user.passwordCheck,
-            phoneNumber: this.user.phoneNumber,
+            phoneNumber: this.user.phoneNumber.replaceAll("/^[0-9]+$/",""),
             birthDate: document.querySelector("#date").value,
           });
+          console.log(this.user.phoneNumber);
           this.isSubmit = result.data.success;
         }
       } catch (err) {
