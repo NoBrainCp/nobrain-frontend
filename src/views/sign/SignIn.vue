@@ -1,11 +1,8 @@
 <template>
   <v-container>
-    <v-row align-content="center" justify="center" id="all" style="aspect-ratio: 16 / 8">
+    <v-row align-content="center" justify="center" id="all">
       <v-col cols="12" sm="12">
-        <v-card
-          id="back"
-          class="elevation-6 mt-10"
-        >
+        <v-card id="back" class="elevation-6 mt-10">
           <div id="row">
             <v-col cols="12" md="6">
               <v-card-text class="mt-15">
@@ -20,7 +17,8 @@
                       label="Id"
                       bg-color="white"
                       color="blue"
-                      v-model="id"/>
+                      v-model="id"
+                    />
                     <v-text-field
                       label="Password"
                       bg-color="white"
@@ -42,7 +40,9 @@
                     <v-btn
                       color="blue"
                       class="mt-n7"
-                      dark block tile
+                      dark
+                      block
+                      tile
                       @click="signIn()"
                     >
                       Log in
@@ -105,40 +105,42 @@ export default {
     return {
       id: this.$cookies.get("loginIdCookie"),
       password: "",
-      isRememberId: true
-    }
+      isRememberId: true,
+    };
   },
 
   methods: {
     async signIn() {
       try {
-        let result = await axios.post("/api/signin", {
-          loginId: this.id,
-          password: this.password
-        }).then((res) => {
-          console.log(res.data.data);
-          if (res.status === 200) {
-            let id = this.id;
-            let password = this.password;
-            // this.store.dispatch("login", {id, password});
+        let result = await axios
+          .post("/api/signin", {
+            loginId: this.id,
+            password: this.password,
+          })
+          .then((res) => {
+            console.log(res.data.data);
+            if (res.status === 200) {
+              let id = this.id;
+              let password = this.password;
+              // this.store.dispatch("login", {id, password});
 
-            if (this.isRememberId) {
-              this.$cookies.set("loginIdCookie", this.id);
-            }
-            router.push({
-              name: "main",
-              params: {
-                "username" : "yoon",
+              if (this.isRememberId) {
+                this.$cookies.set("loginIdCookie", this.id);
               }
-            })
-          }
-        });
+              router.push({
+                name: "main",
+                params: {
+                  username: "yoon",
+                },
+              });
+            }
+          });
       } catch (err) {
         // alert(err.response.data.message);
         console.log(err);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -169,7 +171,6 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  
 }
 #forgetpassword {
   align-content: left;
@@ -185,7 +186,7 @@ export default {
 #all {
   margin-top: 3%;
 }
-.v-col-sm-12{
+.v-col-sm-12 {
   height: 800px;
 }
 </style>
