@@ -4,27 +4,19 @@
       <v-radio-group v-model="radios">
         <v-radio
           label="회원정보에 등록한 휴대전화로 인증"
-          value="radio1"
+          value="radioPhoneNumber"
           @click="clickPhoneNumber()"
         ></v-radio>
         <v-card
           class="mx-12 cardbox"
           id="kindscard"
           variant="outlined"
-          v-if="radios === 'radio1'"
+          v-if="radios === 'radioPhoneNumber'"
         >
           <div class="text-left" id="subtext1">
             회원정보에 등록한 휴대전화 번호와 입력한 번호가 같아야, 인증번호를
             받을 수 있습니다.
           </div>
-          <!-- <v-col cols="12" sm="7" id="textfild">
-            <v-text-field
-              v-model="user.name"
-              id="name"
-              label="Nickname"
-              color="blue"
-            />
-          </v-col> -->
           <v-row id="rowfild">
             <v-col cols="12" sm="7" id="textfild">
               <v-text-field
@@ -78,27 +70,19 @@
 
         <v-radio
           label="본인확인 이메일로 인증"
-          value="radio2"
+          value="radioEmail"
           @click="clickEmail()"
         ></v-radio>
         <v-card
           class="mx-12 cardbox"
           id="kindscard"
           variant="outlined"
-          v-if="radios === 'radio2'"
+          v-if="radios === 'radioEmail'"
         >
           <div class="text-left" id="subtext1">
             본인확인 이메일 주소와 입력한 이메일 주소가 같아야, 인증번호를 받을
             수 있습니다.
           </div>
-          <!-- <v-col cols="12" sm="7" id="textfild">
-            <v-text-field
-              v-model="user.name"
-              id="name"
-              label="Nickname"
-              color="blue"
-            />
-          </v-col> -->
           <v-row id="rowfild">
             <v-col cols="12" sm="7" id="textfild">
               <v-text-field v-model="user.email" label="Email" color="blue" />
@@ -181,7 +165,7 @@ export default {
     timeStr: "",
 
     //radio btn
-    radios: "radio1",
+    radios: "radioPhoneNumber",
 
     //send
     isPhonecheck: false,
@@ -191,12 +175,12 @@ export default {
   methods: {
     //라디오 버튼 활성화 메서드
     clickPhoneNumber() {
-      this.radios = "radio1";
+      this.radios = "radioPhoneNumber";
       this.user.phoneNumber = "";
       this.isEmailcheck = false;
     },
     clickEmail() {
-      this.radios = "radio2";
+      this.radios = "radioEmail";
       this.user.email = "";
       this.isPhonecheck = false;
     },
@@ -204,7 +188,7 @@ export default {
     async existPhoneNumber(phoneNumber) {
       try {
         //존재하는 핸드폰 번호이면 인증번호 전송
-        await axios.get("/api/massage/" + phoneNumber + "/phone");
+        await axios.get("/api/phone/" + phoneNumber + "/authcode");
         this.isPhonecheck = true;
         this.startTimer();
       } catch (err) {
@@ -225,6 +209,7 @@ export default {
         this.dialog = !this.dialog;
       }
     },
+
     //인증번호 체크 메소드
     checkAuthCode(media, authCode) {
       const loginId = this.route.params.loginId;
@@ -244,7 +229,7 @@ export default {
           this.findIdByEmail(media, authCode);
         } else {
           //휴대전화로 아이디 찾기
-          // this.findIdByPhoneNumber(media, authCode);
+          this.findIdByPhoneNumber(media, authCode);
         }
       } catch (err) {
         alert(err.data.message);
@@ -253,41 +238,66 @@ export default {
     //이메일로 아이디 찾기 메서드
     async findIdByEmail(email, authCode) {
       await axios
-        .post("/api/mail/" + email + "/authcode/email", {
+        .post("/api/mail/" + email + "/authcode/login-id", {
           code: authCode,
         })
         .then((res) => {
           if (res.data.success) {
             alert("인증한 이메일로 본인의 아이디가 전송되었습니다.");
             this.$router.push("/");
-            this.dialog = !this.dialog;
           } else {
             alert(res.data.message);
           }
         });
     },
     //휴대전화로 아이디 찾기
-    // async findIdByPhoneNumber(phoneNumber, authCode) {
-    //     await axios
-
-    // },
+    async findIdByPhoneNumber(phoneNumber, authCode) {
+      await axios
+        .post("/api/phone" + phoneNumber + "/authcode/login-id", {
+          code: authCode,
+        })
+        .then((res) => {
+          if (res.data.success) {
+            alert("인증한 휴대전화로 본인의 아이디가 전송되었습니다.");
+            this.$router.push("/");
+          } else {
+            alert(res.data.message);
+          }
+        });
+    },
 
     findPassword(loginId, media, authCode) {
       try {
         if (media === this.user.email) {
           //이메일로 비밀번호 찾기
-          this.findPasswordByEmail(loginId, email, authCode);
+          this.findPasswordByEmail(loginId, media, authCode);
         } else {
           //휴대전화로 아이디 찾기
-          // this.findPasswordByPhoneNumber(loginId, phoneNumbr, authCode);
+          this.findPasswordByPhoneNumber(loginId, media, authCode);
         }
       } catch (err) {
         alert(err.data.message);
       }
     },
+    //이메일로 페스워드 찾기
     async findPasswordByEmail(loginId, email, authCode) {
       await axios
-        .post("/api/mail/" + email + "/authcode", {
+        .post("/api/mail/" + email + "/authcode/password", {
+          code: authCode,
+        })
+        .then((res) => {
+          if (res.data.success) {
+            alert("인증이 완료 되었습니다.");
+            this.$router.push("/changepassword/" + loginId);
+          } else {
+            alert(res.data.message);
+          }
+        });
+    },
+    //휴대전화로 페스워드 찾기
+    async findPasswordByphoneNumber(loginId, phoneNumber, authCode) {
+      await axios
+        .post("/api/phone/" + phoneNumber + "/authcode/password", {
           code: authCode,
         })
         .then((res) => {
