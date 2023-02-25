@@ -20,7 +20,8 @@
                       label="Id"
                       bg-color="white"
                       color="blue"
-                      v-model="id"/>
+                      v-model="id"
+                    />
                     <v-text-field
                       label="Password"
                       bg-color="white"
@@ -42,7 +43,9 @@
                     <v-btn
                       color="blue"
                       class="mt-n7"
-                      dark block tile
+                      dark
+                      block
+                      tile
                       @click="signIn()"
                     >
                       Log in
@@ -105,8 +108,8 @@ export default {
     return {
       id: this.$cookies.get("loginIdCookie"),
       password: "",
-      isRememberId: true
-    }
+      isRememberId: true,
+    };
   },
 
   methods: {
@@ -132,15 +135,20 @@ export default {
               params: {
                 "username" : routerParam,
               }
-            })
-          }
-        });
+              router.push({
+                name: "main",
+                params: {
+                  username: "yoon",
+                },
+              });
+            }
+          });
       } catch (err) {
         // alert(err.response.data.message);
         console.log(err);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
