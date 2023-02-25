@@ -48,7 +48,7 @@
                     <v-row id="rowfild" style="margin-top: 8%">
                       <v-col col="12" sm="8">
                         <v-text-field
-                          v-model="num"
+                          v-model="authCode"
                           label="인증번호"
                           id="num"
                           bg-color="white"
@@ -57,7 +57,12 @@
                         </v-text-field>
                       </v-col>
                       <v-col col="12" sm="3">
-                        <v-btn color="blue" block>확인</v-btn>
+                        <v-btn
+                          color="blue"
+                          block
+                          @click="checkAuthCode(user.phoneNumber, authCode)"
+                          >확인</v-btn
+                        >
                       </v-col>
                     </v-row>
                     <v-col col="12" sm="12"> 남은시간 : {{ timeStr }} </v-col>
@@ -253,7 +258,7 @@ export default {
     //휴대전화로 아이디 찾기
     async findIdByPhoneNumber(phoneNumber, authCode) {
       await axios
-        .post("/api/phone" + phoneNumber + "/authcode/login-id", {
+        .post("/api/phone/" + phoneNumber + "/authcode/login-id", {
           code: authCode,
         })
         .then((res) => {
@@ -268,11 +273,12 @@ export default {
 
     findPassword(loginId, media, authCode) {
       try {
+        console.log(media === this.user.email);
         if (media === this.user.email) {
           //이메일로 비밀번호 찾기
           this.findPasswordByEmail(loginId, media, authCode);
         } else {
-          //휴대전화로 아이디 찾기
+          //휴대전화로 비밀번호 찾기
           this.findPasswordByPhoneNumber(loginId, media, authCode);
         }
       } catch (err) {
@@ -295,19 +301,23 @@ export default {
         });
     },
     //휴대전화로 페스워드 찾기
-    async findPasswordByphoneNumber(loginId, phoneNumber, authCode) {
-      await axios
-        .post("/api/phone/" + phoneNumber + "/authcode/password", {
-          code: authCode,
-        })
-        .then((res) => {
-          if (res.data.success) {
-            alert("인증이 완료 되었습니다.");
-            this.$router.push("/changepassword/" + loginId);
-          } else {
-            alert(res.data.message);
-          }
-        });
+    async findPasswordByPhoneNumber(loginId, phoneNumber, authCode) {
+      try {
+        await axios
+          .post("/api/phone/" + phoneNumber + "/authcode/password", {
+            code: authCode,
+          })
+          .then((res) => {
+            if (res.data.success) {
+              alert("인증이 완료 되었습니다.");
+              this.$router.push("/changepassword/" + loginId);
+            } else {
+              alert(res.data.message);
+            }
+          });
+      } catch (err) {
+        console.log(err);
+      }
     },
 
     //타이머 기능 구현

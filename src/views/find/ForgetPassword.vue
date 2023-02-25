@@ -73,12 +73,12 @@ export default {
   }),
   methods: {
     async checkDuplicationsId(loginId) {
-      let result = await axios.get("/api/loginId/" + loginId + "/exists");
+      let result = await axios.get("/api/user/loginid/" + loginId + "/exists");
       this.isExistsId = result.data.data;
       if (this.isExistsId === false) {
         alert("아이디를 확인해주세요.");
       } else {
-        this.$router.push("/findbypassword/"+loginId);
+        this.$router.push("/findbypassword/" + loginId);
       }
     },
   },
