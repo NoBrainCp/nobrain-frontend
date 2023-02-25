@@ -1,8 +1,11 @@
 <template>
-  <v-container>
+  <v-container id="container">
     <v-row align-content="center" justify="center" id="all">
-      <v-col cols="12" sm="12">
-        <v-card id="back" class="elevation-6 mt-10">
+      <v-col cols="12" sm="12" id="col">
+        <v-card
+          id="back"
+          class="elevation-6 mt-10"
+        >
           <div id="row">
             <v-col cols="12" md="6">
               <v-card-text class="mt-15">
@@ -112,20 +115,25 @@ export default {
   methods: {
     async signIn() {
       try {
-        let result = await axios
-          .post("/api/signin", {
-            loginId: this.id,
-            password: this.password,
-          })
-          .then((res) => {
-            console.log(res.data.data);
-            if (res.status === 200) {
-              let id = this.id;
-              let password = this.password;
-              // this.store.dispatch("login", {id, password});
+        let result = await axios.post("/api/signin", {
+          loginId: this.id,
+          password: this.password
+        }).then((res) => {
+          let routerParam = res.data.data.username;
 
-              if (this.isRememberId) {
-                this.$cookies.set("loginIdCookie", this.id);
+          if (res.status === 200) {
+            let id = this.id;
+            let password = this.password;
+            // this.store.dispatch("login", {id, password});
+
+            if (this.isRememberId) {
+              this.$cookies.set("loginIdCookie", this.id);
+            }
+
+            router.push({
+              name: "main",
+              params: {
+                "username" : routerParam,
               }
               router.push({
                 name: "main",
@@ -145,10 +153,22 @@ export default {
 </script>
 
 <style scoped>
+#all {
+  margin-top: 2%;
+}
+
+#col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 #back {
-  width: 100%;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  width: 85%;
   height: 100%;
-  text-align: center;
 }
 
 #back::after {
@@ -163,15 +183,18 @@ export default {
   z-index: -1;
   opacity: 0.5;
 }
+
 .v-text-field label {
   font-weight: bold;
 }
+
 #row {
-  /* margin-top: 7%; */
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 #forgetpassword {
   align-content: left;
   color: black;
@@ -179,14 +202,13 @@ export default {
   font-size: 17px;
   text-decoration-line: none;
 }
+
 #forgetpassword:hover {
   color: rgb(101, 104, 189);
   text-decoration-line: underline;
 }
-#all {
-  margin-top: 3%;
-}
-.v-col-sm-12 {
+
+.v-col-sm-12{
   height: 800px;
 }
 </style>
