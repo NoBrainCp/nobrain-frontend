@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-row align-content="center" justify="center" id="all">
+    <v-row align-content="center" justify="center" id="all" style="aspect-ratio: 16 / 8">
       <v-col cols="12" sm="12">
         <v-card
           id="back"
