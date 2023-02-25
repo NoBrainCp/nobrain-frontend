@@ -135,14 +135,9 @@ export default {
               params: {
                 "username" : routerParam,
               }
-              router.push({
-                name: "main",
-                params: {
-                  username: "yoon",
-                },
-              });
-            }
-          });
+            })
+          }
+        });
       } catch (err) {
         // alert(err.response.data.message);
         console.log(err);
@@ -196,7 +191,6 @@ export default {
 }
 
 #forgetpassword {
-  align-content: left;
   color: black;
   font-weight: bold;
   font-size: 17px;
