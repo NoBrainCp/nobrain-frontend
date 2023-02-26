@@ -25,6 +25,7 @@
                       color="blue"
                       type="password"
                       v-model="password"
+                      @keydown.enter="signIn()"
                     />
                     <v-row>
                       <v-col cols="12" sm="7">
@@ -45,7 +46,7 @@
                       tile
                       @click="signIn()"
                     >
-                      Log in
+                      Login
                     </v-btn>
                     <v-col cols="12" sm="10">
                       <a
@@ -60,12 +61,11 @@
               </v-card-text>
             </v-col>
             <v-col cols="12" md="6">
-              <div style="padding: 30px 0"></div>
-              <h3 class="text-center">Welcome to Nodrain.</h3>
+              <h3 class="text-center">Welcome!</h3>
               <div class="text-center">
                 <img
                   class="center"
-                  src="../../assets/imges/nobrainlogo.png"
+                  src="../../assets/imges/logo_transparent.png"
                   alt="NobrainLogo"
                   style="width: 200px"
                 />
@@ -73,7 +73,7 @@
               <div class="text-center">
                 <v-card-text class="white--text">
                   <h3 class="text-center">Don't Have an Account Yet?</h3>
-                  <h6 class="text-center">Sign up here</h6>
+                  <h5 class="text-center">Sign up here</h5>
                 </v-card-text>
                 <div class="text-center">
                   <v-btn
@@ -138,8 +138,7 @@ export default {
             }
           });
       } catch (err) {
-        // alert(err.response.data.message);
-        console.log(err);
+        alert(err.response.data.message);
       }
     },
   },
