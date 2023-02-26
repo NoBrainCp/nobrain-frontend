@@ -2,10 +2,7 @@
   <v-container id="container">
     <v-row align-content="center" justify="center" id="all">
       <v-col cols="12" sm="12" id="col">
-        <v-card
-          id="back"
-          class="elevation-6 mt-10"
-        >
+        <v-card id="back" class="elevation-6 mt-10">
           <div id="row">
             <v-col cols="12" md="6">
               <v-card-text class="mt-15">
@@ -115,29 +112,31 @@ export default {
   methods: {
     async signIn() {
       try {
-        let result = await axios.post("/api/signin", {
-          loginId: this.id,
-          password: this.password
-        }).then((res) => {
-          let routerParam = res.data.data.username;
+        let result = await axios
+          .post("/api/signin", {
+            loginId: this.id,
+            password: this.password,
+          })
+          .then((res) => {
+            let routerParam = res.data.data.username;
 
-          if (res.status === 200) {
-            let id = this.id;
-            let password = this.password;
-            // this.store.dispatch("login", {id, password});
+            if (res.status === 200) {
+              let id = this.id;
+              let password = this.password;
+              // this.store.dispatch("login", {id, password});
 
-            if (this.isRememberId) {
-              this.$cookies.set("loginIdCookie", this.id);
-            }
-
-            router.push({
-              name: "main",
-              params: {
-                "username" : routerParam,
+              if (this.isRememberId) {
+                this.$cookies.set("loginIdCookie", this.id);
               }
-            })
-          }
-        });
+
+              router.push({
+                name: "main",
+                params: {
+                  username: routerParam,
+                },
+              });
+            }
+          });
       } catch (err) {
         // alert(err.response.data.message);
         console.log(err);
@@ -159,7 +158,7 @@ export default {
 }
 
 #back {
-  display:flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   width: 85%;
@@ -202,7 +201,7 @@ export default {
   text-decoration-line: underline;
 }
 
-.v-col-sm-12{
+.v-col-sm-12 {
   height: 800px;
 }
 </style>

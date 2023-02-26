@@ -247,7 +247,7 @@ export default {
   methods: {
     checkDuplicationName(name) {
       axios
-        .get("/api/user/username/" + name + "/exists")
+        .get("/api/user/" + name + "/exists")
         .then((res) => {
           this.isExistsName = res.data.data;
           this.dialogObj.isExist = res.data.data;
@@ -266,7 +266,7 @@ export default {
 
     checkDuplicationId(loginId) {
       axios
-        .get("/api/user/loginid/" + loginId + "/exists")
+        .get("/api/user/" + loginId + "/exists")
         .then((res) => {
           this.isExistsId = res.data.data;
           this.dialogObj.isExist = res.data.data;
