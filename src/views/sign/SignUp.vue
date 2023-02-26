@@ -343,6 +343,7 @@ export default {
   z-index: -1;
   opacity: 0.5;
 }
+
 #currentDate {
   size: 10px;
 }
@@ -361,9 +362,11 @@ export default {
   font-weight: bold;
   text-align: left;
 }
+
 .v-input__details {
   display: none;
 }
+
 #all {
   margin-top: 3%;
 }
