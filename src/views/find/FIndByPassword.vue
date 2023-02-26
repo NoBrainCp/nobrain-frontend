@@ -5,16 +5,16 @@
         <v-card class="elevation-6 mt-8" id="back">
           <v-row>
             <v-col cols="12" md="2" class="blue rounded-br-xl">
-              <v-btn color="blue" class="movepassword" to="/findbyid"
-                >아이디 찾기</v-btn
-              >
+              <v-btn color="blue" class="move-password" to="/find-by-id"
+              >아이디 찾기
+              </v-btn>
             </v-col>
             <v-col cols="12" md="8">
-              <h1 class="text-center" id="maintext">Nobrain</h1>
+              <h1 class="text-center" id="main-text">No brain</h1>
               <h3 class="text-left" id="subtext">비밀번호 찾기</h3>
-              <hr />
+              <hr/>
               <FindByCertifiedCard
-                v-bind:findbypassword="certifiedObj"
+                  v-bind:findbypassword="certifiedObj"
               ></FindByCertifiedCard>
               <div style="padding: 20px 0"></div>
             </v-col>
@@ -27,9 +27,10 @@
 
 <script>
 import FindByCertifiedCard from "../../components/certifiedcard/FindByCertifiedCard.vue";
+
 export default {
   name: "FindByPassword",
-  components: { FindByCertifiedCard },
+  components: {FindByCertifiedCard},
   data: () => ({
     certifiedObj: {},
   }),
@@ -43,7 +44,7 @@ export default {
   text-align: center;
 }
 
-.movepassword {
+.move-password {
   margin-top: 15%;
   margin-left: 5%;
 }
@@ -52,7 +53,7 @@ export default {
   width: 100%;
   height: 100%;
   content: "";
-  background-image: url("../../assets/imges/background.jpg");
+  background-image: url("../../assets/images/background.jpg");
   background-size: cover;
   position: absolute;
   top: 0;
@@ -60,11 +61,13 @@ export default {
   z-index: -1;
   opacity: 0.5;
 }
-#maintext {
+
+#main-text {
   font-size: 50px;
   margin-top: 5%;
   margin-bottom: 10%;
 }
+
 hr {
   background-color: rgba(56, 51, 51, 0.257);
   height: 2pt;

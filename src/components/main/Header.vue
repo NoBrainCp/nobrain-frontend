@@ -4,7 +4,7 @@
       <!--      <v-icon icon="mdi-account-circle" size="60" id="user-img" color="black"></v-icon>-->
       <div class="col" id="logo-container" @click="moveMainPage">
         <img
-          src="../../assets/imges/logo_transparent.png"
+          src="../../assets/images/logo_transparent.png"
           width="130"
           height="110"
           id="logo-img"

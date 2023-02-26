@@ -9,7 +9,7 @@
                 <h2 class="text-center">Login in to Your Account</h2>
                 <br />
                 <h6 class="text-center grey--text">
-                  Log in to your account so you can continue builiding
+                  Log in to your account so you can continue building
                 </h6>
                 <v-row align-center justify="center">
                   <v-col cols="12" sm="8" class="mt-8">
@@ -51,10 +51,10 @@
                     <v-col cols="12" sm="10">
                       <a
                         class="caption text"
-                        id="forgetpassword"
-                        href="/forgetpassword"
-                        >Did you forget your password?</a
-                      >
+                        id="forgetPassword"
+                        href="/forget-password">
+                        Did you forget your password?
+                      </a>
                     </v-col>
                   </v-col>
                 </v-row>
@@ -65,8 +65,8 @@
               <div class="text-center">
                 <img
                   class="center"
-                  src="../../assets/imges/logo_transparent.png"
-                  alt="NobrainLogo"
+                  src="../../assets/images/logo_transparent.png"
+                  alt="noBrainLogo"
                   style="width: 200px"
                 />
               </div>
@@ -112,8 +112,8 @@ export default {
   methods: {
     async signIn() {
       try {
-        let result = await axios
-          .post("/api/signin", {
+        await axios
+          .post("/api/sign-in", {
             loginId: this.id,
             password: this.password,
           })
@@ -121,8 +121,8 @@ export default {
             let routerParam = res.data.data.username;
 
             if (res.status === 200) {
-              let id = this.id;
-              let password = this.password;
+              // let id = this.id;
+              // let password = this.password;
               // this.store.dispatch("login", {id, password});
 
               if (this.isRememberId) {
@@ -154,6 +154,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 800px;
 }
 
 #back {
@@ -168,7 +169,7 @@ export default {
   width: 100%;
   height: 100%;
   content: "";
-  background-image: url("../../assets/imges/background.jpg");
+  background-image: url("../../assets/images/background.jpg");
   background-size: cover;
   position: absolute;
   top: 0;
@@ -188,19 +189,16 @@ export default {
   align-items: center;
 }
 
-#forgetpassword {
+#forgetPassword {
   color: black;
   font-weight: bold;
   font-size: 17px;
   text-decoration-line: none;
 }
 
-#forgetpassword:hover {
+#forgetPassword:hover {
   color: rgb(101, 104, 189);
   text-decoration-line: underline;
 }
 
-.v-col-sm-12 {
-  height: 800px;
-}
 </style>

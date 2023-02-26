@@ -11,7 +11,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: "/signin",
+      path: "/sign-in",
       name: "signin",
       component: SignIn,
       alias: "/",
@@ -29,23 +29,23 @@ const router = createRouter({
       props: true,
     },
     {
-      path: "/forgetpassword",
-      name: "forgetpassword",
+      path: "/forget-password",
+      name: "forgetPassword",
       component: ForgetPassword,
     },
     {
-      path: "/findbyid",
+      path: "/find-by-id",
       name: "findbyid",
       component: FindById,
     },
     {
-      path: "/findbypassword/:loginId",
+      path: "/find-by-password/:loginId",
       name: "findbypassword",
       component: FindByPassword,
       props: true,
     },
     {
-      path: "/changepassword/:loginId",
+      path: "/change-password/:loginId",
       name: "changepassword",
       component: ChangePassword,
       props: true,
