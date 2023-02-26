@@ -25,6 +25,7 @@
                           id="name"
                           bg-color="white"
                           color="blue"
+                          maxlength="15"
                           clearable
                           :rules="[(v) => !!v || 'Field is required']"
                         />
@@ -58,6 +59,7 @@
                           id="account"
                           bg-color="white"
                           color="blue"
+                          maxlength="20"
                           clearable
                           :rules="[(v) => !!v || 'Field is required']"
                         />
@@ -82,6 +84,7 @@
                       hint="숫자와 특수문자를 포함한 8글자 이상"
                       color="blue"
                       type="password"
+                      maxlength="25"
                       clearable
                       :rules="[(v) => !!v || 'Field is required']"
                     />
@@ -91,9 +94,11 @@
                       bg-color="white"
                       color="blue"
                       type="password"
+                      maxlength="25"
                       clearable
                       :rules="[(v) => !!v || 'Field is required']"
                     />
+
                     <v-text-field
                       v-model="user.phoneNumber"
                       label="Phone number"
@@ -101,7 +106,8 @@
                       bg-color="white"
                       hint="-를 제외한 핸드폰 번호"
                       color="blue"
-                      type="tel"
+                      maxlength="15"
+                      oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
                       clearable
                       :rules="[(v) => !!v || 'Field is required']"
                     />
