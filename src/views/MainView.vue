@@ -6,11 +6,9 @@
       <v-container>
         <v-row>
           <SideBar/>
-
           <router-view :key="$route.fullPath">
             <Bookmark/>
           </router-view>
-
         </v-row>
       </v-container>
     </v-main>

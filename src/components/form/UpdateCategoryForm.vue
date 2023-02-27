@@ -1,17 +1,16 @@
 <template>
+  <v-btn color="blue" @click="clickUpdate()">
+    수정
+  </v-btn>
   <v-dialog
       v-model="dialog"
       persistent
       width="30%"
   >
-    <template v-slot:activator="{ props }">
-      <IconPlusBox id="plusbox-icon" width="30" v-bind="props"/>
-    </template>
-
     <v-card>
       <v-card-title id="card-title">
         <IconDocumentation width="35"/>
-        <span class="text-h5" id="card-title-text">카테고리 추가</span>
+        <span class="text-h5" id="card-title-text">카테고리 수정</span>
       </v-card-title>
       <v-card-text>
         <v-container>
@@ -20,7 +19,7 @@
               <v-text-field
                   v-model="category.name"
                   label="카테고리 이름"
-                  required
+                  :rules="[rules.name]"
               ></v-text-field>
             </v-col>
             <v-col cols="12">
@@ -28,7 +27,6 @@
                   v-model="category.description"
                   label="설명"
                   type="text"
-                  required
               ></v-text-field>
               <v-checkbox
                   v-model="category.isPublic"
@@ -38,7 +36,6 @@
                   hide-details
               ></v-checkbox>
             </v-col>
-
           </v-row>
         </v-container>
       </v-card-text>
@@ -54,9 +51,9 @@
         <v-btn
             color="blue-darken-1"
             variant="text"
-            @click="submitCategory"
+            @click="updateCategory()"
         >
-          저장
+          수정
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -64,42 +61,49 @@
 </template>
 
 <script>
-import IconPlusBox from "../icons/IconPlusBox.vue";
 import IconDocumentation from "../icons/IconDocumentation.vue";
 import {useRoute} from "vue-router";
 import axios from 'axios';
+import router from "../../router";
 
 export default {
-  name: 'CreateCategoryForm',
-  components: {IconDocumentation, IconPlusBox},
+  name: 'UpdateCategoryForm',
+  components: {IconDocumentation},
 
   data: () => ({
     route: useRoute(),
     dialog: false,
+    on: false,
     category: {
       name: "",
       description: "",
       isPublic: false
+    },
+    rules: {
+      name: v => !!v || '이름은 필수 입력 항목입니다.',
     }
   }),
 
   methods: {
-    async submitCategory() {
+    clickUpdate() {
+      this.dialog = true;
+      this.category.name = this.route.params.category;
+    },
+
+    async updateCategory() {
       this.dialog = false;
-      axios.post("/api/" + this.route.params.username + "/category",
-          { name: this.category.name,
+      await axios.put("/api/" + this.route.params.username + "/category/" + this.route.params.category,
+          {
+            name: this.category.name,
             description: this.category.description,
             isPublic: this.category.isPublic
           })
-          .then((res) => {
-            this.category.name = "";
-            this.category.description = "";
-            this.category.isPublic = false;
-            location.reload();
-          })
-          .catch((err) => {
-            console.log(err.data);
-          });
+      console.log(this.category.name);
+      await router.push("/" + this.route.params.username + "/" + this.category.name);
+      alert("수정이 완료되었습니다.")
+      location.reload();
+
+
     }
   }
 }
@@ -119,7 +123,4 @@ export default {
   font-weight: bold;
 }
 
-#plusbox-icon:hover {
-  cursor: pointer;
-}
 </style>
