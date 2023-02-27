@@ -21,8 +21,9 @@
             <v-text-field
                 v-model="bookmark.url"
                 label="URL"
-                required
-            ></v-text-field>
+                clearable
+                :rules="[rules.url]"
+            />
           </div>
 
           <div class="input-row">
@@ -30,7 +31,9 @@
                 v-model="bookmark.title"
                 label="이름"
                 required
-            ></v-text-field>
+                :rules="[rules.title]"
+                clearable
+            />
           </div>
 
           <div class="input-row">
@@ -38,22 +41,23 @@
                 v-model="bookmark.description"
                 label="설명"
                 type="text"
-            ></v-textarea>
+            />
           </div>
 
           <div class="input-row">
             <v-select
                 label="카테고리 선택"
                 v-model="bookmark.category"
+                hint="카테고리를 선택해주세요"
                 :items="categoryNames"
-            ></v-select>
+            />
           </div>
 
-          <vue3-tags-input :tags="bookmark.tags"
-                           id="input-tags"
-                           placeholder="태그"
-                           @on-tags-changed="handleChangeTag">
-
+          <vue3-tags-input
+              :tags="bookmark.tags"
+              id="input-tags"
+              placeholder="태그"
+              @on-tags-changed="handleChangeTag">
           </vue3-tags-input>
 
           <div class="input-row">
@@ -63,7 +67,7 @@
                 color="info"
                 value="true"
                 hide-details
-            ></v-checkbox>
+            />
           </div>
         </v-container>
       </v-card-text>
@@ -91,9 +95,15 @@
 import IconDocumentation from "../icons/IconDocumentation.vue";
 import {useRoute} from "vue-router";
 import axios from "axios";
+import {ru} from "vuetify/locale";
 
 export default {
   name: 'CreateBookmarkForm',
+  computed: {
+    ru() {
+      return ru
+    }
+  },
   props: ["categoryNames"],
   components: {IconDocumentation},
 
@@ -107,14 +117,19 @@ export default {
       category: [],
       isPublic: "",
       tags: [],
+    },
+    rules: {
+      url: v => !!v || 'URL은 필수 입력 항목입니다.',
+      title:v => !!v || '이름은 필수 입력 항목입니다.'
     }
   }),
 
   methods: {
     async submitBookmark() {
       this.dialog = false;
-      axios.post("/api/"+this.route.params.username+"/bookmark",
-          { url: this.bookmark.url,
+      await axios.post("/api/" + this.route.params.username + "/bookmark",
+          {
+            url: this.bookmark.url,
             title: this.bookmark.title,
             description: this.bookmark.description,
             categoryName: this.bookmark.category,
@@ -122,15 +137,18 @@ export default {
             tags: this.bookmark.tags
           })
           .then((res) => {
+            console.log(this.bookmark.url === "");
+            this.bookmark.url = "";
             this.bookmark.name = "";
             this.bookmark.description = "";
             this.bookmark.category = "";
             this.bookmark.isPublic = false;
             this.bookmark.tags = [];
-            location.reload();
+            // location.reload();
           })
           .catch((err) => {
             console.log(err);
+            alert(err.response.data.message);
           });
     },
 
@@ -167,4 +185,5 @@ export default {
 .v3ti-content > .v3ti-tag > span {
   font-size: 30px;
 }
+
 </style>

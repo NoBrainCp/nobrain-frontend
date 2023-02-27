@@ -61,15 +61,16 @@
 import MainView from "../../views/MainView.vue";
 import axios from "axios";
 import { useRoute } from "vue-router";
-
+import router from "../../router";
 export default {
   name: "Headers",
 
-  setup() {
-    const route = useRoute();
-  },
+  // setup() {
+  //   const route = useRoute();
+  // },
 
   data: () => ({
+    route: useRoute(),
     loaded: false,
     loading: false,
   }),
@@ -85,7 +86,7 @@ export default {
     },
 
     moveMainPage() {
-      axios.get("/api/", this.route.params.username);
+      router.push("/"+ this.route.params.username);
     },
   },
 };

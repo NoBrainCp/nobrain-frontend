@@ -25,6 +25,7 @@
                           id="account"
                           bg-color="white"
                           color="blue"
+                          @keydown.enter="checkDuplicationsId(loginId)"
                       />
                     </v-col>
                     <v-col col="12" sm="12">
