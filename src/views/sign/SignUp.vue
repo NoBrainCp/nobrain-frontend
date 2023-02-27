@@ -5,7 +5,6 @@
         <v-card class="elevation-6 mt-8" id="back">
           <v-row>
             <v-col cols="12" md="2" class="blue rounded-br-xl"></v-col>
-
             <v-col cols="12" md="8">
               <v-card-text class="mt-12">
                 <h1 class="text-center">Sign Up for an Account</h1>

@@ -137,14 +137,13 @@ export default {
             tags: this.bookmark.tags
           })
           .then((res) => {
-            console.log(this.bookmark.url === "");
             this.bookmark.url = "";
             this.bookmark.name = "";
             this.bookmark.description = "";
             this.bookmark.category = "";
             this.bookmark.isPublic = false;
             this.bookmark.tags = [];
-            // location.reload();
+            location.reload();
           })
           .catch((err) => {
             console.log(err);
