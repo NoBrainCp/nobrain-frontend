@@ -21,7 +21,7 @@
                             color="blue"
                             maxlength="15"
                             clearable
-                            :rules="[(v) => !!v || 'Field is required']"
+                            :rules="[rules.name]"
                         />
                       </v-col>
                       <v-col col="12" sm="2">
@@ -42,7 +42,7 @@
                         bg-color="white"
                         color="blue"
                         clearable
-                        :rules="[(v) => !!v || 'Field is required']"
+                        :rules="[rules.email]"
                     />
                     <v-row>
                       <v-col col="12" sm="10">
@@ -53,7 +53,7 @@
                             color="blue"
                             maxlength="20"
                             clearable
-                            :rules="[(v) => !!v || 'Field is required']"
+                            :rules="[rules.loginId]"
                         />
                       </v-col>
                       <v-col col="12" sm="2">
@@ -77,7 +77,7 @@
                         type="password"
                         maxlength="25"
                         clearable
-                        :rules="[(v) => !!v || 'Field is required']"
+                        :rules="[rules.password]"
                     />
                     <v-text-field
                         v-model="user.passwordCheck"
@@ -87,7 +87,6 @@
                         type="password"
                         maxlength="25"
                         clearable
-                        :rules="[(v) => !!v || 'Field is required']"
                     />
 
                     <v-text-field
@@ -99,7 +98,7 @@
                         maxlength="15"
                         oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
                         clearable
-                        :rules="[(v) => !!v || 'Field is required']"
+                        :rules="[rules.phoneNumber]"
                     />
                     <v-row>
                       <label
@@ -240,6 +239,14 @@ export default {
       birthDate: "",
     },
 
+    rules: {
+      name: v => !!v || '닉네임은 필수 입력 항목입니다.',
+      email: v => !!v || '이메일은 필수 입력 항목입니다.',
+      loginId: v => !!v || '로그인 ID는 필수 입력 항목입니다',
+      password: v => !!v || '비밀번호는 필수 입력 항목입니다.',
+      phoneNumber:v => !!v || '핸드폰 번호는 필수 입력 항목입니다.'
+    },
+
     dialogObj: {
       title: "",
       isShow: false,
@@ -325,7 +332,6 @@ export default {
 </script>
 
 <style scoped>
-
 #back {
   width: 100%;
   height: 100%;

@@ -6,7 +6,7 @@
           label="회원정보에 등록한 휴대전화로 인증"
           value="radioPhoneNumber"
           @click="clickPhoneNumber()"
-        ></v-radio>
+        />
         <v-card
           class="mx-12"
           id="kinds-card"
@@ -76,7 +76,7 @@
           label="본인확인 이메일로 인증"
           value="radioEmail"
           @click="clickEmail()"
-        ></v-radio>
+        />
         <v-card
           class="mx-12"
           id="kinds-card"
@@ -121,8 +121,8 @@
                           color="blue"
                           block
                           @click="checkAuthCode(user.email, authCode)"
-                          >확인</v-btn
-                        >
+                          >확인
+                        </v-btn>
                       </v-col>
                     </v-row>
                     <v-row class="field">
@@ -250,7 +250,7 @@ export default {
         .then((res) => {
           if (res.data.success) {
             alert("인증한 이메일로 본인의 아이디가 전송되었습니다.");
-            this.router.push("/");
+            router.push("/");
           } else {
             alert(res.data.message);
           }
@@ -265,7 +265,7 @@ export default {
         .then((res) => {
           if (res.data.success) {
             alert("인증한 휴대전화로 본인의 아이디가 전송되었습니다.");
-            this.router.push("/");
+            router.push("/");
           } else {
             alert(res.data.message);
           }
@@ -295,7 +295,7 @@ export default {
         .then((res) => {
           if (res.data.success) {
             alert("인증이 완료 되었습니다.");
-            this.router.push("/change-password/" + loginId);
+            router.push("/change-password/" + loginId);
           } else {
             alert(res.data.message);
           }
@@ -355,7 +355,6 @@ export default {
 </script>
 
 <style>
-
 .field{
   margin-left: 1%;
 }
