@@ -8,11 +8,10 @@
         <v-hover v-slot="{ isHovering, props }">
           <v-card
               class="mx-auto"
-              min-width="230"
-              max-width="344"
               v-bind="props"
+              elevation="6"
           >
-            <v-img src="https://cdn.vuetifyjs.com/images/cards/forest-art.jpg">
+            <v-img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLe5nUtk5JoD4sdl1VSGYazqdLh7to9LYI_Q&usqp=CAU" height="200">
               <v-overlay
                   :model-value="isHovering"
                   contained
@@ -54,6 +53,9 @@ export default {
 
   data: () => ({
     temp: "black",
+    imagePath: [
+      { noImage: "../assets/images/nobrain-no-image.png"}
+    ]
   }),
 
   setup() {
@@ -101,11 +103,12 @@ export default {
 
 <style scoped>
 .v-btn {
-  color: white
+  color: white;
 }
 
 .v-card {
-  margin-top: 25px
+  margin-top: 7px;
+  width: 280px;
 }
 
 </style>
