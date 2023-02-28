@@ -1,5 +1,6 @@
 <template>
   <v-navigation-drawer
+      width="320"
       v-model="drawer"
       :rail="rail"
       permanent
@@ -11,10 +12,8 @@
         nav
         title="Yoon"
         subtitle="leeyt1201@gmail.com"
+        class="account-item"
     >
-<!--      <h3>-->
-<!--        {{user.name}}-->
-<!--      </h3>-->
 
       <template v-slot:append>
         <v-btn
@@ -30,18 +29,25 @@
       <a href="#" class="follow-items" id="following">팔로잉: {{user.following}}</a>
     </div>
 
-    <div v-if="!rail" id="btn-container">
-      <v-btn class="btn" color="light-blue" height="50">
-        전체보기
-      </v-btn>
-      <v-btn class="btn" color="red-lighten-1" height="50">
-        팔로우
+    <div v-if="!rail" class="follow-btn-container">
+      <v-btn id="follow-btn" class="btn" :color="followButton.color" @click="clickFollow()">
+        <v-icon id="follow-icon">{{followButton.icon}}</v-icon>
+        {{followButton.text}}
       </v-btn>
     </div>
 
-    <hr/>
+    <div v-if="!rail" id="btn-container">
+      <v-btn class="btn btn-show-all" color="#00BCD4" prepend-icon="mdi mdi-text-box-multiple">
+        전체보기
+      </v-btn>
+      <v-btn class="btn" color="#009688" prepend-icon="mdi mdi-bookmark">
+        북마크 추가
+      </v-btn>
+    </div>
 
-    <v-list class="category-list" density="compact" nav>
+    <v-divider v-if="rail" class="account-divider"></v-divider>
+
+    <v-list density="compact" nav>
       <div class="category-header-container" v-if="!rail">
         <v-list-subheader class="category-header">카테고리</v-list-subheader>
         <v-btn size="25" icon="mdi-plus"></v-btn>
@@ -82,22 +88,43 @@ export default {
         { text: 'Uploads', icon: 'mdi-upload' },
         { text: 'Backups', icon: 'mdi-cloud-upload' },
       ],
-      rail: true,
+
+      followButton: {
+        text: "팔로우",
+        color: "#03A9F4",
+        icon: "mdi mdi-account-multiple-plus",
+      },
+
+      follow: true,
+      rail: false,
     }
   },
+
+  methods: {
+    clickFollow() {
+      this.follow = !this.follow;
+
+      if (this.follow) {
+        this.followButton.text = "팔로우 취소";
+        this.followButton.color = "#E53935";
+        this.followButton.icon = "mdi mdi-account-multiple-minus"
+      } else {
+        this.followButton.text = "팔로우";
+        this.followButton.color = "#03A9F4";
+        this.followButton.icon = "mdi mdi-account-multiple-plus"
+      }
+    }
+  }
 }
 </script>
 
 <style scoped>
-#follow-container {
-  display: flex;
-  justify-content: center;
-  margin-left: 10px;
-  margin-bottom: 20px;
+.account-item {
+  margin-top: 10px;
 }
 
-#following {
-  margin-left: 10px;
+.account-divider {
+  margin-top: 15px;
 }
 
 .follow-items {
@@ -107,24 +134,62 @@ export default {
 }
 
 .follow-items:hover {
-  color: cornflowerblue;
-  text-underline: cornflowerblue;
+  color: #03A9F4;
+  text-decoration: underline;
+  text-underline: #03A9F4;
+}
+
+#follow-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+#following {
+  margin-left: 20px;
+}
+
+.follow-btn-container {
+  display: flex;
+  justify-content: center;
+}
+
+#follow-icon {
+  margin-right: 8px;
+}
+
+#follow-btn {
+  width: 305px;
+  height: 50px;
+  background: #03A9F4;
+  font-size: 15px;
+}
+
+.btn-show-all {
+  margin-right: 5px;
 }
 
 #btn-container {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: center;
   margin-bottom: 10px;
+  margin-top: 15px;
 }
 
 .btn {
-  width: 45%;
+  width: 150px;
+  height: 65px;
+  color: white;
   font-size: 13px;
+  font-weight: bold;
+  border-radius: 10px;
 }
 
 .category-header-container {
   display: flex;
   justify-content: space-between;
+  margin-top: 25px;
 }
 
 .category-list {
