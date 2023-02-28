@@ -4,6 +4,8 @@
 
     <Side/>
 
+    <CategoryBar/>
+
     <v-main class="main">
       <Book/>
     </v-main>
@@ -14,9 +16,10 @@
 import Side from "../components/Side.vue";
 import Headed from "../components/Head.vue";
 import Book from "../components/Book.vue";
+import CategoryBar from "../components/CategoryBar.vue";
 
 export default {
-  components: {Book, Headed, Side},
+  components: {CategoryBar, Book, Headed, Side},
   name: 'mainn',
   data: () => ({
     cards: ['Today', 'Yesterday'],
@@ -33,7 +36,7 @@ export default {
 
 <style scoped>
 .main {
-  margin-top: 10px;
-  margin-left: 70px;
+  margin-top: 45px;
+  margin-left: 50px;
 }
 </style>
