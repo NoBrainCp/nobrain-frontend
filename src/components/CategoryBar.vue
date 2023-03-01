@@ -46,9 +46,7 @@ export default {
   height: 42px;
   padding: 8px 12px;
   margin-left: 50px;
-  /*border: 1px solid #03A9F4;*/
   border-radius: 20px;
-  /*color: #03A9F4;*/
   background: #03A9F4;
   color: white;
   font-size: 17px;

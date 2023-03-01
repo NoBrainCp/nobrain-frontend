@@ -73,6 +73,8 @@ export default {
   data () {
     return {
       drawer: true,
+      rail: false,
+
       user: {
         name: "Yoon",
         follower: 100,
@@ -96,7 +98,6 @@ export default {
       },
 
       follow: true,
-      rail: false,
     }
   },
 
@@ -124,7 +125,7 @@ export default {
 }
 
 .account-divider {
-  margin-top: 15px;
+  margin-top: 10px;
 }
 
 .follow-items {
