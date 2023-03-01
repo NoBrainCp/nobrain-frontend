@@ -9,7 +9,6 @@
           <v-col v-for="(bookmark, idx) in data.bookmarks"
                  :key="bookmark"
                  cols="auto">
-
             <div>
               <v-hover v-slot="{ isHovering, props }">
                 <v-card
@@ -19,6 +18,7 @@
                     v-bind="props"
                 >
                   <v-img src="https://cdn.vuetifyjs.com/images/cards/forest-art.jpg">
+<!--                  <v-img draggable="false" src = favicon>-->
                     <v-overlay
                       :model-value="isHovering"
                       contained
@@ -59,9 +59,15 @@
   import axios from "axios";
   import CategorySubBar from "./CategorySubBar.vue";
   import CreateBookmarkForm from "../form/CreateBookmarkForm.vue";
+  import book from "../Book.vue";
 
   export default {
     name: 'Bookmark',
+    computed: {
+      book() {
+        return book
+      }
+    },
     components: {CreateBookmarkForm, CategorySubBar},
 
     data: () => ({
@@ -74,11 +80,14 @@
       const data = reactive({
         bookmarks:[],
       });
+      // let favicon = "https://www.google.com/s2/favicons?domain=";
       const category = route.params.category;
+
       if (category === undefined) {
         axios.get("/api/" + route.params.username + "/bookmarks").then((res) => {
           data.bookmarks = res.data.list;
           data.isSubBarShow = false;
+          console.log(fa)
         })
       }
       else {
