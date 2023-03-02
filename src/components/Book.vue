@@ -4,41 +4,96 @@
            :key="bookmark"
            cols="auto">
 
-      <div>
-        <v-hover v-slot="{ isHovering, props }">
-          <v-card
-              class="mx-auto"
-              v-bind="props"
-              elevation="6"
-          >
-            <v-img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLe5nUtk5JoD4sdl1VSGYazqdLh7to9LYI_Q&usqp=CAU" height="200">
-              <v-overlay
-                  :model-value="isHovering"
-                  contained
-                  scrim="#424242"
-                  class="align-center justify-center"
+      <v-hover v-slot="{ isHovering, props }">
+        <v-card
+            class="mx-auto bookmark-card"
+            v-bind="props"
+            :elevation="isHovering ? 20 : 5"
+        >
+          <v-img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLe5nUtk5JoD4sdl1VSGYazqdLh7to9LYI_Q&usqp=CAU" class="bookmark-img">
+            <v-overlay
+                :model-value="isHovering"
+                contained
+                scrim="#424242"
+                class="align-center justify-center"
+            >
+              <v-btn
+                  :href="bookmark.url"
+                  target="_blank"
+                  color="light-blue"
+                  variant="flat">Move</v-btn>
+            </v-overlay>
+          </v-img>
+
+          <div class="card-header">
+            <v-card-subtitle class="mt-3">{{bookmark.createdAt}}</v-card-subtitle>
+
+            <v-col class="icon-container">
+              <v-icon
+                  size="27"
+                  :color="bookmark.public ? 'indigo' : 'green-darken-3'"
+                  :class="bookmark.public ? 'mdi mdi-lock-open-variant' : 'mdi mdi-lock'"
+                  @click="clickLock(bookmark)"/>
+              <v-icon
+                  size="27"
+                  :color="bookmark.star ? 'light-blue' : 'grey-lighten-1'"
+                  class="mdi mdi-star icon-star"
+                  @click="clickStar(bookmark)"/>
+
+              <v-menu
+                  location="bottom"
+                  transition="scale-transition"
+                  open-on-hover
               >
-                <v-btn
-                    :href="bookmark.url"
-                    target="_blank"
-                    color="#29B6F6"
-                    variant="flat">Move</v-btn>
-              </v-overlay>
-            </v-img>
-            <v-card-text>
-              <h2 class="text-h6 text-primary">
-                {{bookmark.title}}
-              </h2>
+                <template v-slot:activator="{ props }">
+                  <v-chip
+                      class="bookmark-chip mt-1 mdi mdi-dots-horizontal"
+                      @click=""
+                      append-icon="mdi-chevron-down"
+                      v-bind="props"
+                  ></v-chip>
+                </template>
+                <v-list class="bookmark-sub-btn-list">
+                  <v-list-item
+                      class="text-blue-accent-4"
+                      prepend-icon="mdi mdi-pencil-outline"
+                      @click=""
+                  >
+                    <v-list-item-title>수정</v-list-item-title>
+                  </v-list-item>
+                  <v-divider/>
+                  <v-list-item
+                      class="text-red-accent-4"
+                      prepend-icon="mdi mdi-delete"
+                      @click="">
+                    <v-list-item-title>삭제</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </v-col>
+
+          </div>
+
+          <v-card-text class="card-text">
+            <div class="text-h6 text-light-blue font-weight-bold">
+              {{bookmark.title}}
+            </div>
+            <div class="mt-1">
               {{bookmark.description}}
-              <v-icon id = 'sstar' size="35" :color="temp" class="mdi mdi-star" @click="isStar()"></v-icon>
-              <v-icon id = "lock" size="35" class="mdi mdi-lock-open-variant" @click="unLock()"></v-icon>
-            </v-card-text>
-            <v-card-title>
-              <div class="text-primary text-subtitle-2">{{bookmark.createdAt}}</div>
-            </v-card-title>
-          </v-card>
-        </v-hover>
-      </div>
+            </div>
+          </v-card-text>
+
+          <div class="url-container">
+            <v-divider/>
+            <v-card-subtitle class="text-subtitle-2">
+              <a :href="bookmark.url" class="bookmark-link-tag" target="_blank">
+                <v-icon v-b-hover class="icon-link" size="17">mdi mdi-link-variant</v-icon>
+                {{bookmark.url}}
+              </a>
+            </v-card-subtitle>
+          </div>
+        </v-card>
+      </v-hover>
     </v-col>
   </v-row>
 </template>
@@ -55,7 +110,7 @@ export default {
     temp: "black",
     imagePath: [
       { noImage: "../assets/images/nobrain-no-image.png"}
-    ]
+    ],
   }),
 
   setup() {
@@ -78,25 +133,15 @@ export default {
     }
     return {data}
   },
+
   methods: {
-
-    isStar(){
-      // document.getElementById('sstar').style.colo="black"
-      if(this.temp ==="yellow"){
-        this.temp = "black"
-      }else{
-        this.temp = "yellow"
-      }
-
+    clickStar(bookmark) {
+      bookmark.star = !bookmark.star;
     },
 
-    unLock() {
-      if(document.getElementById('lock').className==="mdi mdi-lock"){
-        document.getElementById('lock').className="mdi mdi-lock-open-variant";
-      }else{
-        document.getElementById('lock').className="mdi mdi-lock";
-      }
-    }
+    clickLock(bookmark) {
+      bookmark.public = !bookmark.public;
+    },
   }
 }
 </script>
@@ -106,9 +151,65 @@ export default {
   color: white;
 }
 
-.v-card {
-  margin-top: 7px;
-  width: 280px;
+.bookmark-card {
+  width: 270px;
+  height: 330px;
 }
 
+.bookmark-img {
+  height: 150px;
+}
+
+.card-header {
+  display: flex;
+}
+
+.icon-container {
+  position: relative;
+  left: 16px;
+  bottom: 8px;
+}
+
+.icon-star {
+  margin: 0 10px;
+}
+
+.bookmark-chip {
+  height: 17px;
+}
+
+.bookmark-sub-btn-list {
+  position: relative;
+  right: 42px;
+  border: 1px solid #f3f3f3;
+}
+
+.card-text {
+  margin-top: -20px;
+}
+
+.icon-link {
+  margin-right: 5px;
+}
+
+.url-container {
+  width: 100%;
+  position: absolute;
+  bottom: 3px;
+}
+
+.bookmark-link-tag {
+  text-decoration: none;
+  color: black;
+}
+
+.bookmark-link-tag:hover {
+  color: #0347f4;
+}
+</style>
+
+<style>
+.v-list-item__prepend > .v-icon {
+  margin-inline-end: 15px;
+}
 </style>
