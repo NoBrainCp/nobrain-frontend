@@ -8,7 +8,7 @@
       style="position: fixed"
   >
     <v-list-item
-        prepend-avatar="https://randomuser.me/api/portraits/men/89.jpg"
+        prepend-avatar="https://cdn.vuetifyjs.com/images/john.jpg"
         nav
         title="Yoon"
         subtitle="leeyt1201@gmail.com"
@@ -30,17 +30,29 @@
     </div>
 
     <div v-if="!rail" class="follow-btn-container">
-      <v-btn id="follow-btn" class="btn" :color="followButton.color" @click="clickFollow()">
+      <v-btn
+          id="follow-btn"
+          class="btn"
+          :color="followButton.color"
+          @click="clickFollow()">
         <v-icon id="follow-icon">{{followButton.icon}}</v-icon>
         {{followButton.text}}
       </v-btn>
     </div>
 
     <div v-if="!rail" id="btn-container">
-      <v-btn class="btn btn-show-all" color="#00BCD4" prepend-icon="mdi mdi-text-box-multiple">
+      <v-btn
+          class="btn btn-show-all"
+          color="#00BCD4"
+          prepend-icon="mdi mdi-text-box-multiple"
+      >
         전체보기
       </v-btn>
-      <v-btn class="btn" color="#009688" prepend-icon="mdi mdi-bookmark">
+      <v-btn
+          class="btn"
+          color="#009688"
+          prepend-icon="mdi mdi-bookmark"
+      >
         북마크 추가
       </v-btn>
     </div>
@@ -56,11 +68,21 @@
       <v-divider v-if="!rail"></v-divider>
 
       <v-list-item v-for="(category, i) in categories" :key="i"
-                   :value="category" active-color="light-blue">
+                   :value="category"
+                   active-color="light-blue">
         <template v-slot:prepend>
           <v-icon :icon="category.icon"></v-icon>
         </template>
         <v-list-item-title v-text="category.text"></v-list-item-title>
+        <template v-slot:append>
+          <v-badge
+              color="blue"
+              :content="category.count"
+              inline
+          >
+          </v-badge>
+
+        </template>
       </v-list-item>
     </v-list>
 
@@ -82,13 +104,13 @@ export default {
       },
 
       categories: [
-        { text: 'My Files', icon: 'mdi-folder' },
-        { text: 'Shared with me', icon: 'mdi-account-multiple' },
-        { text: 'Starred', icon: 'mdi-star' },
-        { text: 'Recent', icon: 'mdi-history' },
-        { text: 'Offline', icon: 'mdi-check-circle' },
-        { text: 'Uploads', icon: 'mdi-upload' },
-        { text: 'Backups', icon: 'mdi-cloud-upload' },
+        { text: 'My Files', icon: 'mdi-folder', count: 3 },
+        { text: 'Shared with me', icon: 'mdi-account-multiple', count: 6 },
+        { text: 'Starred', icon: 'mdi-star', count: 12 },
+        { text: 'Recent', icon: 'mdi-history', count: 5 },
+        { text: 'Offline', icon: 'mdi-check-circle', count: 15 },
+        { text: 'Uploads', icon: 'mdi-upload', count: 32 },
+        { text: 'Backups', icon: 'mdi-cloud-upload', count: 1 },
       ],
 
       followButton: {
