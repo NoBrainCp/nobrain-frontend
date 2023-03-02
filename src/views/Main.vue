@@ -9,6 +9,9 @@
     <v-main class="main">
       <Book/>
     </v-main>
+
+    <TagBar class="tag-bar"/>
+
   </v-app>
 </template>
 
@@ -17,9 +20,10 @@ import Side from "../components/Side.vue";
 import Headed from "../components/Head.vue";
 import Book from "../components/Book.vue";
 import CategoryBar from "../components/CategoryBar.vue";
+import TagBar from "../components/TagBar.vue";
 
 export default {
-  components: {CategoryBar, Book, Headed, Side},
+  components: {TagBar, CategoryBar, Book, Headed, Side},
   name: 'mainn',
   data: () => ({
     cards: ['Today', 'Yesterday'],
@@ -36,7 +40,8 @@ export default {
 
 <style scoped>
 .main {
-  margin-top: 45px;
-  margin-left: 50px;
+  margin-top: 35px;
+  margin-bottom: 35px;
+  margin-left: 35px;
 }
 </style>

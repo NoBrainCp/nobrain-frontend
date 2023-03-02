@@ -11,8 +11,22 @@
 
     <v-spacer/>
 
-    <v-btn class="btn" prepend-icon="mdi mdi-pencil-outline">수정</v-btn>
-    <v-btn class="btn" prepend-icon="mdi mdi-delete">삭제</v-btn>
+    <v-btn
+        class="btn"
+        color="blue"
+        prepend-icon="mdi mdi-pencil-outline"
+        border
+    >
+      수정
+    </v-btn>
+    <v-btn
+        class="btn"
+        color="red-accent-4"
+        prepend-icon="mdi mdi-delete"
+        border
+    >
+      삭제
+    </v-btn>
   </v-app-bar>
 </template>
 
@@ -46,9 +60,7 @@ export default {
   height: 42px;
   padding: 8px 12px;
   margin-left: 50px;
-  /*border: 1px solid #03A9F4;*/
   border-radius: 20px;
-  /*color: #03A9F4;*/
   background: #03A9F4;
   color: white;
   font-size: 17px;
@@ -65,7 +77,6 @@ export default {
 .btn {
   width: 120px;
   height: 42px;
-  border: 1px solid black;
   margin-right: 10px;
 }
 
