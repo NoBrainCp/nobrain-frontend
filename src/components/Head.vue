@@ -30,7 +30,11 @@
               :value="index"
               class="search-items"
           >
-            <v-list-item-title @click="selectSearchCondition(item.title)" :value="item.title">{{ item.title }}</v-list-item-title>
+            <v-list-item-title
+                @click="selectSearchCondition(item.title)"
+                :value="item.title">
+              {{ item.title }}
+            </v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -53,7 +57,7 @@
             class="account-chip"
         >
           <v-avatar start>
-            <v-img src="https://randomuser.me/api/portraits/men/89.jpg"></v-img>
+            <v-img src="https://cdn.vuetifyjs.com/images/john.jpg"></v-img>
           </v-avatar>
 
           {{user.name}}
@@ -64,7 +68,7 @@
         <v-list bg-color="light-blue">
           <v-list-item class="search-list">
             <template v-slot:prepend>
-              <v-avatar image="https://randomuser.me/api/portraits/men/89.jpg"></v-avatar>
+              <v-avatar image="https://cdn.vuetifyjs.com/images/john.jpg"></v-avatar>
             </template>
 
             <v-list-item-title>{{user.name}}</v-list-item-title>
@@ -86,7 +90,11 @@
         </v-list>
 
         <v-list>
-          <v-list-item v-for="(menu, index) in menus" :key="index" link>
+          <v-list-item
+              v-for="(menu, index) in menus"
+              :key="index"
+              link
+          >
             <v-list-item-content>
               <div class="account-container">
                 <v-icon>{{menu.icon}}</v-icon>
