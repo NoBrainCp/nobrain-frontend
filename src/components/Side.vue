@@ -25,8 +25,8 @@
     </v-list-item>
 
     <div v-if="!rail" id="follow-container">
-      <a href="#" class="follow-items">팔로워: {{user.follower}}</a>
-      <a href="#" class="follow-items" id="following">팔로잉: {{user.following}}</a>
+      <a href="#" class="follow-items">팔로워: {{ user.follower }}</a>
+      <a href="#" class="follow-items" id="following">팔로잉: {{ user.following }}</a>
     </div>
 
     <div v-if="!rail" class="follow-btn-container">
@@ -35,8 +35,8 @@
           class="btn"
           :color="followButton.color"
           @click="clickFollow()">
-        <v-icon id="follow-icon">{{followButton.icon}}</v-icon>
-        {{followButton.text}}
+        <v-icon id="follow-icon">{{ followButton.icon }}</v-icon>
+        {{ followButton.text }}
       </v-btn>
     </div>
 
@@ -62,7 +62,21 @@
     <v-list density="compact" nav>
       <div class="category-header-container" v-if="!rail">
         <v-list-subheader class="category-header">카테고리</v-list-subheader>
-        <v-btn size="25" icon="mdi-plus"></v-btn>
+        <v-btn
+            size="25"
+            icon="mdi-plus"
+            @click="openDialog"/>
+        <v-dialog
+            v-model="isShowCategoryForm"
+            persistent
+            width="30%"
+        >
+          <CategoryDialog
+              v-bind:isCreated="isCreated"
+              @hide="closeDialog"
+              @submit="submit"/>
+        </v-dialog>
+
       </div>
 
       <v-divider v-if="!rail"></v-divider>
@@ -90,27 +104,31 @@
 </template>
 
 <script>
+import CategoryDialog from "./form/CategoryDialog.vue";
+
 export default {
   name: 'Side',
-  data () {
+  components: {CategoryDialog},
+
+  data() {
     return {
       drawer: true,
       rail: false,
-
+      isCreated: true,
+      isShowCategoryForm: false,
       user: {
         name: "Yoon",
         follower: 100,
         following: 10
       },
-
       categories: [
-        { text: 'My Files', icon: 'mdi-folder', count: 3 },
-        { text: 'Shared with me', icon: 'mdi-account-multiple', count: 6 },
-        { text: 'Starred', icon: 'mdi-star', count: 12 },
-        { text: 'Recent', icon: 'mdi-history', count: 5 },
-        { text: 'Offline', icon: 'mdi-check-circle', count: 15 },
-        { text: 'Uploads', icon: 'mdi-upload', count: 32 },
-        { text: 'Backups', icon: 'mdi-cloud-upload', count: 1 },
+        {text: 'My Files', icon: 'mdi-folder', count: 3},
+        {text: 'Shared with me', icon: 'mdi-account-multiple', count: 6},
+        {text: 'Starred', icon: 'mdi-star', count: 12},
+        {text: 'Recent', icon: 'mdi-history', count: 5},
+        {text: 'Offline', icon: 'mdi-check-circle', count: 15},
+        {text: 'Uploads', icon: 'mdi-upload', count: 32},
+        {text: 'Backups', icon: 'mdi-cloud-upload', count: 1},
       ],
 
       followButton: {
@@ -124,6 +142,11 @@ export default {
   },
 
   methods: {
+    submit(category) {
+      console.log(category);
+      this.closeDialog();
+    },
+
     clickFollow() {
       this.follow = !this.follow;
 
@@ -136,7 +159,15 @@ export default {
         this.followButton.color = "#03A9F4";
         this.followButton.icon = "mdi mdi-account-multiple-plus"
       }
-    }
+    },
+
+    openDialog() {
+      this.isShowCategoryForm = true;
+    },
+
+    closeDialog() {
+      this.isShowCategoryForm = false;
+    },
   }
 }
 </script>

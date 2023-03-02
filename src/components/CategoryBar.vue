@@ -16,9 +16,21 @@
         color="blue"
         prepend-icon="mdi mdi-pencil-outline"
         border
+        @click="openDialog"
     >
       수정
     </v-btn>
+    <v-dialog
+        v-model="isShowCategoryDialog"
+        persistent
+        width="30%"
+    >
+      <CategoryDialog
+          v-bind:isCreated="isCreated"
+          @hide="closeDialog"
+          @submit="submit"
+      />
+    </v-dialog>
     <v-btn
         class="btn"
         color="red-accent-4"
@@ -31,16 +43,37 @@
 </template>
 
 <script>
+import CategoryDialog from "./form/CategoryDialog.vue";
 export default {
   name: 'CategoryBar',
+  components: {CategoryDialog},
+  props: {
+    isCreated: true
+  },
   data() {
     return {
+      isShowCategoryDialog: false,
+      isCreated: false,
       category: {
         name: "Category Name",
         description: "Category Description",
       },
     }
   },
+  methods: {
+    submit(category) {
+      console.log(category);
+      this.closeDialog();
+    },
+
+    openDialog() {
+      this.isShowCategoryDialog = true;
+    },
+
+    closeDialog() {
+      this.isShowCategoryDialog = false;
+    },
+  }
 }
 </script>
 

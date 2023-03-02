@@ -17,8 +17,7 @@
                     max-width="344"
                     v-bind="props"
                 >
-                  <v-img src="https://cdn.vuetifyjs.com/images/cards/forest-art.jpg">
-<!--                  <v-img draggable="false" src = favicon>-->
+<!--                  <v-img :src= "http://www.google.com/s2/favicons?domain="+bookmark.url>-->
                     <v-overlay
                       :model-value="isHovering"
                       contained
@@ -31,7 +30,7 @@
                         color="#29B6F6"
                         variant="flat">Move</v-btn>
                   </v-overlay>
-                  </v-img>
+<!--                  </v-img>-->
                   <v-card-text>
                     <h2 class="text-h6 text-primary">
                       {{bookmark.title}}
@@ -76,11 +75,11 @@
     }),
 
     setup() {
+
       const route = useRoute();
       const data = reactive({
         bookmarks:[],
       });
-      // let favicon = "https://www.google.com/s2/favicons?domain=";
       const category = route.params.category;
 
       if (category === undefined) {
@@ -107,7 +106,7 @@
         }else{
           this.temp = "yellow"
         }
-        
+
       },
 
       unLock() {

@@ -52,7 +52,7 @@ import router from "../../router";
 import IconDocumentation from "../icons/IconDocumentation.vue";
 import IconStar from "../icons/IconStar.vue";
 import IconPlusBox from "../icons/IconPlusBox.vue";
-import CreateCategoryForm from "../form/CreateCategoryForm.vue";
+import CreateCategoryForm from "../form/CategoryDialog.vue";
 
 export default {
   name: "SideBar",

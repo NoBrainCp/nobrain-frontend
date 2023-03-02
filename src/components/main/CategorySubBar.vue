@@ -24,7 +24,7 @@ import {reactive} from "vue";
 import axios from "axios";
 import IconDocumentation from "../icons/IconDocumentation.vue";
 import router from "../../router";
-import CreateCategoryForm from "../form/CreateCategoryForm.vue";
+import CreateCategoryForm from "../form/CategoryDialog.vue";
 import UpdateCategoryForm from "../form/UpdateCategoryForm.vue";
 
 export default {

@@ -19,7 +19,7 @@
               <v-text-field
                   v-model="category.name"
                   label="카테고리 이름"
-                  :rules="[rules.name]"
+                  :rules="[rules]"
               ></v-text-field>
             </v-col>
             <v-col cols="12">
@@ -79,9 +79,7 @@ export default {
       description: "",
       isPublic: false
     },
-    rules: {
-      name: v => !!v || '이름은 필수 입력 항목입니다.',
-    }
+    rules: v => !!v || '이름은 필수 입력 항목입니다.',
   }),
 
   methods: {
