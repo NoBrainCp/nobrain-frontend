@@ -1,12 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
-import MainView from "../views/MainView.vue";
 import SignUp from "../views/sign/SignUp.vue";
 import SignIn from "../views/sign/SignIn.vue";
 import ForgetPassword from "../views/find/ForgetPassword.vue";
 import FindById from "../views/find/FindById.vue";
 import FindByPassword from "../views/find/FindByPassword.vue";
 import ChangePassword from "../views/change/ChangePassword.vue";
-import Main from "../views/Main.vue";
+import MainView from "../views/MainView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -51,11 +50,6 @@ const router = createRouter({
       component: ChangePassword,
       props: true,
     },
-    {
-      path: "/main",
-      name: "mainn",
-      component: Main,
-    }
   ],
 });
 
