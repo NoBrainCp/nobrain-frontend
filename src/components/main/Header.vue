@@ -58,8 +58,6 @@
 </template>
 
 <script>
-import MainView from "../../views/MainView.vue";
-import axios from "axios";
 import { useRoute } from "vue-router";
 import router from "../../router";
 export default {
