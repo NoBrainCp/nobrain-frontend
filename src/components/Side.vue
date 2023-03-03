@@ -10,8 +10,8 @@
     <v-list-item
         prepend-avatar="https://cdn.vuetifyjs.com/images/john.jpg"
         nav
-        title="Yoon"
-        subtitle="leeyt1201@gmail.com"
+        :title = user.name
+        :subtitle= user.email
         class="account-item"
     >
 
@@ -117,9 +117,10 @@ export default {
       isCreated: true,
       isShowCategoryForm: false,
       user: {
-        name: "Yoon",
-        follower: 100,
-        following: 10
+        name: "",
+        email: "",
+        follower: "",
+        following: ""
       },
       categories: [
         {text: 'My Files', icon: 'mdi-folder', count: 3},

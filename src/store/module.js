@@ -40,7 +40,7 @@ const actions = {
             "email": id,
             "password": password
         }
-        axios.post("/api/signin", JSON.stringify(params), {
+        axios.post("/api/signin/", JSON.stringify(params), {
             headers: { 'content-type': 'application/json'}
         }).then(res => {
             commit('login', res)

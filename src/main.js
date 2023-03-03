@@ -6,6 +6,7 @@ import vueCookies from "vue-cookies"
 import vuetify from "./plugins/vuetify";
 import { loadFonts } from "./plugins/webfontloader";
 import Vue3TagsInput from 'vue3-tags-input'
+import axios from "axios";
 
 loadFonts();
 
@@ -27,4 +28,5 @@ const app = createApp(App).use(router)
     .use(store)
     .use(vuetify)
     .component('vue3-tags-input', Vue3TagsInput)
-    .mount("#app");
+app.config.globalProperties.$axios = axios;
+app.mount("#app");

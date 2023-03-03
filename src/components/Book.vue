@@ -120,7 +120,7 @@ export default {
     });
     const category = route.params.category;
     if (category === undefined) {
-      axios.get("/api/yoon/bookmarks").then((res) => {
+      axios.get("/api/" + route.params.username + "/bookmarks").then((res) => {
         data.bookmarks = res.data.list;
         data.isSubBarShow = false;
       })
