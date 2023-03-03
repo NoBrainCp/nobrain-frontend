@@ -1,56 +1,55 @@
 <template>
-  <v-card>
-    <v-card-title id="card-title">
-      <IconDocumentation width="35"/>
-      <span class="text-h5" id="card-title-text"> {{isCreated ? "카테고리 추가" : "카테고리 수정"}} </span>
-    </v-card-title>
-    <v-card-text>
-      <v-container>
-        <v-row>
-          <v-col cols="12">
-            <v-text-field
-                v-model="category.name"
-                label="카테고리 이름"
-                required
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field
-                v-model="category.description"
-                label="설명"
-                type="text"
-                required
-            ></v-text-field>
-            <v-checkbox
-                v-model="category.isPublic"
-                label="비공개"
-                color="info"
-                value="true"
-                hide-details
-            ></v-checkbox>
-          </v-col>
-
-        </v-row>
-      </v-container>
-    </v-card-text>
-    <v-card-actions>
-      <v-spacer></v-spacer>
-      <v-btn
-          color="blue-darken-1"
-          variant="text"
-          @click="$emit('hide')"
-      >
-        닫기
-      </v-btn>
-      <v-btn
-          color="blue-darken-1"
-          variant="text"
-          @click="$emit('submit', category)"
-      >
-        {{isCreated ? "저장" : "수정"}}
-      </v-btn>
-    </v-card-actions>
-  </v-card>
+  <v-dialog
+      v-model="categoryObj.dialog"
+      persistent
+      width="30%">
+    <v-card>
+      <v-card-title id="card-title">
+        <IconDocumentation width="35"/>
+        <span class="text-h5" id="card-title-text"> {{ categoryObj.title }} </span>
+      </v-card-title>
+      <v-card-text>
+        <v-container>
+          <v-row>
+            <v-col cols="12">
+              <v-text-field
+                  v-model="category.name"
+                  label="카테고리 이름"
+                  required/>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                  v-model="category.description"
+                  label="설명"
+                  type="text"
+                  required/>
+              <v-checkbox
+                  v-model="category.isPublic"
+                  label="비공개"
+                  color="info"
+                  value="true"
+                  hide-details/>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+            color="blue-darken-1"
+            variant="text"
+            @click="categoryObj.dialog=false">
+          닫기
+        </v-btn>
+        <v-btn
+            color="blue-darken-1"
+            variant="text"
+            @click="submit">
+          {{ categoryObj.btnName }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -62,8 +61,12 @@ import axios from 'axios';
 export default {
   name: 'CategoryDialog',
   components: {IconDocumentation, IconPlusBox},
-  props : {
-    isCreated : Boolean
+  props: {
+    categoryObj: {
+      title: "",
+      btnName: "",
+      dialog: Boolean,
+    }
   },
   data: () => ({
     route: useRoute(),
@@ -76,10 +79,15 @@ export default {
   }),
 
   methods: {
+    submit() {
+      this.categoryObj.dialog = false;
+      this.$emit('submit', this.category);
+    },
     async submitCategory() {
       this.dialog = false;
       axios.post("/api/" + this.route.params.username + "/category",
-          { name: this.category.name,
+          {
+            name: this.category.name,
             description: this.category.description,
             isPublic: this.category.isPublic
           })
@@ -111,7 +119,4 @@ export default {
   font-weight: bold;
 }
 
-#plusbox-icon:hover {
-  cursor: pointer;
-}
 </style>

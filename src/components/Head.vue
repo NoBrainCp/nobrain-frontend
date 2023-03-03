@@ -4,6 +4,7 @@
         src="../assets/images/logo_transparent.png"
         alt="nobrain-logo"
         class="logo"
+        to="/main"
     />
 
     <v-text-field

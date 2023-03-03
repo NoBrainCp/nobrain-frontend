@@ -2,62 +2,45 @@
   <v-app-bar class="app-bar" style="position: fixed" flat border>
     <div class="category-title">
       <span class="mdi mdi-folder icon-folder"></span>
-      {{category.name}}
+      {{ category.name }}
     </div>
 
     <div class="category-description">
-      {{category.description}}
+      {{ category.description }}
     </div>
 
     <v-spacer/>
-
     <v-btn
         class="btn"
         color="blue"
         prepend-icon="mdi mdi-pencil-outline"
         border
-        @click="openDialog"
+        @click="this.categoryObj.dialog=true"
     >
       수정
     </v-btn>
-    <v-dialog
-        v-model="isShowCategoryDialog"
-        persistent
-        width="30%"
-    >
-      <CategoryDialog
-          v-bind:isCreated="isCreated"
-          @hide="closeDialog"
-          @submit="submit"
-      />
-    </v-dialog>
-
+    <CategoryDialog
+        v-bind:categoryObj="categoryObj"
+        @submit="updateCategory"/>
     <v-btn
         class="btn"
         color="red-accent-4"
         prepend-icon="mdi mdi-delete"
         border
-        @click="openConfirm"
+        @click="this.confirmObj.dialog=true"
     >
       삭제
     </v-btn>
-    <v-dialog
-        v-model="isShowConfirm"
-        width="25%"
-    >
-      <ConfirmDialog
-          v-bind:confirmObj="confirmObj"
-          @cancel="closeConfirm"
-          @delete="deleteCategory"
-      />
-    </v-dialog>
-
+    <ConfirmDialog
+        v-bind:confirmObj="confirmObj"
+        @delete="deleteCategory"/>
   </v-app-bar>
 </template>
 
 <script>
 import CategoryDialog from "./form/CategoryDialog.vue";
 import ConfirmDialog from "./dialog/ConfirmDialog.vue";
+
 export default {
   name: 'CategoryBar',
   components: {ConfirmDialog, CategoryDialog},
@@ -65,56 +48,36 @@ export default {
     isCreated: true,
   },
 
-  data() {
-    return {
-      isShowCategoryDialog: false,
-      isShowConfirm: false,
-      isCreated: false,
-      category: {
-        name: "Category Name",
-        description: "Category Description",
-      },
+  data: () => ({
+    category: {
+      name: "Category Name",
+      description: "Category Description",
+    },
 
-      confirmObj: {
-        title: "",
-        text: "",
-      },
-    }
-  },
+    categoryObj: {
+      title: "카테고리 수정",
+      btnName: "수정",
+      dialog: false,
+    },
+
+    confirmObj: {
+      title: "카테고리 삭제",
+      text: "정말 카테고리를 삭제하시겠습니까?<br/>삭제하시면 관련된 북마크들까지 모두 삭제됩니다.",
+      dialog: false,
+    },
+  }),
+
   methods: {
-    submit(category) {
+    updateCategory(category) {
       console.log(category);
-      this.closeDialog();
-    },
-
-    openDialog() {
-      this.isShowCategoryDialog = true;
-    },
-
-    closeDialog() {
-      this.isShowCategoryDialog = false;
-    },
-
-    openConfirm() {
-      this.isShowConfirm = true;
-      this.setConfirm("카테고리 삭제", "정말 카테고리를 삭제하시겠습니까?<br/>삭제하시면 관련된 북마크들까지 모두 삭제됩니다.");
-    },
-
-    closeConfirm() {
-      this.isShowConfirm = false;
     },
 
     deleteCategory() {
-      this.closeConfirm();
       // delete API
     },
-
-    setConfirm(title, text) {
-      this.confirmObj.title = title;
-      this.confirmObj.text = text;
-    }
   }
 }
+
 </script>
 
 <style scoped>

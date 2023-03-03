@@ -1,19 +1,13 @@
 <template>
   <v-dialog
-      v-model="dialog"
+      v-model="bookmarkObj.dialog"
       persistent
       width="60%"
   >
-    <template v-slot:activator="{ props }">
-      <v-btn v-bind="props">
-        북마크 추가
-      </v-btn>
-    </template>
-
     <v-card>
       <v-card-title id="card-title">
         <IconDocumentation width="35"/>
-        <span class="text-h5" id="card-title-text">북마크 추가</span>
+        <span class="text-h5" id="card-title-text">{{ bookmarkObj.title }}</span>
       </v-card-title>
       <v-card-text>
         <v-container>
@@ -22,8 +16,7 @@
                 v-model="bookmark.url"
                 label="URL"
                 clearable
-                :rules="[rules.url]"
-            />
+                :rules="[rules.url]"/>
           </div>
 
           <div class="input-row">
@@ -32,16 +25,14 @@
                 label="이름"
                 required
                 :rules="[rules.title]"
-                clearable
-            />
+                clearable/>
           </div>
 
           <div class="input-row">
             <v-textarea
                 v-model="bookmark.description"
                 label="설명"
-                type="text"
-            />
+                type="text"/>
           </div>
 
           <div class="input-row">
@@ -49,8 +40,7 @@
                 label="카테고리 선택"
                 v-model="bookmark.category"
                 hint="카테고리를 선택해주세요"
-                :items="categoryNames"
-            />
+                :items="bookmarkObj.categoryNames"/>
           </div>
 
           <vue3-tags-input
@@ -66,26 +56,24 @@
                 label="비공개"
                 color="info"
                 value="true"
-                hide-details
-            />
+                hide-details/>
           </div>
         </v-container>
       </v-card-text>
+
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn
             color="blue-darken-1"
             variant="text"
-            @click="dialog = false"
-        >
+            @click="bookmarkObj.dialog= false">
           닫기
         </v-btn>
         <v-btn
             color="blue-darken-1"
             variant="text"
-            @click="submitBookmark"
-        >
-          저장
+            @click="submitBookmark">
+          {{ bookmarkObj.btnName }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -98,26 +86,29 @@ import axios from "axios";
 import {ru} from "vuetify/locale";
 
 export default {
-  name: 'CreateBookmarkForm',
-  computed: {
-    ru() {
-      return ru
+  name: 'BookmarkDialog',
+  components: {IconDocumentation},
+  props: {
+    bookmarkObj: {
+      title: "",
+      btnName: "",
+      dialog: Boolean,
+      categoryNames :[],
     }
   },
-  props: ["categoryNames"],
-  components: {IconDocumentation},
 
   data: () => ({
     route: useRoute(),
-    dialog: false,
+    dialog: true,
     bookmark: {
       url: "",
       title: "",
       description: "",
       category: [],
-      isPublic: "",
+      isPublic: false,
       tags: [],
     },
+
     rules: {
       url: v => !!v || 'URL은 필수 입력 항목입니다.',
       title:v => !!v || '이름은 필수 입력 항목입니다.'
@@ -125,7 +116,12 @@ export default {
   }),
 
   methods: {
-    async submitBookmark() {
+    submitBookmark() {
+      this.bookmarkObj.dialog = false;
+      this.$emit('submit', this.bookmark);
+    },
+
+    async submitBookmark2() {
       this.dialog = false;
       await axios.post("/api/" + this.route.params.username + "/bookmark",
           {

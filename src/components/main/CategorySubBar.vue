@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import CreateBookmarkForm from "../form/CreateBookmarkForm.vue";
+import CreateBookmarkForm from "../form/BookmarkDialog.vue";
 import {useRoute} from "vue-router";
 import {reactive} from "vue";
 import axios from "axios";
