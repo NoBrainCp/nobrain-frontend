@@ -2,19 +2,22 @@
   <v-dialog
       v-model="categoryObj.dialog"
       persistent
-      width="30%">
+      width="25%">
     <v-card>
       <v-card-title id="card-title">
-        <IconDocumentation width="35"/>
-        <span class="text-h5" id="card-title-text"> {{ categoryObj.title }} </span>
+        <span class="text-h5 mt-4 mr-4" id="card-title-text">
+          <v-icon class="mb-2 mr-3">mdi-bookshelf</v-icon>
+          {{ categoryObj.title }}
+        </span>
       </v-card-title>
       <v-card-text>
-        <v-container>
+        <v-container class="category-input-container">
           <v-row>
             <v-col cols="12">
               <v-text-field
                   v-model="category.name"
                   label="카테고리 이름"
+                  prepend-icon="mdi-rename"
                   required/>
             </v-col>
             <v-col cols="12">
@@ -22,12 +25,14 @@
                   v-model="category.description"
                   label="설명"
                   type="text"
+                  prepend-icon="mdi-tooltip-text"
                   required/>
               <v-checkbox
                   v-model="category.isPublic"
                   label="비공개"
                   color="info"
                   value="true"
+                  :prepend-icon="category.isPublic ? 'mdi mdi-lock':'mdi mdi-lock-open-variant'"
                   hide-details/>
             </v-col>
           </v-row>
@@ -117,6 +122,10 @@ export default {
 #card-title-text {
   color: #4f4d4d;
   font-weight: bold;
+}
+
+.category-input-container {
+  width: 500px;
 }
 
 </style>

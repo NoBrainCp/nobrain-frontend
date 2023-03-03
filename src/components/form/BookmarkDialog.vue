@@ -2,20 +2,25 @@
   <v-dialog
       v-model="bookmarkObj.dialog"
       persistent
-      width="60%"
+      width="42%"
   >
     <v-card>
       <v-card-title id="card-title">
-        <IconDocumentation width="35"/>
-        <span class="text-h5" id="card-title-text">{{ bookmarkObj.title }}</span>
+        <span
+            class="text-h5 mt-7 "
+            id="card-title-text">
+          <v-icon class="mb-2 mr-3">mdi-book-open-page-variant</v-icon>
+          {{ bookmarkObj.title }}
+        </span>
       </v-card-title>
       <v-card-text>
-        <v-container>
+        <v-container class="bookmark-input-container">
           <div class="input-row">
             <v-text-field
                 v-model="bookmark.url"
                 label="URL"
                 clearable
+                prepend-icon="mdi mdi-link-variant"
                 :rules="[rules.url]"/>
           </div>
 
@@ -24,6 +29,7 @@
                 v-model="bookmark.title"
                 label="이름"
                 required
+                prepend-icon="mdi-rename"
                 :rules="[rules.title]"
                 clearable/>
           </div>
@@ -32,23 +38,43 @@
             <v-textarea
                 v-model="bookmark.description"
                 label="설명"
-                type="text"/>
+                type="text"
+                prepend-icon="mdi-tooltip-text"
+            />
           </div>
 
           <div class="input-row">
             <v-select
                 label="카테고리 선택"
                 v-model="bookmark.category"
+                prepend-icon="mdi-bookshelf"
                 hint="카테고리를 선택해주세요"
                 :items="bookmarkObj.categoryNames"/>
           </div>
 
-          <vue3-tags-input
-              :tags="bookmark.tags"
-              id="input-tags"
-              placeholder="태그"
-              @on-tags-changed="handleChangeTag">
-          </vue3-tags-input>
+          <v-combobox
+              v-model="bookmark.tags"
+              :items="items"
+              chips
+              clearable
+              label="Tags"
+              multiple
+              prepend-icon="mdi-tag-multiple"
+              variant="solo"
+          >
+            <template v-slot:selection="{ attrs, item, select, selected }">
+              <v-chip
+                  v-bind="attrs"
+                  :model-value="bookmarkObj.tags"
+                  closable
+                  @click="select"
+                  @click:close="remove(item)"
+              >
+                <strong>{{ item }}</strong>&nbsp;
+                <span>(interest)</span>
+              </v-chip>
+            </template>
+          </v-combobox>
 
           <div class="input-row">
             <v-checkbox
@@ -56,6 +82,7 @@
                 label="비공개"
                 color="info"
                 value="true"
+                :prepend-icon="bookmark.isPublic ? 'mdi mdi-lock':'mdi mdi-lock-open-variant'"
                 hide-details/>
           </div>
         </v-container>
@@ -80,26 +107,28 @@
   </v-dialog>
 </template>
 <script>
-import IconDocumentation from "../icons/IconDocumentation.vue";
+
 import {useRoute} from "vue-router";
 import axios from "axios";
-import {ru} from "vuetify/locale";
-
 export default {
   name: 'BookmarkDialog',
-  components: {IconDocumentation},
+
   props: {
     bookmarkObj: {
       title: "",
       btnName: "",
       dialog: Boolean,
-      categoryNames :[],
+      categoryNames: [],
+      tags: [],
     }
   },
 
   data: () => ({
     route: useRoute(),
     dialog: true,
+    chips: [],
+    items: ['Streaming', 'Eating'],
+
     bookmark: {
       url: "",
       title: "",
@@ -111,7 +140,7 @@ export default {
 
     rules: {
       url: v => !!v || 'URL은 필수 입력 항목입니다.',
-      title:v => !!v || '이름은 필수 입력 항목입니다.'
+      title: v => !!v || '이름은 필수 입력 항목입니다.'
     }
   }),
 
@@ -119,6 +148,10 @@ export default {
     submitBookmark() {
       this.bookmarkObj.dialog = false;
       this.$emit('submit', this.bookmark);
+    },
+
+    remove (item) {
+      this.chips.splice(this.chips.indexOf(item), 1);
     },
 
     async submitBookmark2() {
@@ -161,6 +194,10 @@ export default {
   align-content: center;
   border-bottom: 1px solid #d3d1d1;
   margin-top: 10px
+}
+
+.bookmark-input-container {
+  width: 800px;
 }
 
 .input-row {

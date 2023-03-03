@@ -29,10 +29,10 @@
               v-for="(item, index) in searchConditions"
               :key="index"
               :value="index"
+              @click="selectSearchCondition(item.title)"
               class="search-items"
           >
             <v-list-item-title
-                @click="selectSearchCondition(item.title)"
                 :value="item.title">
               {{ item.title }}
             </v-list-item-title>

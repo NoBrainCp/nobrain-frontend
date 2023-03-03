@@ -1,7 +1,7 @@
 <template>
   <v-app-bar class="app-bar" style="position: fixed" flat border>
     <div class="category-title">
-      <span class="mdi mdi-folder icon-folder"></span>
+      <v-icon class="mr-2">mdi mdi-bookshelf</v-icon>
       {{ category.name }}
     </div>
 
