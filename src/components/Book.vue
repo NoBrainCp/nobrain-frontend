@@ -9,7 +9,7 @@
             v-bind="props"
             :elevation="isHovering ? 20 : 5">
           <v-img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLe5nUtk5JoD4sdl1VSGYazqdLh7to9LYI_Q&usqp=CAU"
+              :src="bookmark.image === null ? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLe5nUtk5JoD4sdl1VSGYazqdLh7to9LYI_Q&usqp=CAU' : bookmark.image"
               class="bookmark-img">
             <v-overlay
                 :model-value="isHovering"
@@ -148,6 +148,8 @@ export default {
         data.isSubBarShow = true;
       });
     }
+
+    console.log(data);
     return {data}
   },
 
