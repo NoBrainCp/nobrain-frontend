@@ -124,7 +124,7 @@ export default {
 
       user: {
         name: "Yoon",
-        email: "Yoon@gmail.com",
+        email: "yoon@gmail.com",
       },
 
       searchCondition: "My",

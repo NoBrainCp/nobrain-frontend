@@ -122,10 +122,10 @@ export default {
     },
 
     user: {
-      name: "",
-      email: "",
-      follower: "",
-      following: ""
+      name: "Yoon",
+      email: "yoon@gmail.com",
+      follower: "12",
+      following: "235"
     },
 
     categories: [
