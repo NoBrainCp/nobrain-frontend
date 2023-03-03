@@ -1,26 +1,48 @@
 <template>
   <v-app id="inspire">
-    <Headers/>
+    <Headed/>
 
-    <v-main class="grey lighten-3">
-      <v-container>
-        <v-row>
-          <SideBar/>
-          <router-view :key="$route.fullPath">
-            <Bookmark/>
-          </router-view>
-        </v-row>
-      </v-container>
+    <Side/>
+
+    <CategoryBar/>
+
+    <v-main class="main">
+      <Book/>
     </v-main>
+
+    <TagBar class="tag-bar"/>
+
   </v-app>
 </template>
 
 <script>
-  import Headers from "../components/main/Header.vue";
-  import SideBar from "../components/main/SideBar.vue";
-  import Bookmark from "../components/main/Bookmark.vue";
+import Side from "../components/Side.vue";
+import Headed from "../components/Head.vue";
+import Book from "../components/Book.vue";
+import CategoryBar from "../components/CategoryBar.vue";
+import TagBar from "../components/TagBar.vue";
 
-  export default {
-    components: {Bookmark, SideBar, Headers},
-  }
+export default {
+  components: {TagBar, CategoryBar, Book, Headed, Side},
+  name: 'main',
+
+  data: () => ({
+    cards: ['Today', 'Yesterday'],
+    drawer: null,
+    links: [
+      ['mdi-inbox-arrow-down', 'Inbox'],
+      ['mdi-send', 'Send'],
+      ['mdi-delete', 'Trash'],
+      ['mdi-alert-octagon', 'Spam'],
+    ],
+  }),
+}
 </script>
+
+<style scoped>
+.main {
+  margin-top: 35px;
+  margin-bottom: 35px;
+  margin-left: 35px;
+}
+</style>
