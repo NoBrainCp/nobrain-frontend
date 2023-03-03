@@ -64,12 +64,7 @@
                   </v-list-item>
                 </v-list>
               </v-menu>
-              <BookmarkDialog
-                  v-bind:bookmarkObj="bookmarkDialogObj"
-                  @submit="updateBookmark"/>
-              <ConfirmDialog
-                  v-bind:confirmObj="confirmObj"
-                  @delete="deleteBookmark"/>
+
             </v-col>
           </div>
 
@@ -94,6 +89,12 @@
       </v-hover>
     </v-col>
   </v-row>
+  <BookmarkDialog
+      v-bind:bookmarkObj="bookmarkDialogObj"
+      @submit="updateBookmark"/>
+  <ConfirmDialog
+      v-bind:confirmObj="confirmObj"
+      @delete="deleteBookmark"/>
 </template>
 
 <script>

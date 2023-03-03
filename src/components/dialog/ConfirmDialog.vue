@@ -4,10 +4,12 @@
       persistent
       width="25%">
     <v-card>
-      <v-card-title class="text-h5 pt-4 pl-6 font-weight-bold">
+      <v-card-title class="text-h5 pt-4 pl-6 font-weight-bold mt-3">
         {{ confirmObj.title }}
       </v-card-title>
-      <v-card-text v-html="confirmObj.text"/>
+      <v-divider/>
+
+      <v-card-text class="mt-2" v-html="confirmObj.text"/>
 
       <v-card-actions>
         <v-spacer></v-spacer>

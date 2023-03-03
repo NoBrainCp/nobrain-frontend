@@ -125,7 +125,7 @@ export default {
 }
 
 .category-input-container {
-  width: 500px;
+  width: 420px;
 }
 
 </style>

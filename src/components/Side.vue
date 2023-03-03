@@ -65,6 +65,7 @@
       <div class="category-header-container" v-if="!rail">
         <v-list-subheader class="category-header">카테고리</v-list-subheader>
         <v-btn
+            class="mr-2"
             size="25"
             icon="mdi-plus"
             @click="categoryObj.dialog=true"/>
@@ -129,13 +130,13 @@ export default {
     },
 
     categories: [
-      {text: 'My Files', icon: 'mdi-folder', count: 3},
-      {text: 'Shared with me', icon: 'mdi-account-multiple', count: 6},
       {text: 'Starred', icon: 'mdi-star', count: 12},
-      {text: 'Recent', icon: 'mdi-history', count: 5},
-      {text: 'Offline', icon: 'mdi-check-circle', count: 15},
-      {text: 'Uploads', icon: 'mdi-upload', count: 32},
-      {text: 'Backups', icon: 'mdi-cloud-upload', count: 1},
+      {text: 'Java', icon: 'mdi-folder', count: 6},
+      {text: 'Spring', icon: 'mdi-folder', count: 3},
+      {text: 'JPA', icon: 'mdi-folder', count: 5},
+      {text: 'Spring Boot', icon: 'mdi-folder', count: 15},
+      {text: 'Vue js', icon: 'mdi-folder', count: 32},
+      {text: 'Vuetify', icon: 'mdi-folder', count: 1},
     ],
 
     followButton: {
