@@ -31,32 +31,53 @@
           @submit="submit"
       />
     </v-dialog>
+
     <v-btn
         class="btn"
         color="red-accent-4"
         prepend-icon="mdi mdi-delete"
         border
+        @click="openConfirm"
     >
       삭제
     </v-btn>
+    <v-dialog
+        v-model="isShowConfirm"
+        width="25%"
+    >
+      <ConfirmDialog
+          v-bind:confirmObj="confirmObj"
+          @cancel="closeConfirm"
+          @delete="deleteCategory"
+      />
+    </v-dialog>
+
   </v-app-bar>
 </template>
 
 <script>
 import CategoryDialog from "./form/CategoryDialog.vue";
+import ConfirmDialog from "./dialog/ConfirmDialog.vue";
 export default {
   name: 'CategoryBar',
-  components: {CategoryDialog},
+  components: {ConfirmDialog, CategoryDialog},
   props: {
-    isCreated: true
+    isCreated: true,
   },
+
   data() {
     return {
       isShowCategoryDialog: false,
+      isShowConfirm: false,
       isCreated: false,
       category: {
         name: "Category Name",
         description: "Category Description",
+      },
+
+      confirmObj: {
+        title: "",
+        text: "",
       },
     }
   },
@@ -73,6 +94,25 @@ export default {
     closeDialog() {
       this.isShowCategoryDialog = false;
     },
+
+    openConfirm() {
+      this.isShowConfirm = true;
+      this.setConfirm("카테고리 삭제", "정말 카테고리를 삭제하시겠습니까?<br/>삭제하시면 관련된 북마크들까지 모두 삭제됩니다.");
+    },
+
+    closeConfirm() {
+      this.isShowConfirm = false;
+    },
+
+    deleteCategory() {
+      this.closeConfirm();
+      // delete API
+    },
+
+    setConfirm(title, text) {
+      this.confirmObj.title = title;
+      this.confirmObj.text = text;
+    }
   }
 }
 </script>
