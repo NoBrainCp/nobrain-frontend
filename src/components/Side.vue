@@ -10,11 +10,10 @@
     <v-list-item
         prepend-avatar="https://cdn.vuetifyjs.com/images/john.jpg"
         nav
-        :title = user.name
-        :subtitle= user.email
+        :title=user.name
+        :subtitle=user.email
         class="account-item"
     >
-
       <template v-slot:append>
         <v-btn
             variant="text"
@@ -34,7 +33,7 @@
           id="follow-btn"
           class="btn"
           :color="followButton.color"
-          @click="clickFollow()">
+          @click="clickFollow">
         <v-icon id="follow-icon">{{ followButton.icon }}</v-icon>
         {{ followButton.text }}
       </v-btn>
@@ -52,35 +51,29 @@
           class="btn"
           color="#009688"
           prepend-icon="mdi mdi-bookmark"
+          @click="bookmarkDialogObj.dialog=true"
       >
         북마크 추가
       </v-btn>
+      <BookmarkDialog
+          v-bind:bookmarkObj="bookmarkDialogObj"
+          @submit="addBookmark"/>
     </div>
 
     <v-divider v-if="rail" class="account-divider"></v-divider>
-
     <v-list density="compact" nav>
       <div class="category-header-container" v-if="!rail">
         <v-list-subheader class="category-header">카테고리</v-list-subheader>
         <v-btn
             size="25"
             icon="mdi-plus"
-            @click="openDialog"/>
-        <v-dialog
-            v-model="isShowCategoryForm"
-            persistent
-            width="30%"
-        >
-          <CategoryDialog
-              v-bind:isCreated="isCreated"
-              @hide="closeDialog"
-              @submit="submit"/>
-        </v-dialog>
-
+            @click="categoryObj.dialog=true"/>
+        <CategoryDialog
+            v-bind:categoryObj="categoryObj"
+            @submit="addCategory"/>
       </div>
 
       <v-divider v-if="!rail"></v-divider>
-
       <v-list-item v-for="(category, i) in categories" :key="i"
                    :value="category"
                    active-color="light-blue">
@@ -92,62 +85,67 @@
           <v-badge
               color="blue"
               :content="category.count"
-              inline
-          >
-          </v-badge>
-
+              inline/>
         </template>
       </v-list-item>
     </v-list>
-
   </v-navigation-drawer>
 </template>
 
 <script>
 import CategoryDialog from "./form/CategoryDialog.vue";
+import Bookmark from "./main/Bookmark.vue";
+import BookmarkDialog from "./form/BookmarkDialog.vue";
 
 export default {
   name: 'Side',
-  components: {CategoryDialog},
+  components: {BookmarkDialog, Bookmark, CategoryDialog},
 
-  data() {
-    return {
-      drawer: true,
-      rail: false,
-      isCreated: true,
-      isShowCategoryForm: false,
-      user: {
-        name: "",
-        email: "",
-        follower: "",
-        following: ""
-      },
-      categories: [
-        {text: 'My Files', icon: 'mdi-folder', count: 3},
-        {text: 'Shared with me', icon: 'mdi-account-multiple', count: 6},
-        {text: 'Starred', icon: 'mdi-star', count: 12},
-        {text: 'Recent', icon: 'mdi-history', count: 5},
-        {text: 'Offline', icon: 'mdi-check-circle', count: 15},
-        {text: 'Uploads', icon: 'mdi-upload', count: 32},
-        {text: 'Backups', icon: 'mdi-cloud-upload', count: 1},
-      ],
+  data: () => ({
+    follow: true,
+    drawer: true,
+    rail: false,
 
-      followButton: {
-        text: "팔로우",
-        color: "#03A9F4",
-        icon: "mdi mdi-account-multiple-plus",
-      },
-
-      follow: true,
-    }
-  },
-
-  methods: {
-    submit(category) {
-      console.log(category);
-      this.closeDialog();
+    categoryObj: {
+      title: "카테고리 추가",
+      btnName: "추가",
+      dialog: false,
     },
 
+    bookmarkDialogObj: {
+      title: "북마크 추가",
+      btnName: "추가",
+      dialog: false,
+      categoryNames: [
+        "java", "spring", "ddd", "aaa"
+      ],
+    },
+
+    user: {
+      name: "",
+      email: "",
+      follower: "",
+      following: ""
+    },
+
+    categories: [
+      {text: 'My Files', icon: 'mdi-folder', count: 3},
+      {text: 'Shared with me', icon: 'mdi-account-multiple', count: 6},
+      {text: 'Starred', icon: 'mdi-star', count: 12},
+      {text: 'Recent', icon: 'mdi-history', count: 5},
+      {text: 'Offline', icon: 'mdi-check-circle', count: 15},
+      {text: 'Uploads', icon: 'mdi-upload', count: 32},
+      {text: 'Backups', icon: 'mdi-cloud-upload', count: 1},
+    ],
+
+    followButton: {
+      text: "팔로우",
+      color: "#03A9F4",
+      icon: "mdi mdi-account-multiple-plus",
+    },
+  }),
+
+  methods: {
     clickFollow() {
       this.follow = !this.follow;
 
@@ -162,13 +160,13 @@ export default {
       }
     },
 
-    openDialog() {
-      this.isShowCategoryForm = true;
+    addBookmark(bookmark) {
+      console.log(bookmark);
     },
 
-    closeDialog() {
-      this.isShowCategoryForm = false;
-    },
+    addCategory(category) {
+      console.log(category);
+    }
   }
 }
 </script>
@@ -245,10 +243,6 @@ export default {
   display: flex;
   justify-content: space-between;
   margin-top: 25px;
-}
-
-.category-list {
-  margin-top: 20px;
 }
 
 .category-header {
