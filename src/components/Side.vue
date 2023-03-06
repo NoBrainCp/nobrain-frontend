@@ -103,7 +103,7 @@ export default {
   components: {BookmarkDialog, Bookmark, CategoryDialog},
 
   data: () => ({
-    follow: true,
+    follow: false,
     drawer: true,
     rail: false,
 
