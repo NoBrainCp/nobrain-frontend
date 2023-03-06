@@ -124,7 +124,11 @@ export default {
               if (this.isRememberId) {
                 this.$cookies.set("loginIdCookie", this.id);
               }
-              router.push("main/" + res.data.data.username);
+
+
+              router.push(res.data.data.username);
+            }
+
           }).catch((err) => {
         alert(err.response.data.message);
       })

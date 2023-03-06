@@ -9,9 +9,11 @@
     />
 
     <v-text-field
+        v-model="searchObj.text"
         class="search-input"
         placeholder="Search"
         append-icon="mdi-magnify"
+        @keyup="search"
     >
 
       <v-menu>
@@ -22,7 +24,7 @@
               append-icon="mdi mdi-menu-down"
               v-bind="props"
           >
-            {{searchCondition}}
+            {{searchObj.condition}}
           </v-btn>
         </template>
         <v-list class="search-item-list">
@@ -128,22 +130,29 @@ export default {
         { title: "Setting", icon: "mdi-cog" },
         { title: "Logout", icon: "mdi-logout" },
       ],
-      // user: {
-      //   name: store.state.username,
-      //   email: store.state.userEmail,
-      // },
-      searchCondition: "My",
+
       searchConditions: [
         { title: "MY" },
         { title: "FOLLOW" },
         { title: "ALL" }
       ],
+
+      searchObj: {
+        condition: "My",
+        text: "",
+      },
+
       menu: false,
       gridView: false,
     }
   },
 
   methods: {
+    search() {
+      console.log(this.searchObj.text);
+      console.log(this.searchObj.condition);
+    },
+
     test() {
       console.log(store.state.accessToken);
       console.log(store.state.userId);
@@ -152,7 +161,7 @@ export default {
     },
 
     selectSearchCondition(title) {
-      this.searchCondition = title;
+      this.searchObj.condition = title;
     }
   }
 }
@@ -177,7 +186,7 @@ export default {
   width: 160px;
   height: 50px;
   position: relative;
-  bottom: 14px;
+  bottom: 1px;
   right: 14px;
   background-color: #03A9F4;
   border-radius: 100px;
@@ -227,6 +236,12 @@ export default {
 </style>
 
 <style>
+.v-input__control {
+  display: flex;
+  align-items: center;
+  height: 55px;
+}
+
 .search-input .v-field__overlay {
   display: none !important;
 }
@@ -238,10 +253,6 @@ export default {
 .v-input--horizontal .v-input__append {
   cursor: pointer;
   padding-right: 20px;
-}
-
-#input-1 {
-  margin-bottom: 28px;
 }
 
 .v-menu .v-overlay__content {
