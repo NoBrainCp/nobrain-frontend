@@ -1,15 +1,18 @@
 import { createStore } from 'vuex'
 import createPersistedState from "vuex-persistedstate"
-import modules from './modules.js'
+import module from './module.js'
 
-const persistedState = createPersistedState({
-    paths: ['token', 'id', 'name', 'role', 'nickname']
-})
+// const persistedState = createPersistedState({
+//     paths: ['token', 'id', 'name', 'role', 'nickname']
+// })
 
 export const store = createStore({
-    state: modules.state,
-    getters: modules.getters,
-    mutations: modules.mutations,
-    actions: modules.actions,
-    plugins: [persistedState]
+    state: module.state,
+    getters: module.getters,
+    mutations: module.mutations,
+    actions: module.actions,
+    plugins: [
+        createPersistedState({
+        })
+    ],
 })

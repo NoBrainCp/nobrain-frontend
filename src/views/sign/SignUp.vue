@@ -220,14 +220,11 @@
 </template>
 
 <script>
-import axios from "axios";
 import SignUpDialog from "../../components/dialog/SignUpDialog.vue";
-
 export default {
   name: "SignUp",
   components: {SignUpDialog},
   data: () => ({
-
     user: {
       name: "",
       email: "",
@@ -243,7 +240,7 @@ export default {
       email: v => !!v || '이메일은 필수 입력 항목입니다.',
       loginId: v => !!v || '로그인 ID는 필수 입력 항목입니다',
       password: v => !!v || '비밀번호는 필수 입력 항목입니다.',
-      phoneNumber:v => !!v || '핸드폰 번호는 필수 입력 항목입니다.'
+      phoneNumber: v => !!v || '핸드폰 번호는 필수 입력 항목입니다.'
     },
 
     dialogObj: {
@@ -266,7 +263,7 @@ export default {
   methods: {
 
     checkDuplicationName(name) {
-      axios
+      this.$axios
           .get("/api/user/username/" + name + "/exists")
           .then((res) => {
             this.isExistsName = res.data.data;
@@ -286,7 +283,7 @@ export default {
     },
 
     checkDuplicationId(loginId) {
-      axios
+      this.$axios
           .get("/api/user/login-id/" + loginId + "/exists")
           .then((res) => {
             this.isExistsId = res.data.data;

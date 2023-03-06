@@ -7,52 +7,52 @@
             <v-col cols="12" md="6">
               <v-card-text class="mt-15">
                 <h2 class="text-center">Login in to Your Account</h2>
-                <br />
+                <br/>
                 <h6 class="text-center grey--text">
                   Log in to your account so you can continue building
                 </h6>
                 <v-row align-center justify="center">
                   <v-col cols="12" sm="8" class="mt-8">
                     <v-text-field
-                      label="Id"
-                      bg-color="white"
-                      color="blue"
-                      v-model="id"
+                        label="Id"
+                        bg-color="white"
+                        color="blue"
+                        v-model="id"
                     />
                     <v-text-field
-                      label="Password"
-                      bg-color="white"
-                      color="blue"
-                      type="password"
-                      v-model="password"
-                      @keydown.enter="signIn()"
+                        label="Password"
+                        bg-color="white"
+                        color="blue"
+                        type="password"
+                        v-model="password"
+                        @keydown.enter="signIn()"
                     />
                     <v-row>
                       <v-col cols="12" sm="7">
                         <v-checkbox
-                          label="Remember Me"
-                          class="mt-n5"
-                          color="blue"
-                          v-model="isRememberId"
+                            label="Remember Me"
+                            class="mt-n5"
+                            color="blue"
+                            v-model="isRememberId"
                         >
                         </v-checkbox>
                       </v-col>
                     </v-row>
                     <v-btn
-                      color="blue"
-                      class="mt-n7"
-                      dark
-                      block
-                      tile
-                      @click="signIn()"
+                        color="blue"
+                        class="mt-n7"
+                        dark
+                        block
+                        tile
+                        @click="signIn()"
                     >
                       Login
                     </v-btn>
                     <v-col cols="12" sm="10">
                       <a
-                        class="caption text"
-                        id="forgetPassword"
-                        href="/forget-password">
+                          class="caption text"
+                          id="forgetPassword"
+                          href="/forget-password">
                         Did you forget your password?
                       </a>
                     </v-col>
@@ -64,10 +64,10 @@
               <h3 class="text-center">Welcome!</h3>
               <div class="text-center">
                 <img
-                  class="center"
-                  src="../../assets/images/logo_transparent.png"
-                  alt="noBrainLogo"
-                  style="width: 200px"
+                    class="center"
+                    src="../../assets/images/logo_transparent.png"
+                    alt="noBrainLogo"
+                    style="width: 200px"
                 />
               </div>
               <div class="text-center">
@@ -77,13 +77,13 @@
                 </v-card-text>
                 <div class="text-center">
                   <v-btn
-                    absolute="true"
-                    tile
-                    outlined
-                    dark
-                    to="/signup"
-                    color="#BBDEFB"
-                    >Sing up
+                      absolute="true"
+                      tile
+                      outlined
+                      dark
+                      to="/signup"
+                      color="#BBDEFB"
+                  >Sing up
                   </v-btn>
                 </div>
               </div>
@@ -96,53 +96,56 @@
 </template>
 
 <script>
-import axios from "axios";
 import router from "../../router";
+import {store} from "/src/store/index"
+import axios from "axios";
 
 export default {
   name: "SignIn",
-  data() {
-    return {
-      id: this.$cookies.get("loginIdCookie"),
-      password: "",
-      isRememberId: true,
-    };
-  },
+  data: () => ({
+    id: "",
+    password: "",
+    isRememberId: true,
+  }),
 
   methods: {
     async signIn() {
-      try {
-        await axios
+      let userData = {};
+      this.$axios
           .post("/api/sign-in", {
             loginId: this.id,
-            password: this.password,
+            password: this.password
           })
           .then((res) => {
-            let routerParam = res.data.data.username;
-
             if (res.status === 200) {
-              // let id = this.id;
-              // let password = this.password;
-              // this.store.dispatch("login", {id, password});
-
+              userData.loginId = this.id;
+              userData.userId = res.data.data.userId;
+              userData.accessToken = res.data.data.accessToken;
+              store.commit("setToken", userData);
+              this.setUserInfo(res.data.data.userId);
               if (this.isRememberId) {
                 this.$cookies.set("loginIdCookie", this.id);
               }
-
-              router.push({
-                name: "main",
-                params: {
-                  username: routerParam,
-                },
-              });
+              router.push("main/" + res.data.data.username);
             }
-          });
-      } catch (err) {
+          }).catch((err) => {
         alert(err.response.data.message);
-      }
+      })
     },
-  },
-};
+    setUserInfo(userId) {
+      let userData = {};
+      this.$axios
+          .get("/api/user/"+ userId +"/info")
+          .then((res) => {
+            userData.username = res.data.data.username;
+            userData.userEmail = res.data.data.email;
+            store.commit("setUserInfo", userData);
+          })
+    }
+
+  }
+}
+
 </script>
 
 <style scoped>
