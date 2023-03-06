@@ -1,55 +1,82 @@
 import axios from 'axios'
-import { router } from '../router/index.js'
+import router from '../router/index.js'
 
 const state = {
-    token: null,
-    id: null,
-    name: null,
-    role: null,
-    email: null,
-    nickname: null
+    accessToken: null,
+    userId: null,
+    loginId: null,
+    username: null,
+    userEmail: null,
+    // role: null,
 }
 
 const getters = {
-    'token': state => state.token,
-    'id': state => state.id,
-    'email': state => state.email,
-    'nickname': state => state.nickname
+    currentId(state) {
+        return state.userId;
+    },
+    currentEmail(state) {
+        return state.userEmail;
+    },
+    currentName(state) {
+        return state.username;
+    },
+    currentAccessToken(state) {
+        return state.accessToken;
+    }
+
 }
 
 const mutations = {
-    login (state, item) {
-        state.token = item.headers['Authorization']
-        state.id = item.data['id']
-        state.role = item.data['role']
-        state.email = item.data['email']
-        state.nickname = item.data['nickname']
+    setToken (state, payload) {
+        state.userId = payload.userId;
+        state.loginId = payload.loginId;
+        state.accessToken = payload.accessToken;
     },
-    logout (state) {
-        state.token = null
-        state.id = null
-        state.role = null
-        state.email = null
-        state.nickname = null
+    setUserInfo(state, payload) {
+        state.username = payload.username;
+        state.userEmail = payload.userEmail;
     }
+    // logout (state) {
+    //     state.token = null
+    //     state.id = null
+    //     state.role = null
+    //     state.email = null
+    //     state.nickname = null
+    // }
 }
 
 const actions = {
-    login ({commit}, {id, password}) {
-        const params = {
-            "email": id,
-            "password": password
-        }
-        axios.post("/api/signin/", JSON.stringify(params), {
-            headers: { 'content-type': 'application/json'}
-        }).then(res => {
-            commit('login', res)
-            router.push('main')
-        }).catch(e => {
-            console.log(e)
-            alert("로그인 요청에 문제가 발생했습니다.")
-        })
-    },
+    // login ({commit}, {id, password}) {
+    //     const params = {
+    //         "email": id,
+    //         "password": password
+    //     }
+    //     axios.post("/api/signin/", JSON.stringify(params), {
+    //         headers: { 'content-type': 'application/json'}
+    //     }).then(res => {
+    //         commit('login', res)
+    //         router.push('main')
+    //     }).catch(e => {
+    //         console.log(e)
+    //         alert("로그인 요청에 문제가 발생했습니다.")
+    //     })
+    // },
+    // signIn({commit}, id, password) {
+    //     const params = {
+    //         loginId: id,
+    //         password: password
+    //     }
+    //     axios.post("/api/sign-in",JSON.stringify(params), {
+    //     }).then(res => {
+    //         commit('login', res.data.data.accessToken, res.data.data.userId, res.data.data.username);
+    //     }).catch(err => {
+    //         console.log(err);
+    //         console.log(id);
+    //         console.log(password);
+    //         alert("로그인 요청에 문제가 발생했습니다.")
+    //     })
+
+    // },
     logout ({commit}) {
         commit('logout')
     }

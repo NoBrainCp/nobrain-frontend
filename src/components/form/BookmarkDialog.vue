@@ -197,7 +197,7 @@ export default {
 }
 
 .bookmark-input-container {
-  width: 680px;
+  width: 90%;
 }
 
 .input-row {
