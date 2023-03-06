@@ -97,8 +97,7 @@
 
 <script>
 import router from "../../router";
-import {store} from "/src/store/index"
-import axios from "axios";
+import {store} from "../../store"
 
 export default {
   name: "SignIn",
@@ -117,7 +116,6 @@ export default {
             password: this.password
           })
           .then((res) => {
-            if (res.status === 200) {
               userData.loginId = this.id;
               userData.userId = res.data.data.userId;
               userData.accessToken = res.data.data.accessToken;
@@ -127,7 +125,6 @@ export default {
                 this.$cookies.set("loginIdCookie", this.id);
               }
               router.push("main/" + res.data.data.username);
-            }
           }).catch((err) => {
         alert(err.response.data.message);
       })
@@ -142,7 +139,6 @@ export default {
             store.commit("setUserInfo", userData);
           })
     }
-
   }
 }
 

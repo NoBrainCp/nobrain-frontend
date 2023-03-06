@@ -68,6 +68,7 @@
 <script>
 import axios from "axios";
 import {useRoute} from "vue-router";
+import router from "../../router";
 
 export default {
   name: "ChangePassword",
@@ -89,7 +90,7 @@ export default {
         });
         console.log(result);
         alert("비밀번호 변경이 완료되었습니다.");
-        this.$router.push("/");
+        await router.push("/");
       } catch (err) {
         alert("비밀번호가 일치하지 않습니다.");
       }

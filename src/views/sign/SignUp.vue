@@ -305,7 +305,7 @@ export default {
       try {
         this.isError = 200;
         if (this.isExistsId === false && this.isExistsName === false) {
-          let result = await axios.post("/api/sign-up", {
+          let result = await this.$axios.post("/api/sign-up", {
             name: this.user.name,
             email: this.user.email,
             loginId: this.user.loginId,
