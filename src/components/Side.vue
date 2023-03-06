@@ -10,8 +10,8 @@
     <v-list-item
         prepend-avatar="https://cdn.vuetifyjs.com/images/john.jpg"
         nav
-        :title=user.name
-        :subtitle=user.email
+        :title=store.state.username
+        :subtitle=store.state.userEmail
         class="account-item"
     >
       <template v-slot:append>
@@ -97,9 +97,15 @@
 import CategoryDialog from "./form/CategoryDialog.vue";
 import Bookmark from "./main/Bookmark.vue";
 import BookmarkDialog from "./form/BookmarkDialog.vue";
+import {store} from "../store";
 
 export default {
   name: 'Side',
+  computed: {
+    store() {
+      return store
+    }
+  },
   components: {BookmarkDialog, Bookmark, CategoryDialog},
 
   data: () => ({

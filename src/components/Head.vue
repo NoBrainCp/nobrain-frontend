@@ -4,7 +4,8 @@
         src="../assets/images/logo_transparent.png"
         alt="nobrain-logo"
         class="logo"
-        to="/main"
+        @click="test"
+
     />
 
     <v-text-field
@@ -60,8 +61,7 @@
           <v-avatar start>
             <v-img src="https://cdn.vuetifyjs.com/images/john.jpg"></v-img>
           </v-avatar>
-
-          {{user.name}}
+          {{store.state.username}}
         </v-chip>
       </template>
 
@@ -72,9 +72,9 @@
               <v-avatar image="https://cdn.vuetifyjs.com/images/john.jpg"></v-avatar>
             </template>
 
-            <v-list-item-title>{{user.name}}</v-list-item-title>
+            <v-list-item-title>{{store.state.username}}</v-list-item-title>
 
-            <v-list-item-subtitle>{{user.email}}</v-list-item-subtitle>
+            <v-list-item-subtitle>{{store.state.userEmail}}</v-list-item-subtitle>
 
             <template v-slot:append>
               <v-list-item-action>
@@ -111,8 +111,15 @@
 
 
 <script>
+import {store} from "../store";
+
 export default {
   name: 'Headed',
+  computed: {
+    store() {
+      return store
+    }
+  },
   data () {
     return {
       menus: [
@@ -121,12 +128,10 @@ export default {
         { title: "Setting", icon: "mdi-cog" },
         { title: "Logout", icon: "mdi-logout" },
       ],
-
-      user: {
-        name: "Yoon",
-        email: "yoon@gmail.com",
-      },
-
+      // user: {
+      //   name: store.state.username,
+      //   email: store.state.userEmail,
+      // },
       searchCondition: "My",
       searchConditions: [
         { title: "MY" },
@@ -139,6 +144,13 @@ export default {
   },
 
   methods: {
+    test() {
+      console.log(store.state.accessToken);
+      console.log(store.state.userId);
+      console.log(store.state.username);
+      console.log(store.state.userEmail);
+    },
+
     selectSearchCondition(title) {
       this.searchCondition = title;
     }
@@ -231,10 +243,9 @@ export default {
 #input-1 {
   margin-bottom: 28px;
 }
-</style>
 
-<style>
 .v-menu .v-overlay__content {
   border-radius: 20px;
 }
 </style>
+
