@@ -10,6 +10,7 @@
             :elevation="isHovering ? 20 : 5">
           <v-img
               :src="bookmark.image === null ? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLe5nUtk5JoD4sdl1VSGYazqdLh7to9LYI_Q&usqp=CAU' : bookmark.image"
+              cover
               class="bookmark-img">
             <v-overlay
                 :model-value="isHovering"
@@ -34,7 +35,7 @@
                   @click="clickLock(bookmark)"/>
               <v-icon
                   size="27"
-                  :color="bookmark.star ? 'light-blue' : 'grey-lighten-1'"
+                  :color="bookmark.starred ? 'light-blue' : 'grey-lighten-1'"
                   class="mdi mdi-star icon-star"
                   @click="clickStar(bookmark)"/>
               <v-menu

@@ -34,13 +34,13 @@
                 clearable/>
           </div>
 
-          <div class="input-row">
+          <div class="input-row input-text-area">
+            <v-icon class="mdi mdi-tooltip-text input-text-area-icon"></v-icon>
             <v-textarea
                 v-model="bookmark.description"
                 label="설명"
                 type="text"
-                prepend-icon="mdi-tooltip-text"
-            />
+                prepend-icon="mdi "/>
           </div>
 
           <div class="input-row">
@@ -202,6 +202,16 @@ export default {
 
 .input-row {
   margin-top: 5px;
+}
+
+.input-text-area {
+  margin-top: 20px;
+  margin-bottom: 50px;
+}
+
+.input-text-area-icon {
+  color: #888888;
+  margin-bottom: 10px;
 }
 
 #input-tags {
