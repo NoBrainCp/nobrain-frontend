@@ -6,7 +6,8 @@ import FindById from "../views/find/FindById.vue";
 import FindByPassword from "../views/find/FindByPassword.vue";
 import ChangePassword from "../views/change/ChangePassword.vue";
 import MainView from "../views/MainView.vue";
-import VueCookies from "vue-cookies"
+import UserProfile from "../views/UserProfile.vue";
+
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -51,6 +52,12 @@ const router = createRouter({
             component: ChangePassword,
             props: true,
         },
+        {
+            path: "/profile",
+            name: "userprofile",
+            component: UserProfile,
+            props: true,
+        }
     ],
 });
 
