@@ -10,8 +10,8 @@
             :elevation="isHovering ? 20 : 5">
           <v-img
               :src="bookmark.image === null ? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLe5nUtk5JoD4sdl1VSGYazqdLh7to9LYI_Q&usqp=CAU' : bookmark.image"
-              cover
-              class="bookmark-img">
+              class="bookmark-img"
+              cover>
             <v-overlay
                 :model-value="isHovering"
                 contained
@@ -166,7 +166,7 @@ export default {
     },
 
     clickStar(bookmark) {
-      bookmark.star = !bookmark.star;
+      bookmark.starred = !bookmark.starred;
     },
 
     clickLock(bookmark) {
@@ -180,11 +180,11 @@ export default {
 
 .bookmark-card {
   width: 270px;
-  height: 330px;
+  height: 350px;
 }
 
 .bookmark-img {
-  height: 150px;
+  height: 160px;
 }
 
 .card-header {
@@ -207,7 +207,7 @@ export default {
 
 .bookmark-sub-btn-list {
   position: relative;
-  right: 42px;
+  right: 63px;
   border: 1px solid #f3f3f3;
 }
 
