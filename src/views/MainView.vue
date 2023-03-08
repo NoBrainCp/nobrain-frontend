@@ -1,16 +1,22 @@
 <template>
   <v-app id="inspire">
-    <Headed/>
+    <Headed @setting="showSettingVue"/>
 
     <Side/>
 
     <CategoryBar/>
 
-    <v-main class="main">
-      <Profile v-if="route.fullPath.includes('profile')"/>
-      <Book v-else/>
-    </v-main>
-
+    <v-window
+      v-model="window">
+      <v-main class="main">
+        <v-window-item value="book">
+          <Book/>
+        </v-window-item>
+        <v-window-item value="setting">
+          <Profile/>
+        </v-window-item>
+      </v-main>
+    </v-window>
     <TagBar class="tag-bar"/>
 
   </v-app>
@@ -32,7 +38,14 @@ export default {
   data: () => ({
     isMain: true,
     route: useRoute(),
+    window: "book",
   }),
+
+  methods: {
+    showSettingVue(setting) {
+      this.window = setting;
+    }
+  }
 }
 </script>
 
