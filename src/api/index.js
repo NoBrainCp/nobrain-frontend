@@ -9,14 +9,14 @@ function createInstance(url) {
     return setInterceptors(instance);
 }
 
-const instance = createInstance();
+const instance = createInstance("/api");
 
 export function signUpUser(userData) {
-    return instance.post('/api/sign-up', userData);
+    return instance.post('/sign-up', userData);
 }
 
 export function signInUser(userData) {
-    return instance.post("/api/sign-in", userData);
+    return instance.post("/sign-in", userData);
 }
 
 export const user = createInstance('/api/user');

@@ -158,9 +158,7 @@ export default {
 
     test() {
       console.log(store.state.accessToken);
-      console.log(store.state.userId);
       console.log(store.state.username);
-      console.log(store.state.userEmail);
     },
 
     selectSearchCondition(title) {
