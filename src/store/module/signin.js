@@ -41,14 +41,14 @@ import {store} from "../index";
 //         }
 //     },
 //     actions: {
-        // async LOGIN ({ commit }, userData) {
-        //     const { data } = await signInUser(this.userData);
-        //     store.commit('setToken', data.accessToken);
-        //     store.commit('setUsername', data.username);
-        //     saveAuthToCookie(data.accessToken);
-        //     saveAuthToCookie(data.username);
-        //     return data;
-        // },
+//         async LOGIN ({ commit }, userData) {
+//             const { data } = await signInUser(this.userData);
+//             store.commit('setToken', data.accessToken);
+//             store.commit('setUsername', data.username);
+//             saveAuthToCookie(data.accessToken);
+//             saveAuthToCookie(data.username);
+//             return data;
+//         },
 //
 //         login: ({commit}, params) => {
 //             return new Promise((resove, reject) => {

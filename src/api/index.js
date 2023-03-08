@@ -16,10 +16,7 @@ function signUpUser(userData) {
 }
 
 function signInUser(userData) {
-    return axiosService.post("/api/sign-in", {
-        loginId: userData.loginId,
-        password: userData.password,
-    });
+    return axiosService.post("/api/sign-in", userData);
 }
 
 export { signUpUser, signInUser };
