@@ -27,7 +27,7 @@
                         <v-btn
                             color="#BBDEFB"
                             class="mt-2"
-                            @click="checkDuplicationName(user.name)"
+                            @click="validateUsername(user.name)"
                         >
                           check
                           <!-- nameCheck dialog -->
@@ -59,7 +59,7 @@
                         <v-btn
                             color="#BBDEFB"
                             class="mt-2"
-                            @click="checkDuplicationId(user.loginId)"
+                            @click="validateLoginId(user.loginId)"
                         >
                           check
                           <!-- idCheck dialog -->
@@ -222,6 +222,8 @@
 <script>
 import SignUpDialog from "../../components/dialog/SignUpDialog.vue";
 import {signUpUser} from "../../api";
+import {existsLoginId, existsUsername} from "../../api/user/userApi";
+
 export default {
   name: "SignUp",
   components: {SignUpDialog},
@@ -263,43 +265,38 @@ export default {
 
   methods: {
 
-    checkDuplicationName(name) {
-      this.$axios
-          .get("/api/user/username/" + name + "/exists")
-          .then((res) => {
-            this.isExistsName = res.data.data;
-            this.dialogObj.isExist = res.data.data;
-            console.log(res);
-            if (this.dialogObj.isExist) {
-              this.dialogObj.title = "이미 존재하는 닉네임 입니다.";
-            } else {
-              this.dialogObj.title = "사용 가능한 닉네임 입니다.";
-            }
-          })
-          .catch((err) => {
-            this.dialogObj.isExist = true;
-            this.dialogObj.title = "가입할 수 없는 닉네임 입니다.";
-            console.log(err);
-          });
+    async validateUsername(name) {
+      try {
+        const response = await existsUsername(name);
+        this.isExistsName = response.data.data;
+        this.dialogObj.isExist = response.data.data;
+
+        if (this.dialogObj.isExist) {
+          this.dialogObj.title = "이미 존재하는 닉네임 입니다.";
+        } else {
+          this.dialogObj.title = "사용 가능한 닉네임 입니다.";
+        }
+      } catch (err) {
+        this.dialogObj.isExist = true;
+        this.dialogObj.title = "가입할 수 없는 닉네임 입니다.";
+      }
     },
 
-    checkDuplicationId(loginId) {
-      this.$axios
-          .get("/api/user/login-id/" + loginId + "/exists")
-          .then((res) => {
-            this.isExistsId = res.data.data;
-            this.dialogObj.isExist = res.data.data;
-            if (this.dialogObj.isExist) {
-              this.dialogObj.title = "이미 존재하는 아이디 입니다.";
-            } else {
-              this.dialogObj.title = "사용 가능한 아이디 입니다.";
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-            this.dialogObj.isExist = true;
-            this.dialogObj.title = "가입할 수 없는 아이디 입니다.";
-          });
+    async validateLoginId(loginId) {
+      try {
+        const response = await existsLoginId(loginId);
+        this.isExistsId = response.data.data;
+        this.dialogObj.isExist = response.data.data;
+
+        if (this.dialogObj.isExist) {
+          this.dialogObj.title = "이미 존재하는 아이디 입니다.";
+        } else {
+          this.dialogObj.title = "사용 가능한 아이디 입니다.";
+        }
+      } catch (err) {
+        this.dialogObj.isExist = true;
+        this.dialogObj.title = "가입할 수 없는 아이디 입니다.";
+      }
     },
 
     async signUp() {
