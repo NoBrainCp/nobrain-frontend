@@ -264,7 +264,6 @@ export default {
   }),
 
   methods: {
-
     async validateUsername(name) {
       try {
         const response = await existsUsername(name);
