@@ -114,7 +114,7 @@
                       />
                     </v-row>
                     <div style="padding: 10px 0"></div>
-                    <v-btn color="blue" dark block tile @click="send()"
+                    <v-btn color="blue" dark block tile @click="signUp()"
                     >Sign up
                       <v-dialog v-model="dialog" activator="parent">
                         <!-- 로그인 실패: (id or name) not check  -->
@@ -221,6 +221,7 @@
 
 <script>
 import SignUpDialog from "../../components/dialog/SignUpDialog.vue";
+import {signUpUser} from "../../api";
 export default {
   name: "SignUp",
   components: {SignUpDialog},
@@ -301,26 +302,17 @@ export default {
           });
     },
 
-    async send() {
+    async signUp() {
       try {
         this.isError = 200;
         if (this.isExistsId === false && this.isExistsName === false) {
-          let result = await this.$axios.post("/api/sign-up", {
-            name: this.user.name,
-            email: this.user.email,
-            loginId: this.user.loginId,
-            password: this.user.password,
-            passwordCheck: this.user.passwordCheck,
-            phoneNumber: this.user.phoneNumber.replaceAll("/^[0-9]+$/", ""),
-            birthDate: document.querySelector("#date").value,
-          });
-          console.log(this.user.phoneNumber);
-          this.isSubmit = result.data.success;
+          this.user.birthDate = document.querySelector("#date").value;
+          const data = await signUpUser(this.user);
+          this.isSubmit = data.data.success;
         }
       } catch (err) {
         this.isError = err.response.data.status;
         this.errorMessage = err.response.data.message;
-        console.log(err);
       }
     },
   },

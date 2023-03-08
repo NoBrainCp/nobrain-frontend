@@ -1,13 +1,13 @@
 <template>
   <v-container id="container">
-    <v-row align-content="center" justify="center" id="all">
+    <v-row align-content="center"  id="all">
       <v-col cols="12" sm="12" id="col">
         <v-card id="back" class="elevation-6 mt-10">
+          <Alert v-if="isError" class="alert" v-bind:alertObj="errorObj"></Alert>
           <div id="row">
             <v-col cols="12" md="6">
               <v-card-text class="mt-15">
-                <h2 class="text-center">Login in to Your Account</h2>
-                <br/>
+                <h2 class="text-center mb-6">Login in to Your Account</h2>
                 <h6 class="text-center grey--text">
                   Log in to your account so you can continue building
                 </h6>
@@ -25,7 +25,7 @@
                         color="blue"
                         type="password"
                         v-model="userData.password"
-                        @keydown.enter="login()"
+                        @keydown.enter="signIn"
                     />
                     <v-row>
                       <v-col cols="12" sm="7">
@@ -34,8 +34,7 @@
                             class="mt-n5"
                             color="blue"
                             v-model="isRememberId"
-                        >
-                        </v-checkbox>
+                        />
                       </v-col>
                     </v-row>
                     <v-btn
@@ -44,7 +43,7 @@
                         dark
                         block
                         tile
-                        @click="login()"
+                        @click="signIn"
                     >
                       Login
                     </v-btn>
@@ -52,7 +51,8 @@
                       <a
                           class="caption text"
                           id="forgetPassword"
-                          href="/forget-password">
+                          href="/forget-password"
+                      >
                         Did you forget your password?
                       </a>
                     </v-col>
@@ -83,7 +83,8 @@
                       dark
                       to="/signup"
                       color="#BBDEFB"
-                  >Sing up
+                  >
+                    Sing up
                   </v-btn>
                 </div>
               </div>
@@ -98,67 +99,41 @@
 <script>
 import router from "../../router";
 import {store} from "../../store"
-import {signInUser} from "../../api";
-import {saveAuthToCookie} from "../../utils/cookies";
+import Alert from "../../components/alert/Alert.vue";
 
 export default {
   name: "SignIn",
+  components: { Alert },
+
   data: () => ({
     userData: {
       loginId: "",
       password: "",
     },
 
+    errorObj: {
+      type: "error",
+      title: "",
+      text: "",
+    },
+
     id: "",
     password: "",
     isRememberId: true,
+    isError: false
   }),
 
   methods: {
-    async login() {
+    async signIn() {
       try {
-        const response = signInUser(this.userData);
-
-        // router.push(reponse.usename);
+        const data = await store.dispatch('LOGIN', this.userData);
+        await router.push(data.username);
       } catch (error) {
-
-      } finally {
-
+        this.errorObj.title="로그인 오류";
+        this.errorObj.text = error.response.data.message;
+        this.isError=true;
       }
     },
-
-    async signIn() {
-      let userData = {};
-      this.$axios
-          .post("/api/sign-in", {
-            loginId: this.id,
-            password: this.password
-          })
-          .then((res) => {
-              userData.loginId = this.id;
-              userData.userId = res.data.data.userId;
-              userData.accessToken = res.data.data.accessToken;
-              store.commit("setToken", userData);
-              this.setUserInfo(res.data.data.userId);
-              if (this.isRememberId) {
-                this.$cookies.set("loginIdCookie", this.id);
-              }
-              router.push(res.data.data.username);
-            }
-          ).catch((err) => {
-        alert(err.response.data.message);
-      })
-    },
-    setUserInfo(userId) {
-      let userData = {};
-      this.$axios
-          .get("/api/user/"+ userId +"/info")
-          .then((res) => {
-            userData.username = res.data.data.username;
-            userData.userEmail = res.data.data.email;
-            store.commit("setUserInfo", userData);
-          })
-    }
   }
 }
 
@@ -218,6 +193,11 @@ export default {
 #forgetPassword:hover {
   color: rgb(101, 104, 189);
   text-decoration-line: underline;
+}
+
+.alert {
+  position: absolute;
+  width: 100%;
 }
 
 </style>
