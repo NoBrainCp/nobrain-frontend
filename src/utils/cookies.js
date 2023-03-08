@@ -1,21 +1,73 @@
-function saveAuthToCookie(value) {
-    document.cookie = `auth=${value}`;
+function saveUserIdToCookie(userId) {
+    document.cookie = `userId=${userId}`;
 }
 
-function saveUserToCookie(value) {
-    document.cookie = `user=${value}`;
+function saveUsernameToCookie(username) {
+    document.cookie = `username=${username}`;
 }
 
-function getAuthFromCookie() {
+function saveEmailToCookie(email) {
+    document.cookie = `email=${email}`;
+}
+
+function saveLoginIdToCookie(loginId) {
+    document.cookie = `loginId=${loginId}`;
+}
+
+function saveAccessTokenToCookie(accessToken) {
+    document.cookie = `accessToken=${accessToken}`;
+}
+
+function saveRefreshTokenToCookie(refreshToken) {
+    document.cookie = `refreshToken=${refreshToken}`;
+}
+
+function saveUserInfoToCookie(userInfo) {
+    saveUserIdToCookie(userInfo.userId);
+    saveEmailToCookie(userInfo.email);
+    saveUsernameToCookie(userInfo.username);
+    saveAccessTokenToCookie(userInfo.accessToken);
+}
+
+
+function getUserIdFromCookie() {
     return document.cookie.replace(
-        /(?:(?:^|.*;\s*)auth\s*=\s*([^;]*).*$)|^.*$/,
+        /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
         '$1',
     );
 }
 
-function getUserFromCookie() {
+function getUsernameFromCookie() {
     return document.cookie.replace(
-        /(?:(?:^|.*;\s*)user\s*=\s*([^;]*).*$)|^.*$/,
+        /(?:(?:^|.*;\s*)username\s*=\s*([^;]*).*$)|^.*$/,
+        '$1',
+    );
+}
+
+function getEmailFromCookie() {
+    return document.cookie.replace(
+        /(?:(?:^|.*;\s*)email\s*=\s*([^;]*).*$)|^.*$/,
+        '$1',
+    );
+}
+
+function getLoginIdFromCookie() {
+    return document.cookie.replace(
+        /(?:(?:^|.*;\s*)loginId\s*=\s*([^;]*).*$)|^.*$/,
+        '$1',
+    );
+}
+
+function getAccessTokenFromCookie() {
+    return document.cookie.replace(
+        /(?:(?:^|.*;\s*)accessToken\s*=\s*([^;]*).*$)|^.*$/,
+        '$1',
+    );
+}
+
+function getRefreshTokenFromCookie() {
+    return document.cookie.replace(
+        /(?:(?:^|.*;\s*)refreshToken\s*=\s*([^;]*).*$)|^.*$/,
         '$1',
     );
 }
@@ -25,9 +77,20 @@ function deleteCookie(value) {
 }
 
 export {
-    saveAuthToCookie,
-    saveUserToCookie,
-    getAuthFromCookie,
-    getUserFromCookie,
+    saveUserIdToCookie,
+    saveUsernameToCookie,
+    saveEmailToCookie,
+    saveLoginIdToCookie,
+    saveAccessTokenToCookie,
+    saveRefreshTokenToCookie,
+    saveUserInfoToCookie,
+
+    getUserIdFromCookie,
+    getUsernameFromCookie,
+    getEmailFromCookie,
+    getLoginIdFromCookie,
+    getAccessTokenFromCookie,
+    getRefreshTokenFromCookie,
+
     deleteCookie,
 };
