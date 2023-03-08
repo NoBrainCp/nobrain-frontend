@@ -119,11 +119,6 @@ export default {
       try {
         const response = signInUser(this.userData);
 
-        console.log(response);
-        console.log(response.userId);
-        console.log(response.username);
-        console.log(response.email);
-        console.log(response.accessToken);
         // router.push(reponse.usename);
       } catch (error) {
 
