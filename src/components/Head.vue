@@ -84,7 +84,7 @@
                 <v-btn
                     icon
                     variant="text"
-                    @click="menu = false"
+                    @click="menu=!menu"
                 >
                   <v-icon>mdi-close-circle</v-icon>
                 </v-btn>
@@ -94,15 +94,19 @@
         </v-list>
 
         <v-list>
-          <v-list-item
-              v-for="(menu, index) in menus"
-              :key="index"
-              link
-          >
+          <v-list-item @click="$emit('setting', 'setting')">
             <v-list-item-content>
               <div class="account-container">
-                <v-icon>{{menu.icon}}</v-icon>
-                <v-list-item-title class="account-title">{{menu.title}}</v-list-item-title>
+                <v-icon class="mdi mdi-cog"></v-icon>
+                <v-list-item-title class="account-title">Setting</v-list-item-title>
+              </div>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-content>
+              <div class="account-container">
+                <v-icon class="mdi mdi-logout"></v-icon>
+                <v-list-item-title class="account-title">Logout</v-list-item-title>
               </div>
             </v-list-item-content>
           </v-list-item>
@@ -126,8 +130,6 @@ export default {
   data () {
     return {
       menus: [
-        { title: "Profile", icon: "mdi-account" },
-        { title: "Change Password", icon: "mdi-key" },
         { title: "Setting", icon: "mdi-cog" },
         { title: "Logout", icon: "mdi-logout" },
       ],
