@@ -77,8 +77,8 @@
                     <v-col cols="12" sm="6" class="img-container">
                       <v-img
                           class="profile-img"
-                          width="250"
-                          height="250"
+                          width="300"
+                          height="300"
                           src="src/assets/images/nobrain-no-image.png"
                       >
                       </v-img>
