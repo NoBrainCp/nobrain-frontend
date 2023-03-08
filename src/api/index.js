@@ -3,7 +3,7 @@ import {setInterceptors} from "./common/interceptors";
 
 function createAxiosService() {
     const axiosService = axios.create({
-        baseURL: import.meta.env.VITE_APP_API_URL,
+        baseURL: `${import.meta.env.VITE_APP_API_URL}`,
     });
 
     return setInterceptors(axiosService);

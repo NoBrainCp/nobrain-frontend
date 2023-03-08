@@ -6,6 +6,7 @@ import FindById from "../views/find/FindById.vue";
 import FindByPassword from "../views/find/FindByPassword.vue";
 import ChangePassword from "../views/change/ChangePassword.vue";
 import MainView from "../views/MainView.vue";
+import {store} from "../store";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -60,7 +61,7 @@ const router = createRouter({
 //      * next: to에서 지정한 url로 이동하기 위해 꼭 호출해야 하는 함수
 //      * next() 가 호출되기 전까지 화면 전환되지 않음
 //      */
-//     if (VueCookies.get('accessToken') === null && VueCookies.get('refreshToken') !== null) {
+//     if (store.state.accessToken === null && store.state.refreshToken !== null) {
 //         //refreshToken은 있고 accessToken이 없을 경우 토큰 재발급 요청
 //         await store.dispatch('refreshToken');
 //     }
