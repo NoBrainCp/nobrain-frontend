@@ -75,9 +75,9 @@
               <v-avatar image="https://cdn.vuetifyjs.com/images/john.jpg"></v-avatar>
             </template>
 
-            <v-list-item-title>{{store.state.username}}</v-list-item-title>
+            <v-list-item-title>{{myInfo.username}}</v-list-item-title>
 
-            <v-list-item-subtitle>{{store.state.userEmail}}</v-list-item-subtitle>
+            <v-list-item-subtitle>{{myInfo.email}}</v-list-item-subtitle>
 
             <template v-slot:append>
               <v-list-item-action>
@@ -119,6 +119,7 @@
 
 <script>
 import {store} from "../store";
+import {getEmailFromCookie, getUsernameFromCookie} from "../utils/cookies";
 
 export default {
   name: 'Headed',
@@ -129,6 +130,11 @@ export default {
   },
   data () {
     return {
+      myInfo: {
+        username: getUsernameFromCookie(),
+        email: getEmailFromCookie(),
+      },
+
       menus: [
         { title: "Setting", icon: "mdi-cog" },
         { title: "Logout", icon: "mdi-logout" },
