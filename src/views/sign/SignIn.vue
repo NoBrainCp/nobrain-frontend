@@ -126,7 +126,7 @@ export default {
   methods: {
     async signIn() {
       try {
-        const data = await store.dispatch('LOGIN', this.userData);
+        const data = await store.dispatch('signIn', this.userData);
         await router.push(data.username);
       } catch (error) {
         this.errorObj.title="로그인 오류";

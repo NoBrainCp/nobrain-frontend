@@ -1,22 +1,22 @@
 import axios from 'axios';
 import {setInterceptors} from "./common/interceptors";
 
-function createAxiosService() {
-    const axiosService = axios.create({
-        baseURL: `${import.meta.env.VITE_APP_API_URL}`,
+function createInstance(url) {
+    const instance = axios.create({
+        baseURL: `${import.meta.env.VITE_APP_API_URL}${url}`,
     });
 
-    return setInterceptors(axiosService);
+    return setInterceptors(instance);
 }
 
-const axiosService = createAxiosService();
+const instance = createInstance("/api");
 
-function signUpUser(userData) {
-    return axiosService.post('/api/sign-up', userData);
+export function signUpUser(userData) {
+    return instance.post('/sign-up', userData);
 }
 
-function signInUser(userData) {
-    return axiosService.post("/api/sign-in", userData);
+export function signInUser(userData) {
+    return instance.post("/sign-in", userData);
 }
 
-export { signUpUser, signInUser };
+export const user = createInstance('/api/user');

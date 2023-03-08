@@ -1,6 +1,6 @@
 import axios from "axios";
 import VueCookies from 'vue-cookies';
-import {getUserFromCookie, saveAuthToCookie} from "../../utils/cookies";
+import {getUsernameFromCookie, saveAccessTokenToCookie} from "../../utils/cookies";
 import {signInUser} from "../../api";
 import {store} from "../index";
 
