@@ -10,8 +10,8 @@
     <v-list-item
         prepend-avatar="https://cdn.vuetifyjs.com/images/john.jpg"
         nav
-        :title=store.state.username
-        :subtitle=store.state.email
+        :title=data.user.username
+        :subtitle=data.user.email
         class="account-item"
     >
       <template v-slot:append>
@@ -24,8 +24,8 @@
     </v-list-item>
 
     <div v-if="!rail" id="follow-container">
-      <a href="#" class="follow-items">팔로워: {{ user.follower }}</a>
-      <a href="#" class="follow-items" id="following">팔로잉: {{ user.following }}</a>
+      <a href="#" class="follow-items">팔로워: {{ followObj.follower }}</a>
+      <a href="#" class="follow-items" id="following">팔로잉: {{ followObj.following }}</a>
     </div>
 
     <div v-if="!rail" class="follow-btn-container">
@@ -75,17 +75,17 @@
       </div>
 
       <v-divider v-if="!rail"></v-divider>
-      <v-list-item v-for="(category, i) in categories" :key="i"
+      <v-list-item v-for="(category, i) in data.categories" :key="i"
                    :value="category"
                    active-color="light-blue">
         <template v-slot:prepend>
-          <v-icon :icon="categories.icon"></v-icon>
+          <v-icon icon="mdi mdi-folder"></v-icon>
         </template>
-        <v-list-item-title v-text="categories.name"></v-list-item-title>
+        <v-list-item-title>{{category.name}}</v-list-item-title>
         <template v-slot:append>
           <v-badge
               color="blue"
-              :content="categories.count"
+              :content="category.count"
               inline/>
         </template>
       </v-list-item>
@@ -99,8 +99,9 @@ import Bookmark from "./main/Bookmark.vue";
 import BookmarkDialog from "./form/BookmarkDialog.vue";
 import {store} from "../store";
 import {getEmailFromCookie, getLoginIdFromCookie, getUserIdFromCookie, getUsernameFromCookie} from "../utils/cookies";
-import {getCategories} from "../api/user/userApi";
+import {getCategories, getUserInfo} from "../api/user/userApi";
 import {reactive} from "vue";
+import {useRoute} from "vue-router";
 
 export default {
   name: 'Side',
@@ -131,21 +132,12 @@ export default {
       ],
     },
 
-    user: {
-      name: "Yoon",
-      email: "yoon@gmail.com",
+    followObj: {
       follower: "12",
       following: "235"
     },
 
-    categories: {
-      id: Number,
-      name: String,
-      description: String,
-      isPublic: Boolean,
-      count: Number,
-      icon: "mdi mdi-folder"
-    },
+    categories: [],
 
     followButton: {
       text: "팔로우",
@@ -154,14 +146,30 @@ export default {
     },
   }),
 
-   async setup() {
+  setup() {
+    const route = useRoute();
     const data = reactive({
-      category: []
-    })
-     data.category = await getCategories(getUserIdFromCookie());
-     data.category = data.category.data.list;
-    // this.categories = await
-   },
+      user: {},
+      categories: []
+    });
+
+    try {
+      const userId = getUserIdFromCookie();
+      getUserInfo(userId).then((response) => {
+        console.log(response.data.data);
+        data.user = response.data.data;
+      });
+
+      getCategories(userId).then((response) => {
+        data.categories =response.data.list;
+      });
+
+    } catch(error) {
+      console.log("error: " + error);
+    }
+
+    return { data };
+  },
 
   methods: {
     clickFollow() {
