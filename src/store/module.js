@@ -22,12 +22,14 @@ const getters = {
     },
     currentAccessToken(state) {
         return state.accessToken;
+    },
+    isLogin(state) {
+        return state.username !== '';
     }
-
 }
 
 const mutations = {
-    setToken (state, payload) {
+    setToken(state, payload) {
         state.userId = payload.userId;
         state.loginId = payload.loginId;
         state.accessToken = payload.accessToken;
@@ -35,6 +37,12 @@ const mutations = {
     setUserInfo(state, payload) {
         state.username = payload.username;
         state.userEmail = payload.userEmail;
+    },
+    setUsername(state, username) {
+        state.username = username;
+    },
+    setAccessToken(state, accessToken) {
+        state.accessToken = accessToken;
     }
     // logout (state) {
     //     state.token = null

@@ -7,7 +7,8 @@
     <CategoryBar/>
 
     <v-main class="main">
-      <Book/>
+      <Profile v-if="route.fullPath.includes('profile')"/>
+      <Book v-else/>
     </v-main>
 
     <TagBar class="tag-bar"/>
@@ -21,20 +22,16 @@ import Headed from "../components/Head.vue";
 import Book from "../components/Book.vue";
 import CategoryBar from "../components/CategoryBar.vue";
 import TagBar from "../components/TagBar.vue";
+import Profile from "../components/Profile.vue";
+import {useRoute} from "vue-router";
 
 export default {
-  components: {TagBar, CategoryBar, Book, Headed, Side},
+  components: {Profile, TagBar, CategoryBar, Book, Headed, Side},
   name: 'main',
 
   data: () => ({
-    cards: ['Today', 'Yesterday'],
-    drawer: null,
-    links: [
-      ['mdi-inbox-arrow-down', 'Inbox'],
-      ['mdi-send', 'Send'],
-      ['mdi-delete', 'Trash'],
-      ['mdi-alert-octagon', 'Spam'],
-    ],
+    isMain: true,
+    route: useRoute(),
   }),
 }
 </script>

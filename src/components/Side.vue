@@ -43,16 +43,14 @@
       <v-btn
           class="btn btn-show-all"
           color="#00BCD4"
-          prepend-icon="mdi mdi-text-box-multiple"
-      >
+          prepend-icon="mdi mdi-text-box-multiple">
         전체보기
       </v-btn>
       <v-btn
           class="btn"
           color="#009688"
           prepend-icon="mdi mdi-bookmark"
-          @click="bookmarkDialogObj.dialog=true"
-      >
+          @click="bookmarkDialogObj.dialog=true">
         북마크 추가
       </v-btn>
       <BookmarkDialog
@@ -68,6 +66,8 @@
             class="mr-2"
             size="25"
             icon="mdi-plus"
+            color="grey-lighten-3"
+            elevation="4"
             @click="categoryObj.dialog=true"/>
         <CategoryDialog
             v-bind:categoryObj="categoryObj"

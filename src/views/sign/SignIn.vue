@@ -17,15 +17,15 @@
                         label="Id"
                         bg-color="white"
                         color="blue"
-                        v-model="id"
+                        v-model="userData.loginId"
                     />
                     <v-text-field
                         label="Password"
                         bg-color="white"
                         color="blue"
                         type="password"
-                        v-model="password"
-                        @keydown.enter="signIn()"
+                        v-model="userData.password"
+                        @keydown.enter="login()"
                     />
                     <v-row>
                       <v-col cols="12" sm="7">
@@ -44,7 +44,7 @@
                         dark
                         block
                         tile
-                        @click="signIn()"
+                        @click="login()"
                     >
                       Login
                     </v-btn>
@@ -98,16 +98,40 @@
 <script>
 import router from "../../router";
 import {store} from "../../store"
+import {signInUser} from "../../api";
+import {saveAuthToCookie} from "../../utils/cookies";
 
 export default {
   name: "SignIn",
   data: () => ({
+    userData: {
+      loginId: "",
+      password: "",
+    },
+
     id: "",
     password: "",
     isRememberId: true,
   }),
 
   methods: {
+    async login() {
+      try {
+        const response = signInUser(this.userData);
+
+        console.log(response);
+        console.log(response.userId);
+        console.log(response.username);
+        console.log(response.email);
+        console.log(response.accessToken);
+        // router.push(reponse.usename);
+      } catch (error) {
+
+      } finally {
+
+      }
+    },
+
     async signIn() {
       let userData = {};
       this.$axios

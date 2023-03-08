@@ -40,6 +40,7 @@
           :key="tag.id"
           :value="tag.name"
           filter
+          elevation="2"
           @click="selectTag(tag.id)"
       >
         {{tag.name}}

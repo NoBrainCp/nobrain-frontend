@@ -13,10 +13,10 @@
     <v-btn
         class="btn"
         color="blue"
+        elevation="3"
         prepend-icon="mdi mdi-pencil-outline"
         border
-        @click="this.categoryObj.dialog=true"
-    >
+        @click="this.categoryObj.dialog=true">
       수정
     </v-btn>
     <CategoryDialog
@@ -25,10 +25,10 @@
     <v-btn
         class="btn"
         color="red-accent-4"
+        elevation="3"
         prepend-icon="mdi mdi-delete"
         border
-        @click="this.confirmObj.dialog=true"
-    >
+        @click="this.confirmObj.dialog=true">
       삭제
     </v-btn>
     <ConfirmDialog

@@ -7,7 +7,7 @@
         <v-card
             class="mx-auto bookmark-card"
             v-bind="props"
-            :elevation="isHovering ? 20 : 5">
+            :elevation="isHovering ? 15 : 3">
           <v-img
               :src="bookmark.image === null ? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLe5nUtk5JoD4sdl1VSGYazqdLh7to9LYI_Q&usqp=CAU' : bookmark.image"
               class="bookmark-img"
@@ -45,6 +45,7 @@
                 <template v-slot:activator="{ props }">
                   <v-chip
                       class="bookmark-chip mt-1 mdi mdi-dots-horizontal"
+                      elevation="1"
                       @click=""
                       append-icon="mdi-chevron-down"
                       v-bind="props"/>
@@ -181,6 +182,8 @@ export default {
 .bookmark-card {
   width: 270px;
   height: 350px;
+  border: 2px solid #f3f3f3;
+  border-radius: 15px;
 }
 
 .bookmark-img {

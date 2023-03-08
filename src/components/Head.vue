@@ -58,6 +58,7 @@
             pill
             v-bind="props"
             link
+            elevation="3"
             class="account-chip"
         >
           <v-avatar start>
