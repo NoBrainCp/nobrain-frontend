@@ -9,7 +9,7 @@ export function addCategory(username, categoryData) {
 }
 
 export function updateCategory(username, categoryName ,categoryData) {
-    return category.post(`${username}/category/${categoryName}`, categoryData);
+    return category.put(`${username}/category/${categoryName}`, categoryData);
 }
 
 export function deleteCategory(username, categoryName) {

@@ -87,7 +87,6 @@ export default {
   }),
 
   methods: {
-
     submit() {
       this.categoryObj.dialog = false;
       this.$emit('submit', this.category);

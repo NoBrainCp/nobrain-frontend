@@ -40,20 +40,29 @@
 <script>
 import CategoryDialog from "./form/CategoryDialog.vue";
 import ConfirmDialog from "./dialog/ConfirmDialog.vue";
+import {updateCategory} from "../api/category/categoryApi";
+import {getUsernameFromCookie} from "../utils/cookies";
+import {useRoute} from "vue-router";
 
 export default {
   name: 'CategoryBar',
   components: {ConfirmDialog, CategoryDialog},
+
   props: {
     isCreated: true,
   },
+
+  // setup() {
+  //   const route= useRoute();
+  //   return route;
+  // },
 
   data: () => ({
     category: {
       name: "Category Name",
       description: "Category Description",
     },
-
+    test: "",
     categoryObj: {
       title: "카테고리 수정",
       btnName: "수정",
@@ -68,9 +77,10 @@ export default {
   }),
 
   methods: {
-    updateCategory(category) {
-      console.log(category);
-    },
+    // async updateCategory(category) {
+    //   const response = await updateCategory(getUsernameFromCookie(),  , category);
+    //   console.log(response);
+    // },
 
     deleteCategory() {
       // delete API

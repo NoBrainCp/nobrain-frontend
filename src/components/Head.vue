@@ -4,7 +4,7 @@
         src="../assets/images/logo_transparent.png"
         alt="nobrain-logo"
         class="logo"
-        @click="test"
+        @click="home"
 
     />
 
@@ -120,6 +120,8 @@
 <script>
 import {store} from "../store";
 import {getEmailFromCookie, getUsernameFromCookie} from "../utils/cookies";
+import router from "../router";
+import mainView from "../views/MainView.vue";
 
 export default {
   name: 'Headed',
@@ -162,9 +164,8 @@ export default {
       console.log(this.searchObj.condition);
     },
 
-    test() {
-      console.log(store.state.accessToken);
-      console.log(store.state.username);
+    home() {
+      router.push("/"+getUsernameFromCookie());
     },
 
     selectSearchCondition(title) {

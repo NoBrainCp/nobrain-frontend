@@ -74,21 +74,30 @@
             @submit="addCategory"/>
       </div>
 
-      <v-divider v-if="!rail"></v-divider>
-      <v-list-item v-for="(category, i) in data.categories" :key="i"
+      <v-divider v-if="!rail"/>
+
+      <router-link v-for="(category, i) in data.categories" key="i"
                    :value="category"
-                   active-color="light-blue">
-        <template v-slot:prepend>
-          <v-icon icon="mdi mdi-folder"></v-icon>
-        </template>
-        <v-list-item-title>{{category.name}}</v-list-item-title>
-        <template v-slot:append>
-          <v-badge
-              color="blue"
-              :content="category.count"
-              inline/>
-        </template>
-      </v-list-item>
+                   :to="'/jun/'+category.name"
+                   class="router-link-list">
+        <v-list-item
+            active-color="light-blue"
+            class="category-list-item"
+            @click="showBookmark(category.name)"
+        >
+          <template v-slot:prepend>
+            <v-icon icon="mdi mdi-folder"></v-icon>
+          </template>
+          <v-list-item-title>{{ category.name }}</v-list-item-title>
+          <template v-slot:append>
+            <v-badge
+                color="blue"
+                :content="category.count"
+                inline/>
+          </template>
+        </v-list-item>
+      </router-link>
+
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -101,8 +110,9 @@ import {store} from "../store";
 import {getEmailFromCookie, getLoginIdFromCookie, getUserIdFromCookie, getUsernameFromCookie} from "../utils/cookies";
 import {getUserInfo} from "../api/user/userApi";
 import {reactive} from "vue";
-import {useRoute} from "vue-router";
+import {createRouter as $router, useRoute} from "vue-router";
 import {addCategory, getCategories} from "../api/category/categoryApi";
+import router from "../router";
 
 export default {
   name: 'Side',
@@ -117,6 +127,7 @@ export default {
     follow: false,
     drawer: true,
     rail: false,
+    userName: getUsernameFromCookie(),
 
     categoryObj: {
       title: "카테고리 추가",
@@ -137,7 +148,6 @@ export default {
       follower: "12",
       following: "235"
     },
-
     categories: [],
 
     followButton: {
@@ -148,12 +158,10 @@ export default {
   }),
 
   setup() {
-    const route = useRoute();
     const data = reactive({
       user: {},
       categories: []
     });
-
     try {
       const userId = getUserIdFromCookie();
       getUserInfo(userId).then((response) => {
@@ -162,17 +170,21 @@ export default {
       });
 
       getCategories(userId).then((response) => {
-        data.categories =response.data.list;
+        data.categories = response.data.list;
+        console.log(data.categories.length);
       });
 
-    } catch(error) {
+    } catch (error) {
       console.log("error: " + error);
     }
-
-    return { data };
+    return {data};
   },
 
   methods: {
+    showBookmark(categoryName) {
+      router.push();
+    },
+
     clickFollow() {
       this.follow = !this.follow;
       if (this.follow) {
@@ -192,7 +204,9 @@ export default {
 
     //카테고리 추가에 있어서 이름- 필수 설정
     async addCategory(category) {
-      await addCategory(getUsernameFromCookie(),category);
+      await addCategory(getUsernameFromCookie(), category);
+      router.go();
+
     }
   }
 }
@@ -266,6 +280,11 @@ export default {
   border-radius: 10px;
 }
 
+.router-link-list {
+  text-decoration: none;
+
+}
+
 .category-header-container {
   display: flex;
   justify-content: space-between;
@@ -275,5 +294,13 @@ export default {
 .category-header {
   font-size: 15px;
   font-weight: bold;
+}
+
+.category-list-item {
+
+}
+
+.v-list-item--variant-plain, .v-list-item--variant-outlined, .v-list-item--variant-text, .v-list-item--variant-tonal {
+  color: #212121;
 }
 </style>
