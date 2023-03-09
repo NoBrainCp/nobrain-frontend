@@ -33,6 +33,7 @@
 
       <div v-if="!rail" class="follow-btn-container">
         <v-btn
+            v-if="!data.isMe"
             id="follow-btn"
             class="btn"
             :color="followButton.color"
@@ -88,7 +89,7 @@
             :value="category"
             active-color="light-blue"
             class="category-list-item"
-            @click="showBookmark(category.name)">
+            @click="showBookmark(category)">
 
           <template v-slot:prepend>
             <v-icon icon="mdi mdi-folder"></v-icon>
@@ -119,6 +120,7 @@ import {createRouter as $router, onBeforeRouteUpdate, useRoute, useRouter} from 
 import {addCategory, getCategories} from "../api/category/categoryApi";
 import router from "../router";
 import {user} from "../api";
+import {categoryStore} from "../store/category/category";
 
 export default {
   name: 'Side',
@@ -168,6 +170,7 @@ export default {
   setup() {
     const route = useRoute();
     const data = reactive({
+      isMe: route.params.username === getUsernameFromCookie(),
       user: {},
       categories: []
     });
@@ -209,9 +212,10 @@ export default {
       return user
     },
 
-    showBookmark(categoryName) {
+    showBookmark(category) {
       const username = this.route.params.username;
-      router.push(`/${username}/${categoryName}`);
+      categoryStore.commit('setCategory', category);
+      router.push(`/${username}/${category.name}`);
     },
 
     showAllBookmarks() {
@@ -241,15 +245,13 @@ export default {
 
 <style scoped>
 .side-bar-header {
-  background: white;
-  position: fixed;
-  left: 7px;
-  z-index: 1;
+  /*background: white;*/
+  /*position: fixed;*/
+  /*left: 7px;*/
+  /*z-index: 1;*/
 }
 
 .side-bar-content {
-  position: relative;
-  margin-top: 250px;
 }
 
 .account-item {

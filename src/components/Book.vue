@@ -143,7 +143,7 @@ export default {
       bookmarks: [],
     });
 
-    watch(() =>  (route.params), (newValue) => {
+    watch(() => (route.params), (newValue) => {
         if (newValue.category === undefined) {
           getAllBookmarksByUser(newValue.username);
         } else {

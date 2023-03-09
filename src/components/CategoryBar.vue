@@ -2,15 +2,16 @@
   <v-app-bar class="app-bar" style="position: fixed" flat border>
     <div class="category-title">
       <v-icon class="mr-2">mdi mdi-bookshelf</v-icon>
-      {{ category.name }}
+      {{ data.category.name }}
     </div>
 
     <div class="category-description">
-      {{ category.description }}
+      {{ data.category.description }}
     </div>
 
     <v-spacer/>
     <v-btn
+        v-if="!data.isAll"
         class="btn"
         color="blue"
         elevation="3"
@@ -23,6 +24,7 @@
         v-bind:categoryObj="categoryObj"
         @submit="updateCategory"/>
     <v-btn
+        v-if="!data.isAll"
         class="btn"
         color="red-accent-4"
         elevation="3"
@@ -42,7 +44,9 @@ import CategoryDialog from "./form/CategoryDialog.vue";
 import ConfirmDialog from "./dialog/ConfirmDialog.vue";
 import {updateCategory} from "../api/category/categoryApi";
 import {getUsernameFromCookie} from "../utils/cookies";
+import {ref, watch} from "vue";
 import {useRoute} from "vue-router";
+import {categoryStore} from "../store/category/category";
 
 export default {
   name: 'CategoryBar',
@@ -52,16 +56,11 @@ export default {
     isCreated: true,
   },
 
-  // setup() {
-  //   const route= useRoute();
-  //   return route;
-  // },
-
   data: () => ({
-    category: {
-      name: "Category Name",
-      description: "Category Description",
-    },
+    // category: {
+    //   name: "Category Name",
+    //   description: "Category Description",
+    // },
     test: "",
     categoryObj: {
       title: "카테고리 수정",
@@ -75,6 +74,26 @@ export default {
       dialog: false,
     },
   }),
+
+  setup() {
+    const route = useRoute();
+    const data = ref({
+      category: {},
+      isAll: false,
+    });
+
+    watch(() => (route.params), (newValue) => {
+      if (newValue.category === undefined) {
+        data.value.isAll = true;
+        data.value.category = {name: '전체 북마크'};
+      } else {
+        data.value.isAll = false;
+        data.value.category = categoryStore.state.category;
+      }
+    });
+
+    return { data };
+  },
 
   methods: {
     // async updateCategory(category) {
