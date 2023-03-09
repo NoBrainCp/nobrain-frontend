@@ -6,96 +6,104 @@
       permanent
       @click="rail = false"
       style="position: fixed"
+      id="side-bar"
   >
-    <v-list-item
-        prepend-avatar="https://cdn.vuetifyjs.com/images/john.jpg"
-        nav
-        :title=data.user.username
-        :subtitle=data.user.email
-        class="account-item"
-    >
-      <template v-slot:append>
-        <v-btn
-            variant="text"
-            icon="mdi-chevron-left"
-            @click.stop="rail = !rail"
-        ></v-btn>
-      </template>
-    </v-list-item>
 
-    <div v-if="!rail" id="follow-container">
-      <a href="#" class="follow-items">팔로워: {{ followObj.follower }}</a>
-      <a href="#" class="follow-items" id="following">팔로잉: {{ followObj.following }}</a>
-    </div>
-
-    <div v-if="!rail" class="follow-btn-container">
-      <v-btn
-          id="follow-btn"
-          class="btn"
-          :color="followButton.color"
-          @click="clickFollow">
-        <v-icon id="follow-icon">{{ followButton.icon }}</v-icon>
-        {{ followButton.text }}
-      </v-btn>
-    </div>
-
-    <div v-if="!rail" id="btn-container">
-      <v-btn
-          class="btn btn-show-all"
-          color="#00BCD4"
-          prepend-icon="mdi mdi-text-box-multiple"
-          @click="showAllBookmarks">
-        전체보기
-      </v-btn>
-
-      <v-btn
-          class="btn"
-          color="#009688"
-          prepend-icon="mdi mdi-bookmark"
-          @click="bookmarkDialogObj.dialog=true">
-        북마크 추가
-      </v-btn>
-      <BookmarkDialog
-          v-bind:bookmarkObj="bookmarkDialogObj"
-          @submit="addBookmark"/>
-    </div>
-
-    <v-divider v-if="rail" class="account-divider"></v-divider>
-    <v-list density="compact" nav>
-      <div class="category-header-container" v-if="!rail">
-        <v-list-subheader class="category-header">카테고리</v-list-subheader>
-        <v-btn
-            class="mr-2"
-            size="25"
-            icon="mdi-plus"
-            color="grey-lighten-3"
-            elevation="4"
-            @click="categoryObj.dialog=true"/>
-        <CategoryDialog
-            v-bind:categoryObj="categoryObj"
-            @submit="addCategoryByUser"/>
-      </div>
-
-      <v-divider v-if="!rail"/>
+    <div class="side-bar-header">
       <v-list-item
-          v-for="(category, i) in data.categories" key="i"
-          :value="category"
-          active-color="light-blue"
-          class="category-list-item"
-          @click="showBookmark(category.name)">
-
-        <template v-slot:prepend>
-          <v-icon icon="mdi mdi-folder"></v-icon>
-        </template>
-        <v-list-item-title>{{ category.name }}</v-list-item-title>
+          prepend-avatar="https://cdn.vuetifyjs.com/images/john.jpg"
+          nav
+          :title=data.user.username
+          :subtitle=data.user.email
+          class="account-item"
+      >
         <template v-slot:append>
-          <v-badge
-              color="blue"
-              :content="category.count"
-              inline/>
+          <v-btn
+              variant="text"
+              icon="mdi-chevron-left"
+              @click.stop="rail = !rail"
+          ></v-btn>
         </template>
       </v-list-item>
-    </v-list>
+
+      <div v-if="!rail" id="follow-container">
+        <a href="#" class="follow-items">팔로워: {{ followObj.follower }}</a>
+        <a href="#" class="follow-items" id="following">팔로잉: {{ followObj.following }}</a>
+      </div>
+
+      <div v-if="!rail" class="follow-btn-container">
+        <v-btn
+            id="follow-btn"
+            class="btn"
+            :color="followButton.color"
+            @click="clickFollow">
+          <v-icon id="follow-icon">{{ followButton.icon }}</v-icon>
+          {{ followButton.text }}
+        </v-btn>
+      </div>
+
+      <div v-if="!rail" id="btn-container">
+        <v-btn
+            class="btn btn-show-all"
+            color="#00BCD4"
+            prepend-icon="mdi mdi-text-box-multiple"
+            @click="showAllBookmarks">
+          전체보기
+        </v-btn>
+
+        <v-btn
+            class="btn"
+            color="#009688"
+            prepend-icon="mdi mdi-bookmark"
+            @click="bookmarkDialogObj.dialog=true">
+          북마크 추가
+        </v-btn>
+        <BookmarkDialog
+            v-bind:bookmarkObj="bookmarkDialogObj"
+            @submit="addBookmark"/>
+      </div>
+
+      <v-divider v-if="rail" class="account-divider"></v-divider>
+    </div>
+
+    <div class="side-bar-content">
+      <v-list density="compact" nav>
+        <div class="category-header-container" v-if="!rail">
+          <v-list-subheader class="category-header">카테고리</v-list-subheader>
+          <v-btn
+              class="mr-2"
+              size="25"
+              icon="mdi-plus"
+              color="grey-lighten-3"
+              elevation="4"
+              @click="categoryObj.dialog=true"/>
+          <CategoryDialog
+              v-bind:categoryObj="categoryObj"
+              @submit="addCategoryByUser"/>
+        </div>
+
+        <v-divider v-if="!rail"/>
+        <v-list-item
+            v-for="(category, i) in data.categories" key="i"
+            :value="category"
+            active-color="light-blue"
+            class="category-list-item"
+            @click="showBookmark(category.name)">
+
+          <template v-slot:prepend>
+            <v-icon icon="mdi mdi-folder"></v-icon>
+          </template>
+          <v-list-item-title>{{ category.name }}</v-list-item-title>
+          <template v-slot:append>
+            <v-badge
+                color="blue"
+                :content="category.count"
+                inline/>
+          </template>
+        </v-list-item>
+      </v-list>
+    </div>
+
   </v-navigation-drawer>
 </template>
 
@@ -232,6 +240,18 @@ export default {
 </script>
 
 <style scoped>
+.side-bar-header {
+  background: white;
+  position: fixed;
+  left: 7px;
+  z-index: 1;
+}
+
+.side-bar-content {
+  position: relative;
+  margin-top: 250px;
+}
+
 .account-item {
   margin-top: 10px;
 }
@@ -310,4 +330,15 @@ export default {
   font-weight: bold;
 }
 
+</style>
+
+<style>
+#side-bar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera*/
+}
 </style>
