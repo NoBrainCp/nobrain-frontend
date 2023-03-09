@@ -2,7 +2,7 @@
   <v-dialog
       v-model="categoryObj.dialog"
       persistent
-      width="25%">
+      width="40%">
     <v-card>
       <v-card-title id="card-title">
         <span class="text-h5 mt-4 mr-4" id="card-title-text">
@@ -88,8 +88,12 @@ export default {
 
   methods: {
     submit() {
-      this.categoryObj.dialog = false;
       this.$emit('submit', this.category);
+
+      this.categoryObj.dialog = false;
+      this.category.name = "";
+      this.category.description = "";
+      this.category.isPublic = false;
     },
   }
 }
