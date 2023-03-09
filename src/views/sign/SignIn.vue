@@ -5,7 +5,7 @@
         <v-card id="back" class="elevation-6 mt-10">
           <Alert v-if="isError" class="alert" v-bind:alertObj="errorObj"></Alert>
           <div id="row">
-            <v-col cols="12" md="6">
+            <v-col cols="12" sm="6">
               <v-card-text class="mt-15">
                 <h2 class="text-center mb-6">Login in to Your Account</h2>
                 <h6 class="text-center grey--text">
@@ -127,7 +127,8 @@ export default {
     async signIn() {
       try {
         const data = await store.dispatch('signIn', this.userData);
-        await router.push(data.username);
+        //로그인 창에서 메인 화면으로 넘어갈때 히스토리 스택을 쌓지 않기위해 push -> replace 로 변경
+        await router.replace(data.username);
       } catch (error) {
         this.errorObj.title="로그인 오류";
         this.errorObj.text = error.response.data.message;
