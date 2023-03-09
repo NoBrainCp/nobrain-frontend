@@ -55,7 +55,7 @@
       </v-btn>
       <BookmarkDialog
           v-bind:bookmarkObj="bookmarkDialogObj"
-          @submit="addBookmark"/>
+          @submit="addedCategory"/>
     </div>
 
     <v-divider v-if="rail" class="account-divider"></v-divider>
@@ -71,7 +71,7 @@
             @click="categoryObj.dialog=true"/>
         <CategoryDialog
             v-bind:categoryObj="categoryObj"
-            @submit="addCategory"/>
+            @submit="addedCategory"/>
       </div>
 
       <v-divider v-if="!rail"/>
@@ -161,46 +161,45 @@ export default {
       user: {},
       categories: []
     });
+
+    const userId = getUserIdFromCookie();
+
     try {
-      const userId = getUserIdFromCookie();
       getUserInfo(userId).then((response) => {
-        console.log(response.data.data);
         data.user = response.data.data;
       });
 
       getCategories(userId).then((response) => {
         data.categories = response.data.list;
-        console.log(data.categories.length);
       });
-
     } catch (error) {
       console.log("error: " + error);
     }
-    return {data};
+
+    const addedCategory = async (category) => {
+      try {
+        await addCategory(getUsernameFromCookie(), category);
+        getCategories(userId).then((response) => {
+          data.categories = response.data.list;
+        })
+      } catch (error) {
+        alert(error.response.data.message);
+      }
+    }
+
+    return {
+      data,
+      addedCategory};
   },
 
   methods: {
     user() {
       return user
     },
+
     showBookmark(categoryName) {
-      const name = getUsernameFromCookie();
-      const path = this.route.path;
-      const params = this.route.params.category;
-      console.log(path+"       "+params);
-      console.log(this.route.params);
-      // const newParams = Object.assign({}, this.route.params)
-      this.router.push(categoryName);
-      // router.push({
-      //   path: `${name}/${categoryName}`,
-      //   replace: true
-      // });
-      // router.push({
-      //   path: categoryName,
-      //   params: {
-      //     category: categoryName
-      //   }
-      // })
+      const username = this.route.params.username;
+      router.push(`/${username}/${categoryName}`);
     },
 
     clickFollow() {
@@ -219,13 +218,6 @@ export default {
     addBookmark(bookmark) {
       console.log(bookmark);
     },
-
-    //카테고리 추가에 있어서 이름- 필수 설정
-    async addCategory(category) {
-      await addCategory(getUsernameFromCookie(), category);
-      router.go();
-
-    }
   }
 }
 </script>

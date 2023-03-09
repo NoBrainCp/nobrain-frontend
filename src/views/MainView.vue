@@ -33,7 +33,7 @@ import BookmarkCategory from "./bookmarkCategory.vue";
 
 export default {
 
-  components: {BookmarkCategory, Profile, TagBar,  Headed, Side, Book},
+  components: {CategoryBar, BookmarkCategory, Profile, TagBar,  Headed, Side, Book},
   name: 'main',
 
   data: () => ({

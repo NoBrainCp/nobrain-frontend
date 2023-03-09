@@ -139,11 +139,13 @@ export default {
     const data = ref({
       bookmarks: [],
     });
+
     watch(() =>  (route.params), (newValue) => {
-        getBookmarks(getUsernameFromCookie(), newValue.category).then((res)=> {
+        getBookmarks(newValue.username, newValue.category).then((res)=> {
         data.value.bookmarks = res.data.list;
       });
     })
+
     const category = route.params.category;
     console.log(category);
     if (category === undefined) {
