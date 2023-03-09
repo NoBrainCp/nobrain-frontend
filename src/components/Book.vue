@@ -101,19 +101,19 @@
 
 <script>
 import {useRoute} from "vue-router";
-import {reactive} from "vue";
-import axios from "axios";
+import {reactive, ref, watch} from "vue";
 import ConfirmDialog from "./dialog/ConfirmDialog.vue";
 import BookmarkDialog from "./form/BookmarkDialog.vue";
-import bookmarkDialog from "./form/BookmarkDialog.vue";
+import {getUsernameFromCookie} from "../utils/cookies";
+import {getAllBookmarks, getBookmarks} from "../api/bookmark/bookmarkApi";
+import {bookmarkStore} from "../store/bookmark/bookmark";
 
 export default {
   name: 'Book',
   components: {BookmarkDialog, ConfirmDialog},
-
   data: () => ({
     temp: "black",
-
+    bookmarks: bookmarkStore.state.bookmarks,
     imagePath: [
       {noImage: "../assets/images/nobrain-no-image.png"}
     ],
@@ -136,36 +136,34 @@ export default {
 
   setup() {
     const route = useRoute();
-    const data = reactive({
+    const data = ref({
       bookmarks: [],
     });
-    const category = route.params.category;
-    if (category === undefined) {
-      axios.get("/api/" + route.params.username + "/bookmarks").then((res) => {
-        data.bookmarks = res.data.list;
-        data.isSubBarShow = false;
-      })
-    } else {
-      axios.get("/api/" + route.params.username + "/" + route.params.category + "/bookmarks").then((res) => {
-        data.bookmarks = res.data.list;
-        data.isSubBarShow = true;
+    watch(() =>  (route.params), (newValue) => {
+        getBookmarks(getUsernameFromCookie(), newValue.category).then((res)=> {
+        data.value.bookmarks = res.data.list;
       });
-    }
+    })
+    const category = route.params.category;
+    console.log(category);
+    if (category === undefined) {
+        getAllBookmarks(getUsernameFromCookie()).then((res) => {
+        data.value.bookmarks = res.data.list;
+        bookmarkStore.commit('setBookmarks', data.value.bookmarks);
 
-    console.log(data);
+      })
+    }
     return {data}
   },
 
   methods: {
-    updateBookmark(bookmark) {
-      console.log(bookmark);
-    },
-
-    deleteBookmark() {
-      this.bookmarkDialogObj.dialog = false;
-      //bookmark delete API
-    },
-
+    // updateBookmark(bookmark) {
+    //   console.log(bookmark);
+    // },
+    //
+    // deleteBookmark() {
+    //   this.bookmarkDialogObj.dialog = false;
+    // },
     clickStar(bookmark) {
       bookmark.starred = !bookmark.starred;
     },

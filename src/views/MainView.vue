@@ -6,9 +6,9 @@
       v-model="window">
       <v-main class="main">
         <v-window-item value="book">
-<!--          <CategoryBar/>-->
-          <BookmarkCategory v-if="route.params.category !== undefined"/>
-          <Book v-else/>
+          <CategoryBar/>
+<!--          <BookmarkCategory v-if="route.params.category/>-->
+          <Book/>
         </v-window-item>
         <v-window-item value="setting">
           <Profile/>
@@ -33,7 +33,7 @@ import BookmarkCategory from "./bookmarkCategory.vue";
 
 export default {
 
-  components: {BookmarkCategory, Profile, TagBar,  Headed, Side},
+  components: {BookmarkCategory, Profile, TagBar,  Headed, Side, Book},
   name: 'main',
 
   data: () => ({

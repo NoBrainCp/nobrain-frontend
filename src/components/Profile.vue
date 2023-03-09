@@ -263,7 +263,6 @@ export default {
     },
     onFileChanged(e) {
       this.selectedFile = e.target.files[0]
-
       // do something
     }
   },
@@ -272,7 +271,10 @@ export default {
 
 <style scoped>
 .main-container {
-  margin: 0 100px;
+  /*margin: 0 100px;*/
+  position: relative;
+  right: 15px;
+  bottom: 50px;
 }
 
 .header-container {

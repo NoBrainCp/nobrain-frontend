@@ -75,29 +75,25 @@
       </div>
 
       <v-divider v-if="!rail"/>
+      <v-list-item
+          v-for="(category, i) in data.categories" key="i"
+          :value="category"
+          active-color="light-blue"
+          class="category-list-item"
+          @click="showBookmark(category.name)"
+      >
 
-      <router-link v-for="(category, i) in data.categories" key="i"
-                   :value="category"
-                   :to="'/jun/'+category.name"
-                   class="router-link-list">
-        <v-list-item
-            active-color="light-blue"
-            class="category-list-item"
-            @click="showBookmark(category.name)"
-        >
-          <template v-slot:prepend>
-            <v-icon icon="mdi mdi-folder"></v-icon>
-          </template>
-          <v-list-item-title>{{ category.name }}</v-list-item-title>
-          <template v-slot:append>
-            <v-badge
-                color="blue"
-                :content="category.count"
-                inline/>
-          </template>
-        </v-list-item>
-      </router-link>
-
+        <template v-slot:prepend>
+          <v-icon icon="mdi mdi-folder"></v-icon>
+        </template>
+        <v-list-item-title>{{ category.name }}</v-list-item-title>
+        <template v-slot:append>
+          <v-badge
+              color="blue"
+              :content="category.count"
+              inline/>
+        </template>
+      </v-list-item>
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -109,10 +105,11 @@ import BookmarkDialog from "./form/BookmarkDialog.vue";
 import {store} from "../store";
 import {getEmailFromCookie, getLoginIdFromCookie, getUserIdFromCookie, getUsernameFromCookie} from "../utils/cookies";
 import {getUserInfo} from "../api/user/userApi";
-import {reactive} from "vue";
-import {createRouter as $router, useRoute} from "vue-router";
+import {reactive, ref} from "vue";
+import {createRouter as $router, useRoute, useRouter} from "vue-router";
 import {addCategory, getCategories} from "../api/category/categoryApi";
 import router from "../router";
+import {user} from "../api";
 
 export default {
   name: 'Side',
@@ -124,6 +121,8 @@ export default {
   components: {BookmarkDialog, Bookmark, CategoryDialog},
 
   data: () => ({
+    router: useRouter(),
+    route: useRoute(),
     follow: false,
     drawer: true,
     rail: false,
@@ -181,8 +180,27 @@ export default {
   },
 
   methods: {
+    user() {
+      return user
+    },
     showBookmark(categoryName) {
-      router.push();
+      const name = getUsernameFromCookie();
+      const path = this.route.path;
+      const params = this.route.params.category;
+      console.log(path+"       "+params);
+      console.log(this.route.params);
+      // const newParams = Object.assign({}, this.route.params)
+      this.router.push(categoryName);
+      // router.push({
+      //   path: `${name}/${categoryName}`,
+      //   replace: true
+      // });
+      // router.push({
+      //   path: categoryName,
+      //   params: {
+      //     category: categoryName
+      //   }
+      // })
     },
 
     clickFollow() {
@@ -280,11 +298,6 @@ export default {
   border-radius: 10px;
 }
 
-.router-link-list {
-  text-decoration: none;
-
-}
-
 .category-header-container {
   display: flex;
   justify-content: space-between;
@@ -296,11 +309,4 @@ export default {
   font-weight: bold;
 }
 
-.category-list-item {
-
-}
-
-.v-list-item--variant-plain, .v-list-item--variant-outlined, .v-list-item--variant-text, .v-list-item--variant-tonal {
-  color: #212121;
-}
 </style>

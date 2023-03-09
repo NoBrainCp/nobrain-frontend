@@ -7,7 +7,6 @@ import vuetify from "./plugins/vuetify";
 import { loadFonts } from "./plugins/webfontloader";
 import Vue3TagsInput from 'vue3-tags-input'
 import axios from "axios";
-
 // loadFonts();
 
 const store = createStore({
