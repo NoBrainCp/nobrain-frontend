@@ -71,7 +71,7 @@
             @click="categoryObj.dialog=true"/>
         <CategoryDialog
             v-bind:categoryObj="categoryObj"
-            @submit="addedCategory"/>
+            @submit="addCategory"/>
       </div>
 
       <v-divider v-if="!rail"/>
@@ -157,26 +157,28 @@ export default {
   }),
 
   setup() {
+    const route = useRoute();
     const data = reactive({
       user: {},
       categories: []
     });
 
     const userId = getUserIdFromCookie();
+    const username = route.params.username;
 
     try {
-      getUserInfo(userId).then((response) => {
+      getUserInfo(username).then((response) => {
         data.user = response.data.data;
       });
 
-      getCategories(userId).then((response) => {
+      getCategories(username).then((response) => {
         data.categories = response.data.list;
       });
     } catch (error) {
       console.log("error: " + error);
     }
 
-    const addedCategory = async (category) => {
+    const addCategory = async (category) => {
       try {
         await addCategory(getUsernameFromCookie(), category);
         getCategories(userId).then((response) => {
@@ -189,7 +191,8 @@ export default {
 
     return {
       data,
-      addedCategory};
+      addCategory
+    };
   },
 
   methods: {
