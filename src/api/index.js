@@ -20,3 +20,4 @@ export function signInUser(userData) {
 }
 
 export const user = createInstance('/api/user');
+export const category = instance;

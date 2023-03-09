@@ -99,9 +99,10 @@ import Bookmark from "./main/Bookmark.vue";
 import BookmarkDialog from "./form/BookmarkDialog.vue";
 import {store} from "../store";
 import {getEmailFromCookie, getLoginIdFromCookie, getUserIdFromCookie, getUsernameFromCookie} from "../utils/cookies";
-import {getCategories, getUserInfo} from "../api/user/userApi";
+import {getUserInfo} from "../api/user/userApi";
 import {reactive} from "vue";
 import {useRoute} from "vue-router";
+import {addCategory, getCategories} from "../api/category/categoryApi";
 
 export default {
   name: 'Side',
@@ -189,8 +190,9 @@ export default {
       console.log(bookmark);
     },
 
-    addCategory(category) {
-      console.log(category);
+    //카테고리 추가에 있어서 이름- 필수 설정
+    async addCategory(category) {
+      await addCategory(getUsernameFromCookie(),category);
     }
   }
 }
