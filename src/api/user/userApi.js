@@ -13,7 +13,5 @@ export function getUserInfo(userId) {
     return user.get(`/${userId}/info`);
 }
 
-export function getCategories(userId) {
-    return user.get(`/${userId}/categories`);
-}
+
 

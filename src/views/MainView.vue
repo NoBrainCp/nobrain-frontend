@@ -1,15 +1,13 @@
 <template>
   <v-app id="inspire">
     <Headed @setting="showSettingVue"/>
-
     <Side/>
-
-    <CategoryBar/>
-
     <v-window
       v-model="window">
       <v-main class="main">
         <v-window-item value="book">
+          <CategoryBar/>
+<!--          <BookmarkCategory v-if="route.params.category/>-->
           <Book/>
         </v-window-item>
         <v-window-item value="setting">
@@ -17,6 +15,7 @@
         </v-window-item>
       </v-main>
     </v-window>
+
     <TagBar class="tag-bar"/>
 
   </v-app>
@@ -30,15 +29,18 @@ import CategoryBar from "../components/CategoryBar.vue";
 import TagBar from "../components/TagBar.vue";
 import Profile from "../components/Profile.vue";
 import {useRoute} from "vue-router";
+import BookmarkCategory from "./bookmarkCategory.vue";
 
 export default {
-  components: {Profile, TagBar, CategoryBar, Book, Headed, Side},
+
+  components: {BookmarkCategory, Profile, TagBar,  Headed, Side, Book},
   name: 'main',
 
   data: () => ({
     isMain: true,
     route: useRoute(),
     window: "book",
+
   }),
 
   methods: {

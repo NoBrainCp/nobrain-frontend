@@ -62,6 +62,9 @@ import IconPlusBox from "../icons/IconPlusBox.vue";
 import IconDocumentation from "../icons/IconDocumentation.vue";
 import {useRoute} from "vue-router";
 import axios from 'axios';
+import {category} from "../../api";
+import {addCategory} from "../../api/category/categoryApi";
+import {getUsernameFromCookie} from "../../utils/cookies";
 
 export default {
   name: 'CategoryDialog',
@@ -88,24 +91,6 @@ export default {
       this.categoryObj.dialog = false;
       this.$emit('submit', this.category);
     },
-    async submitCategory() {
-      this.dialog = false;
-      axios.post("/api/" + this.route.params.username + "/category",
-          {
-            name: this.category.name,
-            description: this.category.description,
-            isPublic: this.category.isPublic
-          })
-          .then((res) => {
-            this.category.name = "";
-            this.category.description = "";
-            this.category.isPublic = false;
-            location.reload();
-          })
-          .catch((err) => {
-            console.log(err.data);
-          });
-    }
   }
 }
 </script>

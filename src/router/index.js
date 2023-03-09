@@ -12,10 +12,9 @@ const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
-            path: "/user-in",
+            path: "/sign-in",
             name: "signin",
             component: SignIn,
-            alias: "/",
         },
         {
             path: "/signup",
@@ -25,6 +24,7 @@ const router = createRouter({
         {
             path: "/:username",
             name: "main",
+            // params: "/:",
             alias: "/:username/:category",
             component: MainView,
             props: true,

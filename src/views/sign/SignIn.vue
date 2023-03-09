@@ -131,7 +131,6 @@ export default {
         await router.replace(data.username);
       } catch (error) {
         this.errorObj.title="로그인 오류";
-        this.errorObj.text = error.response.data.message;
         this.isError=true;
       }
     },
