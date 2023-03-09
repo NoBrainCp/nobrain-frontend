@@ -43,9 +43,11 @@
       <v-btn
           class="btn btn-show-all"
           color="#00BCD4"
-          prepend-icon="mdi mdi-text-box-multiple">
+          prepend-icon="mdi mdi-text-box-multiple"
+          @click="showAllBookmarks">
         전체보기
       </v-btn>
+
       <v-btn
           class="btn"
           color="#009688"
@@ -55,7 +57,7 @@
       </v-btn>
       <BookmarkDialog
           v-bind:bookmarkObj="bookmarkDialogObj"
-          @submit="addedCategory"/>
+          @submit="addBookmark"/>
     </div>
 
     <v-divider v-if="rail" class="account-divider"></v-divider>
@@ -80,8 +82,7 @@
           :value="category"
           active-color="light-blue"
           class="category-list-item"
-          @click="showBookmark(category.name)"
-      >
+          @click="showBookmark(category.name)">
 
         <template v-slot:prepend>
           <v-icon icon="mdi mdi-folder"></v-icon>
@@ -106,7 +107,7 @@ import {store} from "../store";
 import {getEmailFromCookie, getLoginIdFromCookie, getUserIdFromCookie, getUsernameFromCookie} from "../utils/cookies";
 import {getUserInfo} from "../api/user/userApi";
 import {reactive, ref} from "vue";
-import {createRouter as $router, useRoute, useRouter} from "vue-router";
+import {createRouter as $router, onBeforeRouteUpdate, useRoute, useRouter} from "vue-router";
 import {addCategory, getCategories} from "../api/category/categoryApi";
 import router from "../router";
 import {user} from "../api";
@@ -175,7 +176,7 @@ export default {
         data.categories = response.data.list;
       });
     } catch (error) {
-      console.log("error: " + error);
+      alert(error.response.data.message);
     }
 
     const addCategory = async (category) => {
@@ -203,6 +204,11 @@ export default {
     showBookmark(categoryName) {
       const username = this.route.params.username;
       router.push(`/${username}/${categoryName}`);
+    },
+
+    showAllBookmarks() {
+      const username = this.route.params.username;
+      router.push(`/${username}`);
     },
 
     clickFollow() {
