@@ -73,7 +73,7 @@
             @click="categoryObj.dialog=true"/>
         <CategoryDialog
             v-bind:categoryObj="categoryObj"
-            @submit="addCategory"/>
+            @submit="addCategoryByUser"/>
       </div>
 
       <v-divider v-if="!rail"/>
@@ -179,10 +179,10 @@ export default {
       alert(error.response.data.message);
     }
 
-    const addCategory = async (category) => {
+    const addCategoryByUser = async (category) => {
       try {
         await addCategory(getUsernameFromCookie(), category);
-        getCategories(userId).then((response) => {
+        getCategories(getUsernameFromCookie()).then((response) => {
           data.categories = response.data.list;
         })
       } catch (error) {
@@ -192,7 +192,7 @@ export default {
 
     return {
       data,
-      addCategory
+      addCategoryByUser
     };
   },
 
