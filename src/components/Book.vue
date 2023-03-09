@@ -209,7 +209,7 @@ export default {
 
 .icon-container {
   position: relative;
-  left: 16px;
+  left: 10px;
   bottom: 8px;
 }
 
@@ -223,7 +223,7 @@ export default {
 
 .bookmark-sub-btn-list {
   position: relative;
-  right: 63px;
+  right: 60px;
   border: 1px solid #f3f3f3;
 }
 
