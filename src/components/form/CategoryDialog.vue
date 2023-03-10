@@ -1,13 +1,13 @@
 <template>
   <v-dialog
-      v-model="categoryObj.dialog"
+      v-model="categoryDialog.dialog"
       persistent
-      width="25%">
+      width="40%">
     <v-card>
       <v-card-title id="card-title">
         <span class="text-h5 mt-4 mr-4" id="card-title-text">
           <v-icon class="mb-2 mr-3">mdi-bookshelf</v-icon>
-          {{ categoryObj.title }}
+          {{ categoryDialog.title }}
         </span>
       </v-card-title>
       <v-card-text>
@@ -15,24 +15,23 @@
           <v-row>
             <v-col cols="12">
               <v-text-field
-                  v-model="category.name"
+                  v-model="categoryDialog.name"
                   label="카테고리 이름"
                   prepend-icon="mdi-rename"
-                  required/>
+                  required></v-text-field>
             </v-col>
             <v-col cols="12">
               <v-text-field
-                  v-model="category.description"
+                  v-model="categoryDialog.description"
                   label="설명"
                   type="text"
                   prepend-icon="mdi-tooltip-text"
                   required/>
               <v-checkbox
-                  v-model="category.isPublic"
+                  v-model="categoryDialog.public"
                   label="비공개"
                   color="info"
-                  value="true"
-                  :prepend-icon="category.isPublic ? 'mdi mdi-lock':'mdi mdi-lock-open-variant'"
+                  :prepend-icon="categoryDialog.public ? 'mdi mdi-lock':'mdi mdi-lock-open-variant'"
                   hide-details/>
             </v-col>
           </v-row>
@@ -43,14 +42,14 @@
         <v-btn
             color="blue-darken-1"
             variant="text"
-            @click="categoryObj.dialog=false">
+            @click="categoryDialog.dialog=false">
           닫기
         </v-btn>
         <v-btn
             color="blue-darken-1"
             variant="text"
             @click="submit">
-          {{ categoryObj.btnName }}
+          {{ categoryDialog.btnName }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -70,10 +69,14 @@ export default {
   name: 'CategoryDialog',
   components: {IconDocumentation, IconPlusBox},
   props: {
-    categoryObj: {
-      title: "",
-      btnName: "",
-      dialog: Boolean,
+    categoryDialog: {
+      title: String,
+      btnName: String,
+      dialog: false,
+      originName: String,
+      name: String,
+      description: String,
+      public: Boolean,
     }
   },
   data: () => ({
@@ -82,14 +85,18 @@ export default {
     category: {
       name: "",
       description: "",
-      isPublic: false
+      isPublic: "",
     }
   }),
 
   methods: {
     submit() {
-      this.categoryObj.dialog = false;
-      this.$emit('submit', this.category);
+      this.$emit('submit', this.categoryDialog);
+
+      this.categoryDialog.dialog = false;
+      // this.categoryDialog.name = "";
+      // this.categoryDialog.description = "";
+      // this.categoryDialog.isPublic = false;
     },
   }
 }

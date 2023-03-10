@@ -1,7 +1,7 @@
 import {category} from "../index";
 
-export function getCategories(userId) {
-    return category.get(`user/${userId}/categories`);
+export function getCategories(username) {
+    return category.get(`user/${username}/categories`);
 }
 
 export function addCategory(username, categoryData) {

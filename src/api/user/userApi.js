@@ -9,8 +9,8 @@ export function existsLoginId(loginId) {
     return user.get(`/login-id/${loginId}/exists`);
 }
 
-export function getUserInfo(userId) {
-    return user.get(`/${userId}/info`);
+export function getUserInfo(username) {
+    return user.get(`/${username}/info`);
 }
 
 

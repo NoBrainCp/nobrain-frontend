@@ -101,15 +101,14 @@
 
 <script>
 import {useRoute} from "vue-router";
-import {reactive, ref, watch} from "vue";
-import ConfirmDialog from "./dialog/ConfirmDialog.vue";
-import BookmarkDialog from "./form/BookmarkDialog.vue";
-import {getUsernameFromCookie} from "../utils/cookies";
+import {ref, watch} from "vue";
 import {getAllBookmarks, getBookmarks} from "../api/bookmark/bookmarkApi";
 import {bookmarkStore} from "../store/bookmark/bookmark";
+import ConfirmDialog from "./dialog/ConfirmDialog.vue";
+import BookmarkDialog from "./form/BookmarkDialog.vue";
 
 export default {
-  name: 'Book',
+  name: 'Bookmark',
   components: {BookmarkDialog, ConfirmDialog},
   data: () => ({
     temp: "black",
@@ -136,25 +135,38 @@ export default {
 
   setup() {
     const route = useRoute();
+    const category = route.params.category;
+    const username = route.params.username;
+
     const data = ref({
       bookmarks: [],
     });
 
-    watch(() =>  (route.params), (newValue) => {
-        getBookmarks(newValue.username, newValue.category).then((res)=> {
-        data.value.bookmarks = res.data.list;
-      });
-    })
+    watch(() => (route.params), (newValue) => {
+        if (newValue.category === undefined) {
+          getAllBookmarksByUser(newValue.username);
+        } else {
+          getBookmarksByUserAndCategory(newValue.username, newValue.category);
+          // getBookmarks(newValue.username, newValue.category).then((res)=> {
+          //   data.value.bookmarks = res.data.list;
+          // });
+        }
+    });
 
-    const category = route.params.category;
-    console.log(category);
-    if (category === undefined) {
-        getAllBookmarks(getUsernameFromCookie()).then((res) => {
+    const getAllBookmarksByUser = async (username) => {
+      getAllBookmarks(username).then((res) => {
         data.value.bookmarks = res.data.list;
-        bookmarkStore.commit('setBookmarks', data.value.bookmarks);
+      })
+    };
 
+    const getBookmarksByUserAndCategory = async (username, category) => {
+      getBookmarks(username, category).then((res) => {
+        data.value.bookmarks = res.data.list;
       })
     }
+
+    // onMounted(getAllBookmarksByUser(username, category));
+
     return {data}
   },
 
@@ -196,7 +208,7 @@ export default {
 
 .icon-container {
   position: relative;
-  left: 16px;
+  left: 10px;
   bottom: 8px;
 }
 
@@ -210,7 +222,7 @@ export default {
 
 .bookmark-sub-btn-list {
   position: relative;
-  right: 63px;
+  right: 60px;
   border: 1px solid #f3f3f3;
 }
 

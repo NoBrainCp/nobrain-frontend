@@ -17,6 +17,7 @@ export const store = createStore({
         loginId: getLoginIdFromCookie() || '',
         accessToken: getAccessTokenFromCookie() || '',
         refreshToken: getRefreshTokenFromCookie() || '',
+        window: '',
     },
 
     getters: {
@@ -49,6 +50,9 @@ export const store = createStore({
             state.email = userInfo.email;
             state.username = userInfo.username;
             state.accessToken = userInfo.accessToken;
+        },
+        setWindow(state, window) {
+            state.window = window;
         }
     },
 

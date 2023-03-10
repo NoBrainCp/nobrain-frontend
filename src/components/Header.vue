@@ -94,7 +94,7 @@
         </v-list>
 
         <v-list>
-          <v-list-item @click="$emit('setting', 'setting')">
+          <v-list-item @click="clickProfile">
             <v-list-item-content>
               <div class="account-container">
                 <v-icon class="mdi mdi-cog"></v-icon>
@@ -118,18 +118,18 @@
 
 
 <script>
-import {store} from "../store";
 import {getEmailFromCookie, getUsernameFromCookie} from "../utils/cookies";
+import {store} from "../store";
 import router from "../router";
-import mainView from "../views/MainView.vue";
 
 export default {
-  name: 'Headed',
+  name: 'Header',
   computed: {
     store() {
       return store
     }
   },
+
   data () {
     return {
       myInfo: {
@@ -170,6 +170,10 @@ export default {
 
     selectSearchCondition(title) {
       this.searchObj.condition = title;
+    },
+
+    clickProfile() {
+      store.commit('setWindow', 'profile');
     }
   }
 }

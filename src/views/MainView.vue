@@ -1,16 +1,15 @@
 <template>
   <v-app id="inspire">
-    <Headed @setting="showSettingVue"/>
-    <Side/>
+    <Header @setting="showSettingVue"/>
+    <SideBar/>
     <v-window
       v-model="window">
       <v-main class="main">
         <v-window-item value="book">
           <CategoryBar/>
-<!--          <BookmarkCategory v-if="route.params.category/>-->
-          <Book/>
+          <Bookmark/>
         </v-window-item>
-        <v-window-item value="setting">
+        <v-window-item value="profile">
           <Profile/>
         </v-window-item>
       </v-main>
@@ -22,26 +21,31 @@
 </template>
 
 <script>
-import Side from "../components/Side.vue";
-import Headed from "../components/Head.vue";
-import Book from "../components/Book.vue";
+import SideBar from "../components/SideBar.vue";
+import Header from "../components/Header.vue";
 import CategoryBar from "../components/CategoryBar.vue";
 import TagBar from "../components/TagBar.vue";
 import Profile from "../components/Profile.vue";
-import {useRoute} from "vue-router";
-import BookmarkCategory from "./bookmarkCategory.vue";
+import {ref, watch} from "vue";
+import {store} from "../store";
+import Bookmark from "../components/Bookmark.vue";
 
 export default {
-
-  components: {CategoryBar, BookmarkCategory, Profile, TagBar,  Headed, Side, Book},
   name: 'main',
+  components: {CategoryBar, Profile, TagBar,  Header, SideBar, Bookmark},
 
   data: () => ({
-    isMain: true,
-    route: useRoute(),
-    window: "book",
-
   }),
+
+  setup() {
+    const window = ref();
+
+    watch(() => store.state.window, (newWindow, oldWindow) => {
+      window.value = newWindow;
+    })
+
+    return { window };
+  },
 
   methods: {
     showSettingVue(setting) {

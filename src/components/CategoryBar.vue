@@ -2,27 +2,29 @@
   <v-app-bar class="app-bar" style="position: fixed" flat border>
     <div class="category-title">
       <v-icon class="mr-2">mdi mdi-bookshelf</v-icon>
-      {{ category.name }}
+      {{ data.category.name }}
     </div>
 
     <div class="category-description">
-      {{ category.description }}
+      {{ data.category.description }}
     </div>
 
     <v-spacer/>
     <v-btn
+        v-if="data.isMe && !data.isAll"
         class="btn"
         color="blue"
         elevation="3"
         prepend-icon="mdi mdi-pencil-outline"
         border
-        @click="this.categoryObj.dialog=true">
+        @click="categoryDialog.dialog=true">
       수정
     </v-btn>
     <CategoryDialog
-        v-bind:categoryObj="categoryObj"
+        :categoryDialog="categoryDialog"
         @submit="updateCategory"/>
     <v-btn
+        v-if="data.isMe && !data.isAll"
         class="btn"
         color="red-accent-4"
         elevation="3"
@@ -38,11 +40,14 @@
 </template>
 
 <script>
-import CategoryDialog from "./form/CategoryDialog.vue";
-import ConfirmDialog from "./dialog/ConfirmDialog.vue";
-import {updateCategory} from "../api/category/categoryApi";
-import {getUsernameFromCookie} from "../utils/cookies";
+import {ref, watch} from "vue";
 import {useRoute} from "vue-router";
+import {getUsernameFromCookie} from "../utils/cookies";
+import {deleteCategory, updateCategory} from "../api/category/categoryApi";
+import {categoryStore} from "../store/category/category";
+import router from "../router";
+import ConfirmDialog from "./dialog/ConfirmDialog.vue";
+import CategoryDialog from "./form/CategoryDialog.vue";
 
 export default {
   name: 'CategoryBar',
@@ -52,22 +57,9 @@ export default {
     isCreated: true,
   },
 
-  // setup() {
-  //   const route= useRoute();
-  //   return route;
-  // },
-
   data: () => ({
-    category: {
-      name: "Category Name",
-      description: "Category Description",
-    },
+    route: useRoute(),
     test: "",
-    categoryObj: {
-      title: "카테고리 수정",
-      btnName: "수정",
-      dialog: false,
-    },
 
     confirmObj: {
       title: "카테고리 삭제",
@@ -76,14 +68,67 @@ export default {
     },
   }),
 
-  methods: {
-    // async updateCategory(category) {
-    //   const response = await updateCategory(getUsernameFromCookie(),  , category);
-    //   console.log(response);
-    // },
+  setup() {
+    const route = useRoute();
+    const data = ref({
+      category: {},
+      isMe: route.params.username === getUsernameFromCookie(),
+      isAll: false,
+    });
+    const categoryDialog = ref({
+      dialog: false,
+      title: "카테고리 수정",
+      btnName: "수정",
+      originName: String,
+      name: String,
+      description: String,
+      public: Boolean,
+    });
 
-    deleteCategory() {
-      // delete API
+    watch(() => (route.params), (newValue) => {
+      if (newValue.category === undefined) {
+        data.value.isAll = true;
+        data.value.category = {name: '전체 북마크'};
+      } else {
+        data.value.isAll = false;
+        data.value.category = categoryStore.state.category;
+        categoryDialog.value.originName = categoryStore.state.category.name;
+        categoryDialog.value.name = categoryStore.state.category.name;
+        categoryDialog.value.description = categoryStore.state.category.description;
+        categoryDialog.value.public = categoryStore.state.category.public;
+      }
+    });
+
+    watch(() => categoryStore.state.category, (newCategory, oldCategory) => {
+      data.value.category = newCategory;
+    });
+
+    return {
+      data,
+      categoryDialog
+    };
+  },
+
+  methods: {
+    async updateCategory(category) {
+      try {
+        await updateCategory(getUsernameFromCookie(), category.originName, category);
+        categoryStore.commit('setCategory', category);
+        await router.push(`/${getUsernameFromCookie()}/${category.name}`);
+      } catch (error) {
+        alert(error.response.data.message);
+      }
+
+    },
+
+    async deleteCategory() {
+      try {
+        await deleteCategory(getUsernameFromCookie(), categoryStore.state.category.name);
+        categoryStore.commit('setCategory', '');
+        await router.push(`/${getUsernameFromCookie()}`);
+      } catch(error) {
+        alert(error.response.data.message);
+      }
     },
   }
 }

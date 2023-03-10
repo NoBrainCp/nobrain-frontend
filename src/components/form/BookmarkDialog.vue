@@ -2,7 +2,7 @@
   <v-dialog
       v-model="bookmarkObj.dialog"
       persistent
-      width="42%"
+      width="45%"
   >
     <v-card>
       <v-card-title id="card-title">
