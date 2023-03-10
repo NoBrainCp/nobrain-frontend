@@ -3,7 +3,7 @@ import {createStore} from "vuex";
 export const categoryStore = createStore({
     state: {
         category: {},
-        categories: {},
+        categories: [],
     },
 
     mutations: {
