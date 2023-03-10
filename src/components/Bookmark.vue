@@ -54,8 +54,8 @@
                   <v-list-item
                       class="text-blue-accent-4"
                       prepend-icon="mdi mdi-pencil-outline"
-                      @click="bookmarkDialog.dialog=true">
-                    <v-list-item-title >수정</v-list-item-title>
+                      @click="clickEdit(bookmark)">
+                    <v-list-item-title>수정</v-list-item-title>
                   </v-list-item>
                   <v-divider/>
                   <v-list-item
@@ -89,13 +89,12 @@
           </div>
         </v-card>
       </v-hover>
-      <BookmarkDialog
-          :bookmarkDialog="bookmarkDialog"
-          :bookmark="bookmark"
-          @submit="updateBookmark"/>
     </v-col>
   </v-row>
-
+  <BookmarkDialog
+      :bookmarkDialogObj="bookmarkDialogObj"
+      :bookmark="bookmark"
+      @submit="updateBookmark"/>
   <ConfirmDialog
       v-bind:confirmObj="confirmObj"
       @delete="deleteBookmark"/>
@@ -105,16 +104,20 @@
 import {useRoute} from "vue-router";
 import {onMounted, ref, watch} from "vue";
 import {getAllBookmarks, getBookmarks} from "../api/bookmark/bookmarkApi";
+import {bookmarkStore} from "../store/bookmark/bookmark";
 import ConfirmDialog from "./dialog/ConfirmDialog.vue";
-import BookmarkDialog from "./dialog/BookmarkDialog.vue";
+import BookmarkDialog from "./form/BookmarkDialog.vue";
 import {categoryStore} from "../store/category/category";
 import {getCategories} from "../api/category/categoryApi";
+import {getUsernameFromCookie} from "../utils/cookies";
+import bookmarkDialog from "./form/BookmarkDialog.vue";
 
 export default {
   name: 'Bookmark',
   components: {BookmarkDialog, ConfirmDialog},
   data: () => ({
     temp: "black",
+    bookmarks: bookmarkStore.state.bookmarks,
     imagePath: [
       {noImage: "../assets/images/nobrain-no-image.png"}
     ],
@@ -125,60 +128,37 @@ export default {
       dialog: false,
     },
 
-    // bookmarkDialog: {
-    //   title: "북마크 수정",
-    //   btnName: "수정",
-    //   dialog: false,
-    //   categoryNames: categoryStore.state.categories,
-    //   tags: [],
-    // }
+    bookmarkDialogObj: {
+      title: "북마크 수정",
+      btnName: "수정",
+      dialog: false,
+      categoryNames: [],
+    }
   }),
 
   setup() {
     const route = useRoute();
     const category = route.params.category;
     const username = route.params.username;
+
     const data = ref({
       bookmarks: [],
     });
-    console.log(categoryStore.state.categories);
-    const bookmarkDialog = ref({
-        title: "북마크 수정",
-        btnName: "수정",
-        dialog: false,
-        categoryName: category,
-        categoryNames: [],
-    })
-    getCategories(username).then((response) => {
-      bookmarkDialog.value.categoryNames = response.data.list;
-    });
+
+    const bookmark = ref({});
 
     watch(() => (route.params), (newValue) => {
         if (newValue.category === undefined) {
           getAllBookmarksByUser(newValue.username);
         } else {
           getBookmarksByUserAndCategory(newValue.username, newValue.category);
-          // getBookmarks(newValue.username, newValue.category).then((res)=> {
-          //   data.value.bookmarks = res.data.list;
-          // });
         }
     });
-    watch(() => (bookmarkDialog.value.categoryNames), (newValue) => {
-      getCategories(username).then((response) => {
-        bookmarkDialog.value.categoryNames = response.data.list.map(m => m.name);
-        categoryStore.commit('setCategories', bookmarkDialog.value.categoryNames);
-      });
+
+    watch(() => (bookmarkStore.state.bookmark), (newBookmark) => {
+      bookmark.value = bookmarkStore.state.bookmark;
+      console.log(bookmark.value)
     });
-    // watch({params:() => route.params,  bookmark:() =>(data.value.bookmarks)}, (newValue) => {
-    //   if (newValue.category === undefined) {
-    //     getAllBookmarksByUser(newValue.username);
-    //   } else {
-    //     getBookmarksByUserAndCategory(newValue.username, newValue.category);
-    //     // getBookmarks(newValue.username, newValue.category).then((res)=> {
-    //     //   data.value.bookmarks = res.data.list;
-    //     // });
-    //   }
-    // });
 
     const getAllBookmarksByUser = async (username) => {
       getAllBookmarks(username).then((res) => {
@@ -192,12 +172,11 @@ export default {
       })
     }
 
-
     onMounted(() => {
       getAllBookmarksByUser(username);
     });
 
-    return {data, bookmarkDialog}
+    return {data, bookmark};
   },
 
   methods: {
@@ -208,6 +187,16 @@ export default {
     // deleteBookmark() {
     //   this.bookmarkDialogObj.dialog = false;
     // },
+
+    clickEdit(bookmark) {
+      bookmarkStore.commit('setBookmark', bookmark);
+      getCategories(getUsernameFromCookie()).then((response) => {
+        this.bookmarkDialogObj.categoryNames = response.data.list.map(c => c.name);
+      });
+
+      this.bookmarkDialogObj.dialog = true;
+    },
+
     clickStar(bookmark) {
       bookmark.starred = !bookmark.starred;
     },
