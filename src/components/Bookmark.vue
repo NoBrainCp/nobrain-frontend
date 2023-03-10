@@ -100,16 +100,15 @@
 </template>
 
 <script>
-import {onBeforeRouteUpdate, useRoute} from "vue-router";
-import {reactive, ref, watch, onMounted} from "vue";
-import ConfirmDialog from "./dialog/ConfirmDialog.vue";
-import BookmarkDialog from "./form/BookmarkDialog.vue";
-import {getUsernameFromCookie} from "../utils/cookies";
+import {useRoute} from "vue-router";
+import {ref, watch} from "vue";
 import {getAllBookmarks, getBookmarks} from "../api/bookmark/bookmarkApi";
 import {bookmarkStore} from "../store/bookmark/bookmark";
+import ConfirmDialog from "./dialog/ConfirmDialog.vue";
+import BookmarkDialog from "./form/BookmarkDialog.vue";
 
 export default {
-  name: 'Book',
+  name: 'Bookmark',
   components: {BookmarkDialog, ConfirmDialog},
   data: () => ({
     temp: "black",

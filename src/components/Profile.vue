@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="profile-container">
     <v-row>
       <v-col class="main-container">
         <div class="headerFont header-container">
@@ -270,6 +270,29 @@ export default {
 </script>
 
 <style scoped>
+.profile-container {
+  margin-left: 0;
+  width: 70%;
+}
+
+@media (max-width: 1800px) {
+  .profile-container {
+    width: 80%;
+  }
+}
+
+@media (max-width: 1500px) {
+  .profile-container {
+    width: 90%;
+  }
+}
+
+@media (max-width: 1200px) {
+  .profile-container {
+    width: 100%;
+  }
+}
+
 .main-container {
   /*margin: 0 100px;*/
   position: relative;

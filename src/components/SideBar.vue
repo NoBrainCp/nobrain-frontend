@@ -110,27 +110,26 @@
 </template>
 
 <script>
-import CategoryDialog from "./form/CategoryDialog.vue";
-import Bookmark from "./main/Bookmark.vue";
-import BookmarkDialog from "./form/BookmarkDialog.vue";
-import {store} from "../store";
-import {getEmailFromCookie, getLoginIdFromCookie, getUserIdFromCookie, getUsernameFromCookie} from "../utils/cookies";
-import {getUserInfo} from "../api/user/userApi";
-import {reactive, ref, watch} from "vue";
-import {createRouter as $router, onBeforeRouteUpdate, useRoute, useRouter} from "vue-router";
-import {addCategory, getCategories} from "../api/category/categoryApi";
-import router from "../router";
 import {user} from "../api";
+import {store} from "../store";
 import {categoryStore} from "../store/category/category";
+import router from "../router";
+import CategoryDialog from "./form/CategoryDialog.vue";
+import BookmarkDialog from "./form/BookmarkDialog.vue";
+import {getUserInfo} from "../api/user/userApi";
+import {reactive, watch} from "vue";
+import {useRoute, useRouter} from "vue-router";
+import {addCategory, getCategories} from "../api/category/categoryApi";
+import {getUserIdFromCookie, getUsernameFromCookie} from "../utils/cookies";
 
 export default {
-  name: 'Side',
+  name: 'SideBar',
   computed: {
     store() {
       return store
     },
   },
-  components: {BookmarkDialog, Bookmark, CategoryDialog},
+  components: {BookmarkDialog, CategoryDialog},
 
   data: () => ({
     router: useRouter(),
