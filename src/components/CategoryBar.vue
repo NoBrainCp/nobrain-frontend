@@ -40,14 +40,14 @@
 </template>
 
 <script>
-import CategoryDialog from "./form/CategoryDialog.vue";
-import ConfirmDialog from "./dialog/ConfirmDialog.vue";
-import {updateCategory} from "../api/category/categoryApi";
-import {getUsernameFromCookie} from "../utils/cookies";
 import {ref, watch} from "vue";
 import {useRoute} from "vue-router";
+import {getUsernameFromCookie} from "../utils/cookies";
+import {deleteCategory, updateCategory} from "../api/category/categoryApi";
 import {categoryStore} from "../store/category/category";
 import router from "../router";
+import ConfirmDialog from "./dialog/ConfirmDialog.vue";
+import CategoryDialog from "./form/CategoryDialog.vue";
 
 export default {
   name: 'CategoryBar',
@@ -121,8 +121,14 @@ export default {
 
     },
 
-    deleteCategory() {
-      // delete API
+    async deleteCategory() {
+      try {
+        await deleteCategory(getUsernameFromCookie(), categoryStore.state.category.name);
+        categoryStore.commit('setCategory', '');
+        await router.push(`/${getUsernameFromCookie()}`);
+      } catch(error) {
+        alert(error.response.data.message);
+      }
     },
   }
 }
