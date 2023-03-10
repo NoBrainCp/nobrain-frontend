@@ -72,6 +72,7 @@
         <div class="category-header-container" v-if="!rail">
           <v-list-subheader class="category-header">카테고리</v-list-subheader>
           <v-btn
+              v-if="data.isMe"
               class="mr-2"
               size="25"
               icon="mdi-plus"

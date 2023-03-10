@@ -11,7 +11,7 @@
 
     <v-spacer/>
     <v-btn
-        v-if="!data.isAll"
+        v-if="data.isMe && !data.isAll"
         class="btn"
         color="blue"
         elevation="3"
@@ -24,7 +24,7 @@
         :categoryDialog="categoryDialog"
         @submit="updateCategory"/>
     <v-btn
-        v-if="!data.isAll"
+        v-if="data.isMe && !data.isAll"
         class="btn"
         color="red-accent-4"
         elevation="3"
@@ -72,9 +72,9 @@ export default {
     const route = useRoute();
     const data = ref({
       category: {},
+      isMe: route.params.username === getUsernameFromCookie(),
       isAll: false,
     });
-
     const categoryDialog = ref({
       dialog: false,
       title: "카테고리 수정",
@@ -86,7 +86,6 @@ export default {
     });
 
     watch(() => (route.params), (newValue) => {
-      console.log("Watch Category Bar");
       if (newValue.category === undefined) {
         data.value.isAll = true;
         data.value.category = {name: '전체 북마크'};
@@ -97,7 +96,6 @@ export default {
         categoryDialog.value.name = categoryStore.state.category.name;
         categoryDialog.value.description = categoryStore.state.category.description;
         categoryDialog.value.public = categoryStore.state.category.public;
-        console.log(categoryStore.state.category.public);
       }
     });
 

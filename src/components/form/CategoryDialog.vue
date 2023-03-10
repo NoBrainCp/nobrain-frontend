@@ -31,7 +31,6 @@
                   v-model="categoryDialog.public"
                   label="비공개"
                   color="info"
-                  value="true"
                   :prepend-icon="categoryDialog.public ? 'mdi mdi-lock':'mdi mdi-lock-open-variant'"
                   hide-details/>
             </v-col>
@@ -95,9 +94,9 @@ export default {
       this.$emit('submit', this.categoryDialog);
 
       this.categoryDialog.dialog = false;
-      this.categoryDialog.name = "";
-      this.categoryDialog.description = "";
-      this.categoryDialog.isPublic = false;
+      // this.categoryDialog.name = "";
+      // this.categoryDialog.description = "";
+      // this.categoryDialog.isPublic = false;
     },
   }
 }
