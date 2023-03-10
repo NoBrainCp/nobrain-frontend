@@ -56,12 +56,11 @@
             class="btn"
             color="#009688"
             prepend-icon="mdi mdi-bookmark"
-            @click="bookmarkDialog.dialog=true">
+            @click="bookmarkDialogObj.dialog=true">
           북마크 추가
         </v-btn>
         <BookmarkDialog
-            :bookmark="bookmark"
-            :bookmarkDialog="bookmarkDialog"
+            v-bind:bookmarkObj="bookmarkDialogObj"
             @submit="addBookmark"/>
       </div>
 
@@ -112,17 +111,17 @@
 </template>
 
 <script>
+import {user} from "../api";
 import {store} from "../store";
 import {categoryStore} from "../store/category/category";
 import router from "../router";
-import CategoryDialog from "./dialog/CategoryDialog.vue";
-import BookmarkDialog from "./dialog/BookmarkDialog.vue";
+import CategoryDialog from "./form/CategoryDialog.vue";
+import BookmarkDialog from "./form/BookmarkDialog.vue";
 import {getUserInfo} from "../api/user/userApi";
-import {reactive, ref, watch} from "vue";
+import {reactive, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {addCategory, getCategories} from "../api/category/categoryApi";
-import {getUsernameFromCookie} from "../utils/cookies";
-import {addBookmark} from "../api/bookmark/bookmarkApi";
+import {getUserIdFromCookie, getUsernameFromCookie} from "../utils/cookies";
 
 export default {
   name: 'SideBar',
@@ -139,6 +138,7 @@ export default {
     follow: false,
     drawer: true,
     rail: false,
+    userName: getUsernameFromCookie(),
 
     categoryObj: {
       title: "카테고리 추가",
@@ -146,40 +146,37 @@ export default {
       dialog: false,
     },
 
+    bookmarkDialogObj: {
+      title: "북마크 추가",
+      btnName: "추가",
+      dialog: false,
+      categoryNames: [
+        "java", "spring", "ddd", "aaa"
+      ],
+    },
+
     followObj: {
       follower: "12",
       following: "235"
     },
+    categories: [],
 
     followButton: {
       text: "팔로우",
       color: "#03A9F4",
       icon: "mdi mdi-account-multiple-plus",
     },
-    bookmark: {
-      url: "",
-      title: "",
-      description: "",
-      public: false,
-      starred: false,
-    },
   }),
 
   setup() {
-    const bookmarkDialog = ref({
-      title: "북마크 추가",
-      btnName: "추가",
-      dialog: false,
-      categoryName: "",
-      categoryNames: [],
-    })
-
     const route = useRoute();
     const data = reactive({
       isMe: route.params.username === getUsernameFromCookie(),
       user: {},
-      categories: [],
+      categories: []
     });
+
+    const userId = getUserIdFromCookie();
     const username = route.params.username;
 
     try {
@@ -189,7 +186,6 @@ export default {
 
       getCategories(username).then((response) => {
         data.categories = response.data.list;
-        categoryStore.commit('setCategories', response.data.list);
       });
     } catch (error) {
       alert(error.response.data.message);
@@ -197,14 +193,7 @@ export default {
 
     watch(() => (route.params), (newValue) => {
       getCategories(username).then((response) => {
-        bookmarkDialog.value.categoryNames = response.data.list;
-      });
-    });
-
-    watch(() => (data.categories), (newValue) => {
-      getCategories(username).then((response) => {
-        bookmarkDialog.value.categoryNames = response.data.list.map(m => m.name);
-        categoryStore.commit('setCategories', bookmarkDialog.value.categoryNames);
+        data.categories = response.data.list;
       });
     });
 
@@ -221,12 +210,15 @@ export default {
 
     return {
       data,
-      addCategoryByUser,
-      bookmarkDialog
+      addCategoryByUser
     };
   },
 
   methods: {
+    user() {
+      return user
+    },
+
     showBookmark(category) {
       const username = this.route.params.username;
       categoryStore.commit('setCategory', category);
@@ -251,10 +243,8 @@ export default {
       }
     },
 
-    async addBookmark(bookmark) {
-      await addBookmark(getUsernameFromCookie(), bookmark).then(() => {
-        router.push(`/${getUsernameFromCookie()}/bookmark`);
-      });
+    addBookmark(bookmark) {
+      console.log(bookmark);
     },
   }
 }
