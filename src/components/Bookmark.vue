@@ -106,11 +106,10 @@ import {onMounted, ref, watch} from "vue";
 import {getAllBookmarks, getBookmarks} from "../api/bookmark/bookmarkApi";
 import {bookmarkStore} from "../store/bookmark/bookmark";
 import ConfirmDialog from "./dialog/ConfirmDialog.vue";
-import BookmarkDialog from "./form/BookmarkDialog.vue";
+import BookmarkDialog from "./dialog/BookmarkDialog.vue";
 import {categoryStore} from "../store/category/category";
 import {getCategories} from "../api/category/categoryApi";
 import {getUsernameFromCookie} from "../utils/cookies";
-import bookmarkDialog from "./form/BookmarkDialog.vue";
 
 export default {
   name: 'Bookmark',

@@ -109,21 +109,21 @@
 
 import {defineComponent, ref} from "vue";
 import {useRoute} from "vue-router";
-import axios from "axios";
 import {bookmarkStore} from "../../store/bookmark/bookmark";
 export default defineComponent ({
   name: 'BookmarkDialog',
 
   props: {
+
+  },
+
+  data: () => ({
     bookmarkDialogObj: {
       title: "",
       btnName: "",
       dialog: false,
       categoryNames: []
-    }
-  },
-
-  data: () => ({
+    },
     bookmarkObj: {},
 
     route: useRoute(),
