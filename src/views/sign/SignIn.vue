@@ -128,7 +128,7 @@ export default {
       try {
         const data = await store.dispatch('signIn', this.userData);
         //로그인 창에서 메인 화면으로 넘어갈때 히스토리 스택을 쌓지 않기위해 push -> replace 로 변경
-        await router.replace(data.username);
+        await router.replace(`/${data.username}`);
       } catch (error) {
         this.errorObj.title="로그인 오류";
         this.isError=true;

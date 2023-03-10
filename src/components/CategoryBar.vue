@@ -47,7 +47,7 @@ import {deleteCategory, updateCategory} from "../api/category/categoryApi";
 import {categoryStore} from "../store/category/category";
 import router from "../router";
 import ConfirmDialog from "./dialog/ConfirmDialog.vue";
-import CategoryDialog from "./form/CategoryDialog.vue";
+import CategoryDialog from "./dialog/CategoryDialog.vue";
 
 export default {
   name: 'CategoryBar',

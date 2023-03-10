@@ -82,11 +82,6 @@ export default {
   data: () => ({
     route: useRoute(),
     dialog: true,
-    category: {
-      name: "",
-      description: "",
-      isPublic: "",
-    }
   }),
 
   methods: {

@@ -54,8 +54,8 @@
                   <v-list-item
                       class="text-blue-accent-4"
                       prepend-icon="mdi mdi-pencil-outline"
-                      @click="bookmarkDialogObj.dialog=true">
-                    <v-list-item-title>수정</v-list-item-title>
+                      @click="bookmarkDialog.dialog=true">
+                    <v-list-item-title >수정</v-list-item-title>
                   </v-list-item>
                   <v-divider/>
                   <v-list-item
@@ -89,11 +89,13 @@
           </div>
         </v-card>
       </v-hover>
+      <BookmarkDialog
+          :bookmarkDialog="bookmarkDialog"
+          :bookmark="bookmark"
+          @submit="updateBookmark"/>
     </v-col>
   </v-row>
-  <BookmarkDialog
-      v-bind:bookmarkObj="bookmarkDialogObj"
-      @submit="updateBookmark"/>
+
   <ConfirmDialog
       v-bind:confirmObj="confirmObj"
       @delete="deleteBookmark"/>
@@ -103,16 +105,16 @@
 import {useRoute} from "vue-router";
 import {onMounted, ref, watch} from "vue";
 import {getAllBookmarks, getBookmarks} from "../api/bookmark/bookmarkApi";
-import {bookmarkStore} from "../store/bookmark/bookmark";
 import ConfirmDialog from "./dialog/ConfirmDialog.vue";
-import BookmarkDialog from "./form/BookmarkDialog.vue";
+import BookmarkDialog from "./dialog/BookmarkDialog.vue";
+import {categoryStore} from "../store/category/category";
+import {getCategories} from "../api/category/categoryApi";
 
 export default {
   name: 'Bookmark',
   components: {BookmarkDialog, ConfirmDialog},
   data: () => ({
     temp: "black",
-    bookmarks: bookmarkStore.state.bookmarks,
     imagePath: [
       {noImage: "../assets/images/nobrain-no-image.png"}
     ],
@@ -123,23 +125,32 @@ export default {
       dialog: false,
     },
 
-    bookmarkDialogObj: {
-      title: "북마크 수정",
-      btnName: "수정",
-      dialog: false,
-      categoryNames: [
-        "java", "spring", "ddd", "aaa"
-      ]
-    }
+    // bookmarkDialog: {
+    //   title: "북마크 수정",
+    //   btnName: "수정",
+    //   dialog: false,
+    //   categoryNames: categoryStore.state.categories,
+    //   tags: [],
+    // }
   }),
 
   setup() {
     const route = useRoute();
     const category = route.params.category;
     const username = route.params.username;
-
     const data = ref({
       bookmarks: [],
+    });
+    console.log(categoryStore.state.categories);
+    const bookmarkDialog = ref({
+        title: "북마크 수정",
+        btnName: "수정",
+        dialog: false,
+        categoryName: category,
+        categoryNames: [],
+    })
+    getCategories(username).then((response) => {
+      bookmarkDialog.value.categoryNames = response.data.list;
     });
 
     watch(() => (route.params), (newValue) => {
@@ -152,6 +163,22 @@ export default {
           // });
         }
     });
+    watch(() => (bookmarkDialog.value.categoryNames), (newValue) => {
+      getCategories(username).then((response) => {
+        bookmarkDialog.value.categoryNames = response.data.list.map(m => m.name);
+        categoryStore.commit('setCategories', bookmarkDialog.value.categoryNames);
+      });
+    });
+    // watch({params:() => route.params,  bookmark:() =>(data.value.bookmarks)}, (newValue) => {
+    //   if (newValue.category === undefined) {
+    //     getAllBookmarksByUser(newValue.username);
+    //   } else {
+    //     getBookmarksByUserAndCategory(newValue.username, newValue.category);
+    //     // getBookmarks(newValue.username, newValue.category).then((res)=> {
+    //     //   data.value.bookmarks = res.data.list;
+    //     // });
+    //   }
+    // });
 
     const getAllBookmarksByUser = async (username) => {
       getAllBookmarks(username).then((res) => {
@@ -170,13 +197,13 @@ export default {
       getAllBookmarksByUser(username);
     });
 
-    return {data}
+    return {data, bookmarkDialog}
   },
 
   methods: {
-    // updateBookmark(bookmark) {
-    //   console.log(bookmark);
-    // },
+    updateBookmark(bookmark) {
+      console.log(bookmark);
+    },
     //
     // deleteBookmark() {
     //   this.bookmarkDialogObj.dialog = false;

@@ -1,6 +1,6 @@
 <template>
   <v-dialog
-      v-model="bookmarkObj.dialog"
+      v-model="bookmarkDialog.dialog"
       persistent
       width="45%"
   >
@@ -10,7 +10,7 @@
             class="text-h5 mt-7 "
             id="card-title-text">
           <v-icon class="mb-2 mr-3">mdi-book-open-page-variant</v-icon>
-          {{ bookmarkObj.title }}
+          {{ bookmarkDialog.title }}
         </span>
       </v-card-title>
       <v-card-text>
@@ -46,10 +46,10 @@
           <div class="input-row">
             <v-select
                 label="카테고리 선택"
-                v-model="bookmark.category"
+                v-model="bookmarkDialog.categoryName"
                 prepend-icon="mdi-bookshelf"
                 hint="카테고리를 선택해주세요"
-                :items="bookmarkObj.categoryNames"/>
+                :items="bookmarkDialog.categoryNames"/>
           </div>
 
           <v-combobox
@@ -65,7 +65,7 @@
             <template v-slot:selection="{ attrs, item, select, selected }">
               <v-chip
                   v-bind="attrs"
-                  :model-value="bookmarkObj.tags"
+                  :model-value="bookmarkDialog.tags"
                   closable
                   @click="select"
                   @click:close="remove(item)"
@@ -78,11 +78,11 @@
 
           <div class="input-row">
             <v-checkbox
-                v-model="bookmark.isPublic"
+                v-model="bookmark.public"
                 label="비공개"
                 color="info"
                 value="true"
-                :prepend-icon="bookmark.isPublic ? 'mdi mdi-lock':'mdi mdi-lock-open-variant'"
+                :prepend-icon="bookmark.public ? 'mdi mdi-lock':'mdi mdi-lock-open-variant'"
                 hide-details/>
           </div>
         </v-container>
@@ -93,14 +93,14 @@
         <v-btn
             color="blue-darken-1"
             variant="text"
-            @click="bookmarkObj.dialog= false">
+            @click="bookmarkDialog.dialog= false">
           닫기
         </v-btn>
         <v-btn
             color="blue-darken-1"
             variant="text"
             @click="submitBookmark">
-          {{ bookmarkObj.btnName }}
+          {{ bookmarkDialog.btnName }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -109,44 +109,54 @@
 <script>
 
 import {useRoute} from "vue-router";
-import axios from "axios";
-export default {
+import {defineComponent} from "vue";
+import {categoryStore} from "../../store/category/category";
+
+export default defineComponent ({
   name: 'BookmarkDialog',
 
   props: {
-    bookmarkObj: {
-      title: "",
-      btnName: "",
+    bookmarkDialog: {
+      title: String,
+      btnName: String,
       dialog: Boolean,
+      categoryName: String,
       categoryNames: [],
-      tags: [],
-    }
-  },
+      // url: String,
+      // name: String,
+      // description: String,
+      // isPublic: Boolean,
+      // isStarred: Boolean,
 
-  data: () => ({
-    route: useRoute(),
-    dialog: true,
-    chips: [],
-    items: ['Streaming', 'Eating'],
-
+    },
     bookmark: {
       url: "",
       title: "",
       description: "",
-      category: [],
-      isPublic: false,
+      categoryName: "",
       tags: [],
+      isPublic: false,
+      isStarred: false,
     },
+  },
+
+  data: () => ({
+    route: useRoute(),
+    chips: [],
+    items: ['Streaming', 'Eating'],
 
     rules: {
       url: v => !!v || 'URL은 필수 입력 항목입니다.',
       title: v => !!v || '이름은 필수 입력 항목입니다.'
     }
   }),
-
+  // setup(props) {
+  //   console.log(props.bookmarkDialog);
+  //   console.log(props.bookmark);
+  // },
   methods: {
     submitBookmark() {
-      this.bookmarkObj.dialog = false;
+      this.bookmarkDialog.dialog = false;
       this.$emit('submit', this.bookmark);
     },
 
@@ -154,37 +164,11 @@ export default {
       this.chips.splice(this.chips.indexOf(item), 1);
     },
 
-    async submitBookmark2() {
-      this.dialog = false;
-      await axios.post("/api/" + this.route.params.username + "/bookmark",
-          {
-            url: this.bookmark.url,
-            title: this.bookmark.title,
-            description: this.bookmark.description,
-            categoryName: this.bookmark.category,
-            isPublic: this.bookmark.isPublic,
-            tags: this.bookmark.tags
-          })
-          .then((res) => {
-            this.bookmark.url = "";
-            this.bookmark.name = "";
-            this.bookmark.description = "";
-            this.bookmark.category = "";
-            this.bookmark.isPublic = false;
-            this.bookmark.tags = [];
-            location.reload();
-          })
-          .catch((err) => {
-            console.log(err);
-            alert(err.response.data.message);
-          });
-    },
-
     handleChangeTag(tags) {
       this.bookmark.tags = tags;
     }
   }
-}
+})
 </script>
 
 <style scoped>
@@ -212,16 +196,6 @@ export default {
 .input-text-area-icon {
   color: #888888;
   margin-bottom: 10px;
-}
-
-#input-tags {
-  background: #f6f6f6;
-  height: 56px;
-  align-content: center;
-}
-
-#input-tags:focus {
-  background: #aeaeae;
 }
 
 .v3ti-content > .v3ti-tag > span {

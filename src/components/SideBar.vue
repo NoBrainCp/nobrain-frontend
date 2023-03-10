@@ -56,11 +56,12 @@
             class="btn"
             color="#009688"
             prepend-icon="mdi mdi-bookmark"
-            @click="bookmarkDialogObj.dialog=true">
+            @click="bookmarkDialog.dialog=true">
           북마크 추가
         </v-btn>
         <BookmarkDialog
-            v-bind:bookmarkObj="bookmarkDialogObj"
+            :bookmark="bookmark"
+            :bookmarkDialog="bookmarkDialog"
             @submit="addBookmark"/>
       </div>
 
@@ -111,17 +112,17 @@
 </template>
 
 <script>
-import {user} from "../api";
 import {store} from "../store";
 import {categoryStore} from "../store/category/category";
 import router from "../router";
-import CategoryDialog from "./form/CategoryDialog.vue";
-import BookmarkDialog from "./form/BookmarkDialog.vue";
+import CategoryDialog from "./dialog/CategoryDialog.vue";
+import BookmarkDialog from "./dialog/BookmarkDialog.vue";
 import {getUserInfo} from "../api/user/userApi";
-import {reactive, watch} from "vue";
+import {reactive, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {addCategory, getCategories} from "../api/category/categoryApi";
-import {getUserIdFromCookie, getUsernameFromCookie} from "../utils/cookies";
+import {getUsernameFromCookie} from "../utils/cookies";
+import {addBookmark} from "../api/bookmark/bookmarkApi";
 
 export default {
   name: 'SideBar',
@@ -138,7 +139,6 @@ export default {
     follow: false,
     drawer: true,
     rail: false,
-    userName: getUsernameFromCookie(),
 
     categoryObj: {
       title: "카테고리 추가",
@@ -146,37 +146,40 @@ export default {
       dialog: false,
     },
 
-    bookmarkDialogObj: {
-      title: "북마크 추가",
-      btnName: "추가",
-      dialog: false,
-      categoryNames: [
-        "java", "spring", "ddd", "aaa"
-      ],
-    },
-
     followObj: {
       follower: "12",
       following: "235"
     },
-    categories: [],
 
     followButton: {
       text: "팔로우",
       color: "#03A9F4",
       icon: "mdi mdi-account-multiple-plus",
     },
+    bookmark: {
+      url: "",
+      title: "",
+      description: "",
+      public: false,
+      starred: false,
+    },
   }),
 
   setup() {
+    const bookmarkDialog = ref({
+      title: "북마크 추가",
+      btnName: "추가",
+      dialog: false,
+      categoryName: "",
+      categoryNames: [],
+    })
+
     const route = useRoute();
     const data = reactive({
       isMe: route.params.username === getUsernameFromCookie(),
       user: {},
-      categories: []
+      categories: [],
     });
-
-    const userId = getUserIdFromCookie();
     const username = route.params.username;
 
     try {
@@ -186,6 +189,7 @@ export default {
 
       getCategories(username).then((response) => {
         data.categories = response.data.list;
+        categoryStore.commit('setCategories', response.data.list);
       });
     } catch (error) {
       alert(error.response.data.message);
@@ -193,7 +197,14 @@ export default {
 
     watch(() => (route.params), (newValue) => {
       getCategories(username).then((response) => {
-        data.categories = response.data.list;
+        bookmarkDialog.value.categoryNames = response.data.list;
+      });
+    });
+
+    watch(() => (data.categories), (newValue) => {
+      getCategories(username).then((response) => {
+        bookmarkDialog.value.categoryNames = response.data.list.map(m => m.name);
+        categoryStore.commit('setCategories', bookmarkDialog.value.categoryNames);
       });
     });
 
@@ -210,15 +221,12 @@ export default {
 
     return {
       data,
-      addCategoryByUser
+      addCategoryByUser,
+      bookmarkDialog
     };
   },
 
   methods: {
-    user() {
-      return user
-    },
-
     showBookmark(category) {
       const username = this.route.params.username;
       categoryStore.commit('setCategory', category);
@@ -243,8 +251,10 @@ export default {
       }
     },
 
-    addBookmark(bookmark) {
-      console.log(bookmark);
+    async addBookmark(bookmark) {
+      await addBookmark(getUsernameFromCookie(), bookmark).then(() => {
+        router.push(`/${getUsernameFromCookie()}/bookmark`);
+      });
     },
   }
 }
