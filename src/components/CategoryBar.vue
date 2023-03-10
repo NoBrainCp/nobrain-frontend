@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import {ref, watch} from "vue";
+import {onMounted, ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import {getUsernameFromCookie} from "../utils/cookies";
 import {deleteCategory, updateCategory} from "../api/category/categoryApi";
@@ -102,6 +102,11 @@ export default {
     watch(() => categoryStore.state.category, (newCategory, oldCategory) => {
       data.value.category = newCategory;
     });
+
+    onMounted(() => {
+      data.value.isAll = true;
+      data.value.category = {name: '전체 북마크'};
+    })
 
     return {
       data,

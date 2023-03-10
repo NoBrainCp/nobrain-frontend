@@ -101,7 +101,7 @@
 
 <script>
 import {useRoute} from "vue-router";
-import {ref, watch} from "vue";
+import {onMounted, ref, watch} from "vue";
 import {getAllBookmarks, getBookmarks} from "../api/bookmark/bookmarkApi";
 import {bookmarkStore} from "../store/bookmark/bookmark";
 import ConfirmDialog from "./dialog/ConfirmDialog.vue";
@@ -165,7 +165,10 @@ export default {
       })
     }
 
-    // onMounted(getAllBookmarksByUser(username, category));
+
+    onMounted(() => {
+      getAllBookmarksByUser(username);
+    });
 
     return {data}
   },
