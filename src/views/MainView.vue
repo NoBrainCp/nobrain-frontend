@@ -7,7 +7,6 @@
       <v-main class="main">
         <v-window-item value="book">
           <CategoryBar/>
-<!--          <BookmarkCategory v-if="route.params.category/>-->
           <Book/>
         </v-window-item>
         <v-window-item value="setting">
@@ -29,11 +28,10 @@ import CategoryBar from "../components/CategoryBar.vue";
 import TagBar from "../components/TagBar.vue";
 import Profile from "../components/Profile.vue";
 import {useRoute} from "vue-router";
-import BookmarkCategory from "./bookmarkCategory.vue";
 
 export default {
 
-  components: {CategoryBar, BookmarkCategory, Profile, TagBar,  Headed, Side, Book},
+  components: {CategoryBar, Profile, TagBar,  Headed, Side, Book},
   name: 'main',
 
   data: () => ({

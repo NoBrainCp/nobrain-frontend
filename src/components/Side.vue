@@ -79,7 +79,7 @@
               elevation="4"
               @click="categoryObj.dialog=true"/>
           <CategoryDialog
-              v-bind:categoryObj="categoryObj"
+              v-bind:categoryDialog="categoryObj"
               @submit="addCategoryByUser"/>
         </div>
 
@@ -115,7 +115,7 @@ import BookmarkDialog from "./form/BookmarkDialog.vue";
 import {store} from "../store";
 import {getEmailFromCookie, getLoginIdFromCookie, getUserIdFromCookie, getUsernameFromCookie} from "../utils/cookies";
 import {getUserInfo} from "../api/user/userApi";
-import {reactive, ref} from "vue";
+import {reactive, ref, watch} from "vue";
 import {createRouter as $router, onBeforeRouteUpdate, useRoute, useRouter} from "vue-router";
 import {addCategory, getCategories} from "../api/category/categoryApi";
 import router from "../router";
@@ -189,6 +189,12 @@ export default {
     } catch (error) {
       alert(error.response.data.message);
     }
+
+    watch(() => (route.params), (newValue) => {
+      getCategories(username).then((response) => {
+        data.categories = response.data.list;
+      });
+    });
 
     const addCategoryByUser = async (category) => {
       try {

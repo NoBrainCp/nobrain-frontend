@@ -17,11 +17,11 @@
         elevation="3"
         prepend-icon="mdi mdi-pencil-outline"
         border
-        @click="this.categoryObj.dialog=true">
+        @click="categoryDialog.dialog=true">
       수정
     </v-btn>
     <CategoryDialog
-        v-bind:categoryObj="categoryObj"
+        :categoryDialog="categoryDialog"
         @submit="updateCategory"/>
     <v-btn
         v-if="!data.isAll"
@@ -47,6 +47,7 @@ import {getUsernameFromCookie} from "../utils/cookies";
 import {ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import {categoryStore} from "../store/category/category";
+import router from "../router";
 
 export default {
   name: 'CategoryBar',
@@ -57,16 +58,8 @@ export default {
   },
 
   data: () => ({
-    // category: {
-    //   name: "Category Name",
-    //   description: "Category Description",
-    // },
+    route: useRoute(),
     test: "",
-    categoryObj: {
-      title: "카테고리 수정",
-      btnName: "수정",
-      dialog: false,
-    },
 
     confirmObj: {
       title: "카테고리 삭제",
@@ -82,24 +75,53 @@ export default {
       isAll: false,
     });
 
+    const categoryDialog = ref({
+      dialog: false,
+      title: "카테고리 수정",
+      btnName: "수정",
+      originName: String,
+      name: String,
+      description: String,
+      public: Boolean,
+    });
+
     watch(() => (route.params), (newValue) => {
+      console.log("Watch Category Bar");
       if (newValue.category === undefined) {
         data.value.isAll = true;
         data.value.category = {name: '전체 북마크'};
       } else {
         data.value.isAll = false;
         data.value.category = categoryStore.state.category;
+        categoryDialog.value.originName = categoryStore.state.category.name;
+        categoryDialog.value.name = categoryStore.state.category.name;
+        categoryDialog.value.description = categoryStore.state.category.description;
+        categoryDialog.value.public = categoryStore.state.category.public;
+        console.log(categoryStore.state.category.public);
       }
     });
 
-    return { data };
+    watch(() => categoryStore.state.category, (newCategory, oldCategory) => {
+      data.value.category = newCategory;
+    });
+
+    return {
+      data,
+      categoryDialog
+    };
   },
 
   methods: {
-    // async updateCategory(category) {
-    //   const response = await updateCategory(getUsernameFromCookie(),  , category);
-    //   console.log(response);
-    // },
+    async updateCategory(category) {
+      try {
+        await updateCategory(getUsernameFromCookie(), category.originName, category);
+        categoryStore.commit('setCategory', category);
+        await router.push(`/${getUsernameFromCookie()}/${category.name}`);
+      } catch (error) {
+        alert(error.response.data.message);
+      }
+
+    },
 
     deleteCategory() {
       // delete API
