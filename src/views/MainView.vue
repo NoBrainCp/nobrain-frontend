@@ -2,6 +2,8 @@
   <v-app id="inspire">
     <Header @setting="showSettingVue"/>
     <SideBar/>
+    <TagBar class="tag-bar"/>
+
     <v-window
       v-model="window">
       <v-main class="main">
@@ -14,8 +16,6 @@
         </v-window-item>
       </v-main>
     </v-window>
-
-    <TagBar class="tag-bar"/>
 
   </v-app>
 </template>

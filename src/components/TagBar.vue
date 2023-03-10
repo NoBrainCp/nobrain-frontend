@@ -17,6 +17,7 @@
     >
       <template v-slot:append>
         <v-btn
+            class="tag-btn"
             variant="text"
             icon="mdi-chevron-right"
             @click.stop="rail = !rail"
@@ -80,6 +81,10 @@ export default {
 </script>
 
 <style scoped>
+.tag-btn {
+  margin: 4px 0;
+}
+
 .chip-group {
   margin-left: 10px;
 }
