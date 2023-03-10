@@ -98,6 +98,7 @@
           <v-list-item-title>{{ category.name }}</v-list-item-title>
           <template v-slot:append>
             <v-badge
+                v-if="category.count !== 0"
                 color="blue"
                 :content="category.count"
                 inline/>
