@@ -1,6 +1,6 @@
 <template>
   <v-dialog
-      v-model="bookmarkObj.dialog"
+      v-model="bookmarkDialogObj.dialog"
       persistent
       width="45%"
   >
@@ -10,7 +10,7 @@
             class="text-h5 mt-7 "
             id="card-title-text">
           <v-icon class="mb-2 mr-3">mdi-book-open-page-variant</v-icon>
-          {{ bookmarkObj.title }}
+          {{ bookmarkDialogObj.title }}
         </span>
       </v-card-title>
       <v-card-text>
@@ -46,10 +46,10 @@
           <div class="input-row">
             <v-select
                 label="카테고리 선택"
-                v-model="bookmark.category"
+                v-model="bookmark.categoryName"
                 prepend-icon="mdi-bookshelf"
                 hint="카테고리를 선택해주세요"
-                :items="bookmarkObj.categoryNames"/>
+                :items="bookmarkDialogObj.categoryNames"/>
           </div>
 
           <v-combobox
@@ -65,7 +65,7 @@
             <template v-slot:selection="{ attrs, item, select, selected }">
               <v-chip
                   v-bind="attrs"
-                  :model-value="bookmarkObj.tags"
+                  :model-value="bookmarkDialogObj.tags"
                   closable
                   @click="select"
                   @click:close="remove(item)"
@@ -78,11 +78,10 @@
 
           <div class="input-row">
             <v-checkbox
-                v-model="bookmark.isPublic"
+                v-model="bookmark.public"
                 label="비공개"
                 color="info"
-                value="true"
-                :prepend-icon="bookmark.isPublic ? 'mdi mdi-lock':'mdi mdi-lock-open-variant'"
+                :prepend-icon="bookmark.public ? 'mdi mdi-lock':'mdi mdi-lock-open-variant'"
                 hide-details/>
           </div>
         </v-container>
@@ -93,14 +92,14 @@
         <v-btn
             color="blue-darken-1"
             variant="text"
-            @click="bookmarkObj.dialog= false">
+            @click="bookmarkDialogObj.dialog= false">
           닫기
         </v-btn>
         <v-btn
             color="blue-darken-1"
             variant="text"
             @click="submitBookmark">
-          {{ bookmarkObj.btnName }}
+          {{ bookmarkDialogObj.btnName }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -108,35 +107,29 @@
 </template>
 <script>
 
+import {defineComponent, ref} from "vue";
 import {useRoute} from "vue-router";
 import axios from "axios";
-export default {
+import {bookmarkStore} from "../../store/bookmark/bookmark";
+export default defineComponent ({
   name: 'BookmarkDialog',
 
   props: {
-    bookmarkObj: {
+    bookmarkDialogObj: {
       title: "",
       btnName: "",
-      dialog: Boolean,
-      categoryNames: [],
-      tags: [],
+      dialog: false,
+      categoryNames: []
     }
   },
 
   data: () => ({
+    bookmarkObj: {},
+
     route: useRoute(),
     dialog: true,
     chips: [],
     items: ['Streaming', 'Eating'],
-
-    bookmark: {
-      url: "",
-      title: "",
-      description: "",
-      category: [],
-      isPublic: false,
-      tags: [],
-    },
 
     rules: {
       url: v => !!v || 'URL은 필수 입력 항목입니다.',
@@ -144,47 +137,29 @@ export default {
     }
   }),
 
+  setup() {
+    const bookmark = ref({});
+    bookmark.value = bookmarkStore.state.bookmark;
+
+    return {bookmark};
+  },
+
   methods: {
     submitBookmark() {
-      this.bookmarkObj.dialog = false;
+      this.bookmarkDialogObj.dialog = false;
+      this.bookmarkObj = this.bookmark;
       this.$emit('submit', this.bookmark);
     },
 
     remove (item) {
       this.chips.splice(this.chips.indexOf(item), 1);
     },
-
-    async submitBookmark2() {
-      this.dialog = false;
-      await axios.post("/api/" + this.route.params.username + "/bookmark",
-          {
-            url: this.bookmark.url,
-            title: this.bookmark.title,
-            description: this.bookmark.description,
-            categoryName: this.bookmark.category,
-            isPublic: this.bookmark.isPublic,
-            tags: this.bookmark.tags
-          })
-          .then((res) => {
-            this.bookmark.url = "";
-            this.bookmark.name = "";
-            this.bookmark.description = "";
-            this.bookmark.category = "";
-            this.bookmark.isPublic = false;
-            this.bookmark.tags = [];
-            location.reload();
-          })
-          .catch((err) => {
-            console.log(err);
-            alert(err.response.data.message);
-          });
-    },
-
+    
     handleChangeTag(tags) {
       this.bookmark.tags = tags;
     }
   }
-}
+})
 </script>
 
 <style scoped>

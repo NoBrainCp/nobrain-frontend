@@ -54,7 +54,7 @@
                   <v-list-item
                       class="text-blue-accent-4"
                       prepend-icon="mdi mdi-pencil-outline"
-                      @click="bookmarkDialogObj.dialog=true">
+                      @click="clickEdit(bookmark)">
                     <v-list-item-title>수정</v-list-item-title>
                   </v-list-item>
                   <v-divider/>
@@ -92,7 +92,8 @@
     </v-col>
   </v-row>
   <BookmarkDialog
-      v-bind:bookmarkObj="bookmarkDialogObj"
+      :bookmarkDialogObj="bookmarkDialogObj"
+      :bookmark="bookmark"
       @submit="updateBookmark"/>
   <ConfirmDialog
       v-bind:confirmObj="confirmObj"
@@ -106,6 +107,10 @@ import {getAllBookmarks, getBookmarks} from "../api/bookmark/bookmarkApi";
 import {bookmarkStore} from "../store/bookmark/bookmark";
 import ConfirmDialog from "./dialog/ConfirmDialog.vue";
 import BookmarkDialog from "./form/BookmarkDialog.vue";
+import {categoryStore} from "../store/category/category";
+import {getCategories} from "../api/category/categoryApi";
+import {getUsernameFromCookie} from "../utils/cookies";
+import bookmarkDialog from "./form/BookmarkDialog.vue";
 
 export default {
   name: 'Bookmark',
@@ -127,9 +132,7 @@ export default {
       title: "북마크 수정",
       btnName: "수정",
       dialog: false,
-      categoryNames: [
-        "java", "spring", "ddd", "aaa"
-      ]
+      categoryNames: [],
     }
   }),
 
@@ -142,15 +145,19 @@ export default {
       bookmarks: [],
     });
 
+    const bookmark = ref({});
+
     watch(() => (route.params), (newValue) => {
         if (newValue.category === undefined) {
           getAllBookmarksByUser(newValue.username);
         } else {
           getBookmarksByUserAndCategory(newValue.username, newValue.category);
-          // getBookmarks(newValue.username, newValue.category).then((res)=> {
-          //   data.value.bookmarks = res.data.list;
-          // });
         }
+    });
+
+    watch(() => (bookmarkStore.state.bookmark), (newBookmark) => {
+      bookmark.value = bookmarkStore.state.bookmark;
+      console.log(bookmark.value)
     });
 
     const getAllBookmarksByUser = async (username) => {
@@ -165,22 +172,31 @@ export default {
       })
     }
 
-
     onMounted(() => {
       getAllBookmarksByUser(username);
     });
 
-    return {data}
+    return {data, bookmark};
   },
 
   methods: {
-    // updateBookmark(bookmark) {
-    //   console.log(bookmark);
-    // },
+    updateBookmark(bookmark) {
+      console.log(bookmark);
+    },
     //
     // deleteBookmark() {
     //   this.bookmarkDialogObj.dialog = false;
     // },
+
+    clickEdit(bookmark) {
+      bookmarkStore.commit('setBookmark', bookmark);
+      getCategories(getUsernameFromCookie()).then((response) => {
+        this.bookmarkDialogObj.categoryNames = response.data.list.map(c => c.name);
+      });
+
+      this.bookmarkDialogObj.dialog = true;
+    },
+
     clickStar(bookmark) {
       bookmark.starred = !bookmark.starred;
     },
