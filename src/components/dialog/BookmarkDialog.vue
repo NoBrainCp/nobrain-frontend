@@ -146,13 +146,6 @@ export default defineComponent ({
     }
   }),
 
-  // setup() {
-    // const bookmark = ref({});
-    // bookmark.value = bookmarkStore.state.bookmark;
-    //
-    // return {bookmark};
-  // },
-
   methods: {
     submitBookmark() {
       this.bookmarkDialogObj.dialog = false;

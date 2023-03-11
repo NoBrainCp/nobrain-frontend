@@ -261,6 +261,11 @@ export default {
     },
 
     clickAddBookmarkBtn() {
+      const categoryName = this.route.params.category;
+      if (categoryName !== undefined) {
+        this.bookmarkDialogObj.bookmark.categoryName = categoryName;
+      }
+
       getCategories(getUsernameFromCookie()).then((response) => {
         this.bookmarkDialogObj.categoryNames = response.data.list.map(c => c.name);
       });
