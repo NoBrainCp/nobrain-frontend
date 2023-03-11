@@ -56,11 +56,11 @@
             class="btn"
             color="#009688"
             prepend-icon="mdi mdi-bookmark"
-            @click="bookmarkDialogObj.dialog=true">
+            @click="clickAddBookmarkBtn">
           북마크 추가
         </v-btn>
         <BookmarkDialog
-            v-bind:bookmarkObj="bookmarkDialogObj"
+            :bookmarkDialogObj="bookmarkDialogObj"
             @submit="addBookmark"/>
       </div>
 
@@ -122,6 +122,7 @@ import {reactive, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {addCategory, getCategories} from "../api/category/categoryApi";
 import {getUserIdFromCookie, getUsernameFromCookie} from "../utils/cookies";
+import {addBookmark} from "../api/bookmark/bookmarkApi";
 
 export default {
   name: 'SideBar',
@@ -147,12 +148,12 @@ export default {
     },
 
     bookmarkDialogObj: {
-      title: "북마크 추가",
+      dialogTitle: "북마크 추가",
       btnName: "추가",
       dialog: false,
-      categoryNames: [
-        "java", "spring", "ddd", "aaa"
-      ],
+      categoryNames: [],
+
+      bookmark: {},
     },
 
     followObj: {
@@ -191,7 +192,7 @@ export default {
       alert(error.response.data.message);
     }
 
-    watch(() => (route.params), (newValue) => {
+    watch(() => (route.params.category), (newValue) => {
       getCategories(username).then((response) => {
         data.categories = response.data.list;
       });
@@ -215,9 +216,6 @@ export default {
   },
 
   methods: {
-    user() {
-      return user
-    },
 
     showBookmark(category) {
       const username = this.route.params.username;
@@ -243,8 +241,19 @@ export default {
       }
     },
 
-    addBookmark(bookmark) {
-      console.log(bookmark);
+    clickAddBookmarkBtn() {
+      getCategories(getUsernameFromCookie()).then((response) => {
+        this.bookmarkDialogObj.categoryNames = response.data.list.map(c => c.name);
+      });
+
+      this.bookmarkDialogObj.dialog = true;
+    },
+
+    async addBookmark(bookmark) {
+      bookmark.isPublic = !bookmark.isPublic;
+      const username = getUsernameFromCookie();
+      await addBookmark(username, bookmark);
+      await router.push(`/${username}/${bookmark.categoryName}`)
     },
   }
 }

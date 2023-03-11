@@ -10,14 +10,14 @@
             class="text-h5 mt-7 "
             id="card-title-text">
           <v-icon class="mb-2 mr-3">mdi-book-open-page-variant</v-icon>
-          {{ bookmarkDialogObj.title }}
+          {{ bookmarkDialogObj.dialogTitle }}
         </span>
       </v-card-title>
       <v-card-text>
         <v-container class="bookmark-input-container">
           <div class="input-row">
             <v-text-field
-                v-model="bookmark.url"
+                v-model="bookmarkDialogObj.bookmark.url"
                 label="URL"
                 clearable
                 prepend-icon="mdi mdi-link-variant"
@@ -26,7 +26,7 @@
 
           <div class="input-row">
             <v-text-field
-                v-model="bookmark.title"
+                v-model="bookmarkDialogObj.bookmark.title"
                 label="이름"
                 required
                 prepend-icon="mdi-rename"
@@ -37,7 +37,7 @@
           <div class="input-row input-text-area">
             <v-icon class="mdi mdi-tooltip-text input-text-area-icon"></v-icon>
             <v-textarea
-                v-model="bookmark.description"
+                v-model="bookmarkDialogObj.bookmark.description"
                 label="설명"
                 type="text"
                 prepend-icon="mdi "/>
@@ -46,14 +46,14 @@
           <div class="input-row">
             <v-select
                 label="카테고리 선택"
-                v-model="bookmark.categoryName"
+                v-model="bookmarkDialogObj.bookmark.categoryName"
                 prepend-icon="mdi-bookshelf"
                 hint="카테고리를 선택해주세요"
                 :items="bookmarkDialogObj.categoryNames"/>
           </div>
 
           <v-combobox
-              v-model="bookmark.tags"
+              v-model="bookmarkDialogObj.bookmark.tags"
               :items="items"
               chips
               clearable
@@ -65,7 +65,7 @@
             <template v-slot:selection="{ attrs, item, select, selected }">
               <v-chip
                   v-bind="attrs"
-                  :model-value="bookmarkDialogObj.tags"
+                  :model-value="bookmarkDialogObj.bookmark.tags"
                   closable
                   @click="select"
                   @click:close="remove(item)"
@@ -78,10 +78,10 @@
 
           <div class="input-row">
             <v-checkbox
-                v-model="bookmark.public"
+                v-model="bookmarkDialogObj.bookmark.isPublic"
                 label="비공개"
                 color="info"
-                :prepend-icon="bookmark.public ? 'mdi mdi-lock':'mdi mdi-lock-open-variant'"
+                :prepend-icon="bookmarkDialogObj.bookmark.isPublic ? 'mdi mdi-lock':'mdi mdi-lock-open-variant'"
                 hide-details/>
           </div>
         </v-container>
@@ -114,16 +114,25 @@ export default defineComponent ({
   name: 'BookmarkDialog',
 
   props: {
+    bookmarkDialogObj: {
+      dialogTitle: String,
+      btnName: String,
+      dialog: false,
+      categoryNames: [],
 
+      bookmark: {
+        url: String,
+        title: String,
+        description: String,
+        categoryName: String,
+        tags: [],
+        isPublic: true,
+      },
+    },
   },
 
   data: () => ({
-    bookmarkDialogObj: {
-      title: "",
-      btnName: "",
-      dialog: false,
-      categoryNames: []
-    },
+
     bookmarkObj: {},
 
     route: useRoute(),
@@ -137,18 +146,17 @@ export default defineComponent ({
     }
   }),
 
-  setup() {
-    const bookmark = ref({});
-    bookmark.value = bookmarkStore.state.bookmark;
-
-    return {bookmark};
-  },
+  // setup() {
+    // const bookmark = ref({});
+    // bookmark.value = bookmarkStore.state.bookmark;
+    //
+    // return {bookmark};
+  // },
 
   methods: {
     submitBookmark() {
       this.bookmarkDialogObj.dialog = false;
-      this.bookmarkObj = this.bookmark;
-      this.$emit('submit', this.bookmark);
+      this.$emit('submit', this.bookmarkDialogObj.bookmark);
     },
 
     remove (item) {
