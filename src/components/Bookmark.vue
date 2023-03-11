@@ -1,7 +1,7 @@
 <template>
   <v-row>
-    <v-col v-for="(bookmark, idx) in data.bookmarks"
-           :key="bookmark"
+    <v-col v-for="bookmark in data.bookmarks"
+           :key="bookmark.id"
            cols="auto">
       <v-hover v-slot="{ isHovering, props }">
         <v-card
@@ -61,7 +61,7 @@
                   <v-list-item
                       class="text-red-accent-4"
                       prepend-icon="mdi mdi-delete"
-                      @click="confirmObj.dialog=true">
+                      @click="clickDelete(bookmark.id)">
                     <v-list-item-title>삭제</v-list-item-title>
                   </v-list-item>
                 </v-list>
@@ -91,23 +91,21 @@
       </v-hover>
     </v-col>
   </v-row>
+  <ConfirmDialog
+      :confirmObj="confirmObj"
+      @delete="deleteBookmark"/>
   <BookmarkDialog
       :bookmarkDialogObj="bookmarkDialogObj"
-      :bookmark="bookmark"
       @submit="updateBookmark"/>
-  <ConfirmDialog
-      v-bind:confirmObj="confirmObj"
-      @delete="deleteBookmark"/>
 </template>
 
 <script>
-import {useRoute} from "vue-router";
-import {onMounted, ref, watch} from "vue";
-import {getAllBookmarks, getBookmarks} from "../api/bookmark/bookmarkApi";
 import {bookmarkStore} from "../store/bookmark/bookmark";
 import ConfirmDialog from "./dialog/ConfirmDialog.vue";
 import BookmarkDialog from "./dialog/BookmarkDialog.vue";
-import {categoryStore} from "../store/category/category";
+import {useRoute} from "vue-router";
+import {onMounted, reactive, watch} from "vue";
+import {deleteBookmarkById, getAllBookmarks, getBookmarks, updateBookmark} from "../api/bookmark/bookmarkApi";
 import {getCategories} from "../api/category/categoryApi";
 import {getUsernameFromCookie} from "../utils/cookies";
 
@@ -125,13 +123,17 @@ export default {
       title: "북마크 삭제",
       text: "정말 북마크를 삭제하시겠습니까?",
       dialog: false,
+
+      bookmarkId: '',
     },
 
     bookmarkDialogObj: {
-      title: "북마크 수정",
+      dialogTitle: "북마크 수정",
       btnName: "수정",
       dialog: false,
       categoryNames: [],
+
+      bookmark: {},
     }
   }),
 
@@ -140,11 +142,9 @@ export default {
     const category = route.params.category;
     const username = route.params.username;
 
-    const data = ref({
+    const data = reactive({
       bookmarks: [],
     });
-
-    const bookmark = ref({});
 
     watch(() => (route.params), (newValue) => {
         if (newValue.category === undefined) {
@@ -154,20 +154,24 @@ export default {
         }
     });
 
-    watch(() => (bookmarkStore.state.bookmark), (newBookmark) => {
-      bookmark.value = bookmarkStore.state.bookmark;
-      console.log(bookmark.value)
-    });
+    // watch([() => data.bookmarks, () => route.params], ([newBookmarks, newParams], [oldBookmarks, oldParams]) => {
+    //   if (newParams.category === undefined) {
+    //     getAllBookmarksByUser(newParams.username);
+    //   } else {
+    //     getBookmarksByUserAndCategory(newParams.username, newParams.category);
+    //   }
+    // })
 
     const getAllBookmarksByUser = async (username) => {
       getAllBookmarks(username).then((res) => {
-        data.value.bookmarks = res.data.list;
+        data.bookmarks = res.data.list;
       })
     };
 
     const getBookmarksByUserAndCategory = async (username, category) => {
       getBookmarks(username, category).then((res) => {
-        data.value.bookmarks = res.data.list;
+        data.bookmarks = res.data.list;
+        console.log(data.bookmarks);
       })
     }
 
@@ -175,25 +179,37 @@ export default {
       getAllBookmarksByUser(username);
     });
 
-    return {data, bookmark};
+    return { data };
   },
 
   methods: {
     updateBookmark(bookmark) {
       console.log(bookmark);
+      updateBookmark(bookmark.id, bookmark);
+      // this.data.bookmark.push(bookmark);
     },
-    //
-    // deleteBookmark() {
-    //   this.bookmarkDialogObj.dialog = false;
-    // },
+
+    deleteBookmark(bookmarkId) {
+      deleteBookmarkById(bookmarkId);
+
+      const index = this.data.bookmarks.findIndex(bookmark => bookmark.id === bookmarkId);
+      if (index !== -1) {
+        this.data.bookmarks.splice(index, 1);
+      }
+    },
 
     clickEdit(bookmark) {
-      bookmarkStore.commit('setBookmark', bookmark);
+      this.bookmarkDialogObj.bookmark = bookmark;
       getCategories(getUsernameFromCookie()).then((response) => {
         this.bookmarkDialogObj.categoryNames = response.data.list.map(c => c.name);
       });
 
       this.bookmarkDialogObj.dialog = true;
+    },
+
+    clickDelete(bookmarkId) {
+      this.confirmObj.bookmarkId = bookmarkId;
+      this.confirmObj.dialog=true;
     },
 
     clickStar(bookmark) {

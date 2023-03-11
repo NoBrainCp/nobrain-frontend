@@ -39,13 +39,14 @@ export default {
       title: "",
       text: "",
       dialog: Boolean,
+      bookmarkId: Number,
     }
   },
 
   methods: {
     submit() {
-      this.confirmObj.dialog = false
-      this.$emit('delete')
+      this.confirmObj.dialog = false;
+      this.$emit('delete', this.confirmObj.bookmarkId);
     }
   }
 }
