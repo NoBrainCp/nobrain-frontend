@@ -12,7 +12,11 @@ export function addBookmark(username, bookmarkData) {
     return bookmark.post(`/${username}/bookmark`, bookmarkData);
 }
 
-export function deleteBookmark(bookmarkId) {
+export function updateBookmark(bookmarkId, bookmarkData) {
+    return bookmark.put(`/bookmark/${bookmarkId}`, bookmarkData);
+}
+
+export function deleteBookmarkById(bookmarkId) {
     return bookmark.delete(`/bookmark/${bookmarkId}`);
 }
 // export function

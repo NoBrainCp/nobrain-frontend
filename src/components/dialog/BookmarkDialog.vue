@@ -1,6 +1,6 @@
 <template>
   <v-dialog
-      v-model="bookmarkDialog.dialog"
+      v-model="bookmarkDialogObj.dialog"
       persistent
       width="45%"
   >
@@ -10,14 +10,14 @@
             class="text-h5 mt-7 "
             id="card-title-text">
           <v-icon class="mb-2 mr-3">mdi-book-open-page-variant</v-icon>
-          {{ bookmarkDialog.text }}
+          {{ bookmarkDialogObj.dialogTitle }}
         </span>
       </v-card-title>
       <v-card-text>
         <v-container class="bookmark-input-container">
           <div class="input-row">
             <v-text-field
-                v-model="bookmarkDialog.url"
+                v-model="bookmarkDialogObj.bookmark.url"
                 label="URL"
                 clearable
                 prepend-icon="mdi mdi-link-variant"
@@ -26,7 +26,7 @@
 
           <div class="input-row">
             <v-text-field
-                v-model="bookmarkDialog.title"
+                v-model="bookmarkDialogObj.bookmark.title"
                 label="이름"
                 required
                 prepend-icon="mdi-rename"
@@ -37,7 +37,7 @@
           <div class="input-row input-text-area">
             <v-icon class="mdi mdi-tooltip-text input-text-area-icon"></v-icon>
             <v-textarea
-                v-model="bookmarkDialog.description"
+                v-model="bookmarkDialogObj.bookmark.description"
                 label="설명"
                 type="text"
                 prepend-icon="mdi "/>
@@ -46,15 +46,15 @@
           <div class="input-row">
             <v-select
                 label="카테고리 선택"
-                v-model="bookmarkDialog.categoryName"
+                v-model="bookmarkDialogObj.bookmark.categoryName"
                 prepend-icon="mdi-bookshelf"
                 hint="카테고리를 선택해주세요"
-                :items="bookmarkDialog.categoryList"/>
+                :items="bookmarkDialogObj.categoryNames"/>
           </div>
 
-          <!--    v-model을 태그 리스트를 뽑는건데 item에만 주는것인가     -->
           <v-combobox
-              :items="bookmarkDialog.tags"
+              v-model="bookmarkDialogObj.bookmark.tags"
+              :items="items"
               chips
               clearable
               label="Tags"
@@ -65,7 +65,7 @@
             <template v-slot:selection="{ attrs, item, select, selected }">
               <v-chip
                   v-bind="attrs"
-                  :model-value="bookmarkDialog.tags"
+                  :model-value="bookmarkDialogObj.bookmark.tags"
                   closable
                   @click="select"
                   @click:close="remove(item)"
@@ -78,10 +78,10 @@
 
           <div class="input-row">
             <v-checkbox
-                v-model="bookmarkDialog.isPublic"
+                v-model="bookmarkDialogObj.bookmark.isPublic"
                 label="비공개"
                 color="info"
-                :prepend-icon="bookmarkDialog.isPublic ? 'mdi mdi-lock':'mdi mdi-lock-open-variant'"
+                :prepend-icon="bookmarkDialogObj.bookmark.isPublic ? 'mdi mdi-lock':'mdi mdi-lock-open-variant'"
                 hide-details/>
           </div>
         </v-container>
@@ -92,14 +92,14 @@
         <v-btn
             color="blue-darken-1"
             variant="text"
-            @click="bookmarkDialog.dialog= false">
+            @click="bookmarkDialogObj.dialog= false">
           닫기
         </v-btn>
         <v-btn
             color="blue-darken-1"
             variant="text"
             @click="submitBookmark">
-          {{ bookmarkDialog.btnName }}
+          {{ bookmarkDialogObj.btnName }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -114,24 +114,31 @@ export default defineComponent ({
   name: 'BookmarkDialog',
 
   props: {
-    bookmarkDialog: {
-      text: String,
+    bookmarkDialogObj: {
+      dialogTitle: String,
       btnName: String,
       dialog: false,
-      url: String,
-      title: String,
-      description: String,
-      isPublic: Boolean,
-      isStarred: false,
-      categoryName: String,
-      categoryList: [],
-      tags: []
-    }
+      categoryNames: [],
+
+      bookmark: {
+        url: String,
+        title: String,
+        description: String,
+        categoryName: String,
+        tags: [],
+        isPublic: true,
+      },
+    },
   },
 
   data: () => ({
+
+    bookmarkObj: {},
+
     route: useRoute(),
+    dialog: true,
     chips: [],
+    items: ['Streaming', 'Eating'],
 
     rules: {
       url: v => !!v || 'URL은 필수 입력 항목입니다.',
@@ -139,21 +146,10 @@ export default defineComponent ({
     }
   }),
 
-  setup() {
-    const bookmark = ref({});
-    bookmark.value = bookmarkStore.state.bookmark;
-    return {bookmark};
-  },
-
   methods: {
     submitBookmark() {
-      this.bookmarkDialog.dialog = false;
-      this.$emit('submit', this.bookmarkDialog);
-      this.bookmarkDialog.url = "";
-      this.bookmarkDialog.title = "";
-      this.bookmarkDialog.description = "";
-      this.bookmarkDialog.isPublic = false;
-      this.bookmarkDialog.tags = [];
+      this.bookmarkDialogObj.dialog = false;
+      this.$emit('submit', this.bookmarkDialogObj.bookmark);
     },
 
     remove (item) {

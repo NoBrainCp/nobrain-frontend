@@ -56,10 +56,11 @@
             class="btn"
             color="#009688"
             prepend-icon="mdi mdi-bookmark"
-            @click="bookmarkDialog.dialog=true">
+            @click="clickAddBookmarkBtn">
           북마크 추가
         </v-btn>
         <BookmarkDialog
+            :bookmarkDialogObj="bookmarkDialogObj"
             :bookmarkDialog="bookmarkDialog"
             @submit="addBookmark"/>
       </div>
@@ -78,9 +79,9 @@
               icon="mdi-plus"
               color="grey-lighten-3"
               elevation="4"
-              @click="categoryDialog.dialog=true"/>
+              @click="categoryObj.dialog=true"/>
           <CategoryDialog
-              :categoryDialog="categoryDialog"
+              v-bind:categoryDialog="categoryObj"
               @submit="addCategoryByUser"/>
         </div>
 
@@ -111,18 +112,18 @@
 </template>
 
 <script>
-import {user} from "../api";
 import {store} from "../store";
 import {categoryStore} from "../store/category/category";
 import router from "../router";
 import CategoryDialog from "./dialog/CategoryDialog.vue";
 import BookmarkDialog from "./dialog/BookmarkDialog.vue";
 import {getUserInfo} from "../api/user/userApi";
-import {reactive, ref, watch} from "vue";
+import {reactive, watch, computed} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {addCategory, getCategories} from "../api/category/categoryApi";
 import {getUserIdFromCookie, getUsernameFromCookie} from "../utils/cookies";
 import {addBookmark} from "../api/bookmark/bookmarkApi";
+import {bookmarkStore} from "../store/bookmark/bookmark";
 
 export default {
   name: 'SideBar',
@@ -134,19 +135,26 @@ export default {
   components: {BookmarkDialog, CategoryDialog},
 
   data: () => ({
-    route : useRoute(), //showBookmark 메서드에서 사용중
+    router: useRouter(),
+    route: useRoute(),
     follow: false,
     drawer: true,
     rail: false,
     userName: getUsernameFromCookie(),
 
-    bookmarkDialogObj: {
-      title: "북마크 추가",
+    categoryObj: {
+      title: "카테고리 추가",
       btnName: "추가",
       dialog: false,
-      categoryNames: [
-        "java", "spring", "ddd", "aaa"
-      ],
+    },
+
+    bookmarkDialogObj: {
+      dialogTitle: "북마크 추가",
+      btnName: "추가",
+      dialog: false,
+      categoryNames: [],
+
+      bookmark: {},
     },
 
     followObj: {
@@ -170,28 +178,6 @@ export default {
       categories: []
     });
 
-    const categoryDialog = ref({
-      dialog: false,
-      title: "카테고리 추가",
-      btnName: "추가",
-      categoryName: "",
-      description: "",
-      public: false,
-    })
-
-    const bookmarkDialog = ref({
-      dialog: false,
-      text: "북마크 추가",
-      btnName: "추가",
-      url: "",
-      title: "",
-      description: "",
-      isPublic: false,
-      categoryName: "",
-      categoryList: [],
-      tags: [],
-    })
-    const userId = getUserIdFromCookie();
     const username = route.params.username;
 
     try {
@@ -201,16 +187,21 @@ export default {
 
       getCategories(username).then((response) => {
         data.categories = response.data.list;
-        bookmarkDialog.value.categoryList = data.categories.map(m => m.name);
       });
     } catch (error) {
       alert(error.response.data.message);
     }
 
-    watch(() => (route.params), (newValue) => {
+    watch(() => (route.params.category), (newValue) => {
       getCategories(username).then((response) => {
         data.categories = response.data.list;
-        bookmarkDialog.value.categoryName = route.params.category;
+      });
+    });
+
+    const bookmarks = computed(() => bookmarkStore.getters.bookmarks);
+    watch(() => bookmarks, (newBookmarks, oldBookmarks) => {
+      getCategories(username).then((response) => {
+        data.categories = response.data.list;
       });
     });
 
@@ -227,15 +218,23 @@ export default {
 
     return {
       data,
-      addCategoryByUser,
-      categoryDialog,
-      bookmarkDialog
+      addCategoryByUser
     };
   },
 
   methods: {
-    user() {
-      return user
+    async addBookmark(bookmark) {
+      bookmark.isPublic = !bookmark.isPublic;
+      const username = getUsernameFromCookie();
+
+      try {
+        await addBookmark(username, bookmark);
+        bookmarkStore.commit('addBookmark', bookmark);
+      } catch (error) {
+        alert(error.response.data.message);
+      }
+
+      await router.push(`/${username}/${bookmark.categoryName}`)
     },
 
     showBookmark(category) {
@@ -247,11 +246,6 @@ export default {
     showAllBookmarks() {
       const username = this.route.params.username;
       router.push(`/${username}`);
-    },
-
-    async addBookmark(bookmark) {
-      await addBookmark(getUsernameFromCookie(), bookmark);
-      await router.push(`/${getUsernameFromCookie()}/${bookmark.categoryName}`);
     },
 
     clickFollow() {
@@ -267,6 +261,18 @@ export default {
       }
     },
 
+    clickAddBookmarkBtn() {
+      const categoryName = this.route.params.category;
+      if (categoryName !== undefined) {
+        this.bookmarkDialogObj.bookmark.categoryName = categoryName;
+      }
+
+      getCategories(getUsernameFromCookie()).then((response) => {
+        this.bookmarkDialogObj.categoryNames = response.data.list.map(c => c.name);
+      });
+
+      this.bookmarkDialogObj.dialog = true;
+    },
   }
 }
 </script>
