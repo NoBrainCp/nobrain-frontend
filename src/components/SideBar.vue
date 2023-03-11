@@ -61,6 +61,7 @@
         </v-btn>
         <BookmarkDialog
             :bookmarkDialogObj="bookmarkDialogObj"
+            :bookmarkDialog="bookmarkDialog"
             @submit="addBookmark"/>
       </div>
 

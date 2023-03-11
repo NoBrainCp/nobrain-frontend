@@ -67,7 +67,6 @@ import {getUsernameFromCookie} from "../../utils/cookies";
 
 export default {
   name: 'CategoryDialog',
-  components: {IconDocumentation, IconPlusBox},
   props: {
     categoryDialog: {
       title: String,
@@ -87,11 +86,10 @@ export default {
   methods: {
     submit() {
       this.$emit('submit', this.categoryDialog);
-
       this.categoryDialog.dialog = false;
-      // this.categoryDialog.name = "";
-      // this.categoryDialog.description = "";
-      // this.categoryDialog.isPublic = false;
+      this.categoryDialog.name = "";
+      this.categoryDialog.description = "";
+      this.categoryDialog.public = false;
     },
   }
 }
