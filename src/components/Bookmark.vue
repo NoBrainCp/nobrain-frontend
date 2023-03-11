@@ -54,14 +54,14 @@
                   <v-list-item
                       class="text-blue-accent-4"
                       prepend-icon="mdi mdi-pencil-outline"
-                      @click="clickEdit(bookmark)">
+                      @click="clickEditBookmarkBtn(bookmark)">
                     <v-list-item-title>수정</v-list-item-title>
                   </v-list-item>
                   <v-divider/>
                   <v-list-item
                       class="text-red-accent-4"
                       prepend-icon="mdi mdi-delete"
-                      @click="clickDelete(bookmark.id)">
+                      @click="clickDeleteBookmarkBtn(bookmark.id)">
                     <v-list-item-title>삭제</v-list-item-title>
                   </v-list-item>
                 </v-list>
@@ -199,8 +199,9 @@ export default {
       }
     },
 
-    clickEdit(bookmark) {
+    clickEditBookmarkBtn(bookmark) {
       this.bookmarkDialogObj.bookmark = bookmark;
+
       getCategories(getUsernameFromCookie()).then((response) => {
         this.bookmarkDialogObj.categoryNames = response.data.list.map(c => c.name);
       });
@@ -208,7 +209,7 @@ export default {
       this.bookmarkDialogObj.dialog = true;
     },
 
-    clickDelete(bookmarkId) {
+    clickDeleteBookmarkBtn(bookmarkId) {
       this.confirmObj.bookmarkId = bookmarkId;
       this.confirmObj.dialog=true;
     },
