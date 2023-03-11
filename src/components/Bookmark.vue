@@ -195,6 +195,7 @@ export default {
       const index = this.data.bookmarks.findIndex(bookmark => bookmark.id === bookmarkId);
       if (index !== -1) {
         this.data.bookmarks.splice(index, 1);
+        bookmarkStore.commit('deleteBookmark', bookmarkStore, bookmarkId);
       }
     },
 

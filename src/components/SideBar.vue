@@ -111,18 +111,18 @@
 </template>
 
 <script>
-import {user} from "../api";
 import {store} from "../store";
 import {categoryStore} from "../store/category/category";
 import router from "../router";
 import CategoryDialog from "./dialog/CategoryDialog.vue";
 import BookmarkDialog from "./dialog/BookmarkDialog.vue";
 import {getUserInfo} from "../api/user/userApi";
-import {reactive, watch} from "vue";
+import {reactive, watch, computed} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {addCategory, getCategories} from "../api/category/categoryApi";
 import {getUserIdFromCookie, getUsernameFromCookie} from "../utils/cookies";
 import {addBookmark} from "../api/bookmark/bookmarkApi";
+import {bookmarkStore} from "../store/bookmark/bookmark";
 
 export default {
   name: 'SideBar',
@@ -177,7 +177,6 @@ export default {
       categories: []
     });
 
-    const userId = getUserIdFromCookie();
     const username = route.params.username;
 
     try {
@@ -193,6 +192,13 @@ export default {
     }
 
     watch(() => (route.params.category), (newValue) => {
+      getCategories(username).then((response) => {
+        data.categories = response.data.list;
+      });
+    });
+
+    const bookmarks = computed(() => bookmarkStore.getters.bookmarks);
+    watch(() => bookmarks, (newBookmarks, oldBookmarks) => {
       getCategories(username).then((response) => {
         data.categories = response.data.list;
       });
@@ -216,6 +222,19 @@ export default {
   },
 
   methods: {
+    async addBookmark(bookmark) {
+      bookmark.isPublic = !bookmark.isPublic;
+      const username = getUsernameFromCookie();
+
+      try {
+        await addBookmark(username, bookmark);
+        bookmarkStore.commit('addBookmark', bookmark);
+      } catch (error) {
+        alert(error.response.data.message);
+      }
+
+      await router.push(`/${username}/${bookmark.categoryName}`)
+    },
 
     showBookmark(category) {
       const username = this.route.params.username;
@@ -247,13 +266,6 @@ export default {
       });
 
       this.bookmarkDialogObj.dialog = true;
-    },
-
-    async addBookmark(bookmark) {
-      bookmark.isPublic = !bookmark.isPublic;
-      const username = getUsernameFromCookie();
-      await addBookmark(username, bookmark);
-      await router.push(`/${username}/${bookmark.categoryName}`)
     },
   }
 }
