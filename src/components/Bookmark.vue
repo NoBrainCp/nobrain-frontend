@@ -92,8 +92,7 @@
     </v-col>
   </v-row>
   <BookmarkDialog
-      :bookmarkDialogObj="bookmarkDialogObj"
-      :bookmark="bookmark"
+      :bookmarkDialog="bookmarkDialog"
       @submit="updateBookmark"/>
   <ConfirmDialog
       v-bind:confirmObj="confirmObj"
@@ -144,7 +143,18 @@ export default {
       bookmarks: [],
     });
 
-    const bookmark = ref({});
+    const bookmarkDialog = ref({
+      dialog: false,
+      text: "북마크 추가",
+      btnName: "추가",
+      url: "",
+      title: "",
+      description: "",
+      isPublic: false,
+      categoryName: "",
+      categoryList: [],
+      tags: [],
+    })
 
     watch(() => (route.params), (newValue) => {
         if (newValue.category === undefined) {
@@ -155,8 +165,8 @@ export default {
     });
 
     watch(() => (bookmarkStore.state.bookmark), (newBookmark) => {
-      bookmark.value = bookmarkStore.state.bookmark;
-      console.log(bookmark.value)
+      bookmarkDialog.value = bookmarkStore.state.bookmark;
+      console.log(bookmarkDialog.value)
     });
 
     const getAllBookmarksByUser = async (username) => {
@@ -175,7 +185,7 @@ export default {
       getAllBookmarksByUser(username);
     });
 
-    return {data, bookmark};
+    return {data, bookmarkDialog};
   },
 
   methods: {

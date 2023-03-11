@@ -56,11 +56,11 @@
             class="btn"
             color="#009688"
             prepend-icon="mdi mdi-bookmark"
-            @click="bookmarkDialogObj.dialog=true">
+            @click="bookmarkDialog.dialog=true">
           북마크 추가
         </v-btn>
         <BookmarkDialog
-            v-bind:bookmarkObj="bookmarkDialogObj"
+            :bookmarkDialog="bookmarkDialog"
             @submit="addBookmark"/>
       </div>
 
@@ -122,6 +122,7 @@ import {reactive, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {addCategory, getCategories} from "../api/category/categoryApi";
 import {getUserIdFromCookie, getUsernameFromCookie} from "../utils/cookies";
+import {addBookmark} from "../api/bookmark/bookmarkApi";
 
 export default {
   name: 'SideBar',
@@ -133,6 +134,7 @@ export default {
   components: {BookmarkDialog, CategoryDialog},
 
   data: () => ({
+    route : useRoute(), //showBookmark 메서드에서 사용중
     follow: false,
     drawer: true,
     rail: false,
@@ -171,12 +173,24 @@ export default {
     const categoryDialog = ref({
       dialog: false,
       title: "카테고리 추가",
-      btnName: "추기",
+      btnName: "추가",
       categoryName: "",
       description: "",
       public: false,
     })
 
+    const bookmarkDialog = ref({
+      dialog: false,
+      text: "북마크 추가",
+      btnName: "추가",
+      url: "",
+      title: "",
+      description: "",
+      isPublic: false,
+      categoryName: "",
+      categoryList: [],
+      tags: [],
+    })
     const userId = getUserIdFromCookie();
     const username = route.params.username;
 
@@ -187,6 +201,7 @@ export default {
 
       getCategories(username).then((response) => {
         data.categories = response.data.list;
+        bookmarkDialog.value.categoryList = data.categories.map(m => m.name);
       });
     } catch (error) {
       alert(error.response.data.message);
@@ -195,6 +210,7 @@ export default {
     watch(() => (route.params), (newValue) => {
       getCategories(username).then((response) => {
         data.categories = response.data.list;
+        bookmarkDialog.value.categoryName = route.params.category;
       });
     });
 
@@ -212,7 +228,8 @@ export default {
     return {
       data,
       addCategoryByUser,
-      categoryDialog
+      categoryDialog,
+      bookmarkDialog
     };
   },
 
@@ -232,6 +249,11 @@ export default {
       router.push(`/${username}`);
     },
 
+    async addBookmark(bookmark) {
+      await addBookmark(getUsernameFromCookie(), bookmark);
+      await router.push(`/${getUsernameFromCookie()}/${bookmark.categoryName}`);
+    },
+
     clickFollow() {
       this.follow = !this.follow;
       if (this.follow) {
@@ -245,9 +267,6 @@ export default {
       }
     },
 
-    addBookmark(bookmark) {
-      console.log(bookmark);
-    },
   }
 }
 </script>
