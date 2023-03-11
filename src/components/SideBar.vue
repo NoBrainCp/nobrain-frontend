@@ -78,9 +78,9 @@
               icon="mdi-plus"
               color="grey-lighten-3"
               elevation="4"
-              @click="categoryObj.dialog=true"/>
+              @click="categoryDialog.dialog=true"/>
           <CategoryDialog
-              v-bind:categoryDialog="categoryObj"
+              :categoryDialog="categoryDialog"
               @submit="addCategoryByUser"/>
         </div>
 
@@ -118,7 +118,7 @@ import router from "../router";
 import CategoryDialog from "./dialog/CategoryDialog.vue";
 import BookmarkDialog from "./dialog/BookmarkDialog.vue";
 import {getUserInfo} from "../api/user/userApi";
-import {reactive, watch} from "vue";
+import {reactive, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {addCategory, getCategories} from "../api/category/categoryApi";
 import {getUserIdFromCookie, getUsernameFromCookie} from "../utils/cookies";
@@ -133,18 +133,10 @@ export default {
   components: {BookmarkDialog, CategoryDialog},
 
   data: () => ({
-    router: useRouter(),
-    route: useRoute(),
     follow: false,
     drawer: true,
     rail: false,
     userName: getUsernameFromCookie(),
-
-    categoryObj: {
-      title: "카테고리 추가",
-      btnName: "추가",
-      dialog: false,
-    },
 
     bookmarkDialogObj: {
       title: "북마크 추가",
@@ -175,6 +167,15 @@ export default {
       user: {},
       categories: []
     });
+
+    const categoryDialog = ref({
+      dialog: false,
+      title: "카테고리 추가",
+      btnName: "추기",
+      categoryName: "",
+      description: "",
+      public: false,
+    })
 
     const userId = getUserIdFromCookie();
     const username = route.params.username;
@@ -210,7 +211,8 @@ export default {
 
     return {
       data,
-      addCategoryByUser
+      addCategoryByUser,
+      categoryDialog
     };
   },
 
