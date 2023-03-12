@@ -107,7 +107,8 @@ import {useRoute} from "vue-router";
 import {onMounted, reactive, watch} from "vue";
 import {deleteBookmarkById, getAllBookmarks, getBookmarks, updateBookmark} from "../api/bookmark/bookmarkApi";
 import {getCategories} from "../api/category/categoryApi";
-import {getUsernameFromCookie} from "../utils/cookies";
+import {getUserIdFromCookie, getUsernameFromCookie} from "../utils/cookies";
+import {getTags, getTagsByBookmarkId} from "../api/tag/tagApi";
 
 export default {
   name: 'Bookmark',
@@ -201,10 +202,17 @@ export default {
 
     clickEditBookmarkBtn(bookmark) {
       this.bookmarkDialogObj.bookmark = bookmark;
-
       getCategories(getUsernameFromCookie()).then((response) => {
         this.bookmarkDialogObj.categoryNames = response.data.list.map(c => c.name);
       });
+
+      getTags(getUserIdFromCookie()).then((response) => {
+        this.bookmarkDialogObj.bookmark.tagList = response.data.list.map(t => t.tag.name);
+      })
+
+      getTagsByBookmarkId(getUsernameFromCookie(), bookmark.id).then((response) => {
+        this.bookmarkDialogObj.bookmark.tags = response.data.list.map(t => t.tagName);
+      })
 
       this.bookmarkDialogObj.dialog = true;
     },
