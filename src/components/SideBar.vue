@@ -123,7 +123,7 @@ import {addCategory, getCategories} from "../api/category/categoryApi";
 import {getUserIdFromCookie, getUsernameFromCookie} from "../utils/cookies";
 import {addBookmark} from "../api/bookmark/bookmarkApi";
 import {bookmarkStore} from "../store/bookmark/bookmark";
-import {getTags} from "../api/bookmark_tag/bookmarkTagApi";
+import {getTags} from "../api/tag/tagApi";
 
 export default {
   name: 'SideBar',
