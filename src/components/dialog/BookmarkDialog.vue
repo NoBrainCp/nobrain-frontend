@@ -52,9 +52,10 @@
                 :items="bookmarkDialogObj.categoryNames"/>
           </div>
 
+
           <v-combobox
               v-model="bookmarkDialogObj.bookmark.tags"
-              :items="items"
+              :items="bookmarkDialogObj.bookmark.tagList"
               chips
               clearable
               label="Tags"
@@ -125,7 +126,8 @@ export default defineComponent ({
         title: String,
         description: String,
         categoryName: String,
-        tags: [],
+        tags: [], //수정시 기존 보여지는 태그들
+        tagList: [],  //자신의 북마크 전체 태그 리스트
         isPublic: true,
       },
     },
@@ -138,7 +140,7 @@ export default defineComponent ({
     route: useRoute(),
     dialog: true,
     chips: [],
-    items: ['Streaming', 'Eating'],
+    // items: ['Streaming', 'Eating'],
 
     rules: {
       url: v => !!v || 'URL은 필수 입력 항목입니다.',
