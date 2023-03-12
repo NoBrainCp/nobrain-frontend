@@ -123,7 +123,7 @@ import {addCategory, getCategories} from "../api/category/categoryApi";
 import {getUserIdFromCookie, getUsernameFromCookie} from "../utils/cookies";
 import {addBookmark} from "../api/bookmark/bookmarkApi";
 import {bookmarkStore} from "../store/bookmark/bookmark";
-import {getTags} from "../api/tag/tagApi";
+import {getTags} from "../api/bookmark_tag/bookmarkTagApi";
 
 export default {
   name: 'SideBar',
@@ -271,8 +271,8 @@ export default {
         this.bookmarkDialogObj.categoryNames = response.data.list.map(c => c.name);
       });
 
-      getTags(getUsernameFromCookie()).then((response) => {
-        this.bookmarkDialogObj.bookmark.tagList = response.data.list.map(t => t.tagName);
+      getTags(getUserIdFromCookie()).then((response) => {
+        this.bookmarkDialogObj.bookmark.tagList = response.data.list.map(t => t.tag.name);
       })
 
       this.bookmarkDialogObj.dialog = true;
