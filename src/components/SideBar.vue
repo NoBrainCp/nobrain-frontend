@@ -13,8 +13,8 @@
       <v-list-item
           prepend-avatar="https://cdn.vuetifyjs.com/images/john.jpg"
           nav
-          :title=data.user.username
-          :subtitle=data.user.email
+          :title=user.username
+          :subtitle=user.email
           class="account-item"
       >
         <template v-slot:append>
@@ -33,7 +33,7 @@
 
       <div v-if="!rail" class="follow-btn-container">
         <v-btn
-            v-if="!data.isMe"
+            v-if="!isMe"
             id="follow-btn"
             class="btn"
             :color="followButton.color"
@@ -72,7 +72,7 @@
         <div class="category-header-container" v-if="!rail">
           <v-list-subheader class="category-header">카테고리</v-list-subheader>
           <v-btn
-              v-if="data.isMe"
+              v-if="isMe"
               class="mr-2"
               size="25"
               icon="mdi-plus"
@@ -86,7 +86,7 @@
 
         <v-divider v-if="!rail"/>
         <v-list-item
-            v-for="(category, i) in data.categories" key="i"
+            v-for="(category, i) in categories" key="i"
             :value="category"
             active-color="light-blue"
             class="category-list-item"
@@ -117,7 +117,7 @@ import router from "../router";
 import CategoryDialog from "./dialog/CategoryDialog.vue";
 import BookmarkDialog from "./dialog/BookmarkDialog.vue";
 import {getUserInfo} from "../api/user/userApi";
-import {reactive, watch, computed} from "vue";
+import {reactive, toRefs, watch, computed} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {addCategory, getCategories} from "../api/category/categoryApi";
 import {getUserIdFromCookie, getUsernameFromCookie} from "../utils/cookies";
@@ -135,12 +135,10 @@ export default {
   components: {BookmarkDialog, CategoryDialog},
 
   data: () => ({
-    router: useRouter(),
     route: useRoute(),
     follow: false,
     drawer: true,
     rail: false,
-    userName: getUsernameFromCookie(),
 
     categoryObj: {
       title: "카테고리 추가",
@@ -161,7 +159,7 @@ export default {
       follower: "12",
       following: "235"
     },
-    categories: [],
+    // categories: [],
 
     followButton: {
       text: "팔로우",
@@ -172,74 +170,102 @@ export default {
 
   setup() {
     const route = useRoute();
+    const username = route.params.username;
     const data = reactive({
-      isMe: route.params.username === getUsernameFromCookie(),
+      isMe: username === getUsernameFromCookie(),
       user: {},
       categories: []
     });
 
-    const username = route.params.username;
+    getUserInfo(username)
+        .then((response) => {
+          data.user = response.data.data;
+        })
+        .catch((error) => {
+          alert(error.response.data.message);
+        });
+    getCategories(username)
+        .then((response) => {
+          data.categories = response.data.list;
+        })
+        .catch((error) => {
+          alert(error.response.data.message);
+        });
 
-    try {
-      getUserInfo(username).then((response) => {
-        data.user = response.data.data;
-      });
-
-      getCategories(username).then((response) => {
-        data.categories = response.data.list;
-      });
-    } catch (error) {
-      alert(error.response.data.message);
+    function updateCategories() {
+      getCategories(username)
+          .then((response) => {
+            data.categories = response.data.list;
+          })
+          .catch((error) => {
+            alert(error.response.data.message);
+          });
     }
+    watch(() => (categoryStore.state.status), updateCategories);
+    watch(() => (bookmarkStore.state.status), updateCategories);
 
-    watch(() => (route.params.category), (newValue) => {
-      getCategories(username).then((response) => {
-        data.categories = response.data.list;
-      });
-    });
-
-    const bookmarks = computed(() => bookmarkStore.getters.bookmarks);
-    watch(() => bookmarks, (newBookmarks, oldBookmarks) => {
-      getCategories(username).then((response) => {
-        data.categories = response.data.list;
-      });
-    });
+    // watch(() => (route.params.category), (newValue) => {
+    //   getCategories(username).then((response) => {
+    //     data.categories = response.data.list;
+    //   });
+    // });
 
     const addCategoryByUser = async (category) => {
       try {
         await addCategory(getUsernameFromCookie(), category);
-        getCategories(getUsernameFromCookie()).then((response) => {
-          data.categories = response.data.list;
-        })
+        categoryStore.state.status = !categoryStore.state.status;
+        // getCategories(getUsernameFromCookie()).then((response) => {
+        //   data.categories = response.data.list;
+        // })
       } catch (error) {
         alert(error.response.data.message);
       }
     }
 
     return {
-      data,
-      addCategoryByUser
+      addCategoryByUser,
+      ...toRefs(data) //toRefs 를 사용 하면 template 에서 data.변수이름 -> 변수이름으로 사용 가능
     };
   },
 
   methods: {
+    clickAddBookmarkBtn() {
+      this.bookmarkDialogObj.dialog = true;
+      const categoryName = this.route.params.category;
+      if (categoryName !== undefined) {
+        this.bookmarkDialogObj.bookmark.categoryName = categoryName;
+      }
+
+      getCategories(getUsernameFromCookie()).then((response) => {
+        this.bookmarkDialogObj.categoryNames = response.data.list.map(c => c.name);
+      });
+
+      getTags(getUserIdFromCookie()).then((response) => {
+        this.bookmarkDialogObj.bookmark.tagList = response.data.list.map(t => t.tag.name);
+      })
+    },
+
     async addBookmark(bookmark) {
       bookmark.isPublic = !bookmark.isPublic;
       const username = getUsernameFromCookie();
-
+      const categoryName = this.route.params.category;
       try {
         await addBookmark(username, bookmark);
-        bookmarkStore.commit('addBookmark', bookmark);
+        // bookmarkStore.commit('addBookmark', bookmark);
       } catch (error) {
         alert(error.response.data.message);
       }
-
-      await router.push(`/${username}/${bookmark.categoryName}`)
+      categoryStore.state.status = !categoryStore.state.status;
+      bookmarkStore.state.status = !bookmarkStore.state.status;
+      this.bookmarkDialogInit();
+      if (categoryName === undefined) {
+        await router.push(`/${username}/${bookmark.categoryName}`)
+      }
     },
 
     showBookmark(category) {
-      const username = this.route.params.username;
       categoryStore.commit('setCategory', category);
+      const username = this.route.params.username;
       router.push(`/${username}/${category.name}`);
     },
 
@@ -261,22 +287,12 @@ export default {
       }
     },
 
-    clickAddBookmarkBtn() {
-      const categoryName = this.route.params.category;
-      if (categoryName !== undefined) {
-        this.bookmarkDialogObj.bookmark.categoryName = categoryName;
-      }
-
-      getCategories(getUsernameFromCookie()).then((response) => {
-        this.bookmarkDialogObj.categoryNames = response.data.list.map(c => c.name);
-      });
-
-      getTags(getUserIdFromCookie()).then((response) => {
-        this.bookmarkDialogObj.bookmark.tagList = response.data.list.map(t => t.tag.name);
-      })
-
-      this.bookmarkDialogObj.dialog = true;
-    },
+    bookmarkDialogInit() {
+      this.bookmarkDialogObj.bookmark.url = "";
+      this.bookmarkDialogObj.bookmark.title = "";
+      this.bookmarkDialogObj.bookmark.description = "";
+      this.bookmarkDialogObj.bookmark.tags = [];
+    }
   }
 }
 </script>
