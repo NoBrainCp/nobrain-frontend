@@ -100,15 +100,26 @@
 </template>
 
 <script>
+import router from "../router";
+import {useRoute} from "vue-router";
+
+//라이플 사이클 / 반응형 / 감지
+import {onMounted, reactive, watch} from "vue";
+
+//store
 import {bookmarkStore} from "../store/bookmark/bookmark";
+
+//dialog
 import ConfirmDialog from "./dialog/ConfirmDialog.vue";
 import BookmarkDialog from "./dialog/BookmarkDialog.vue";
-import {useRoute} from "vue-router";
-import {onMounted, reactive, watch} from "vue";
+
+//api
 import {deleteBookmarkById, getAllBookmarks, getBookmarks, updateBookmark} from "../api/bookmark/bookmarkApi";
 import {getCategories} from "../api/category/categoryApi";
-import {getUserIdFromCookie, getUsernameFromCookie} from "../utils/cookies";
 import {getTags, getTagsByBookmarkId} from "../api/tag/tagApi";
+
+//Cookie
+import {getUserIdFromCookie, getUsernameFromCookie} from "../utils/cookies";
 
 export default {
   name: 'Bookmark',
@@ -147,13 +158,30 @@ export default {
       bookmarks: [],
     });
 
-    watch(() => (route.params), (newValue) => {
-        if (newValue.category === undefined) {
-          getAllBookmarksByUser(newValue.username);
-        } else {
-          getBookmarksByUserAndCategory(newValue.username, newValue.category);
-        }
+    watch([() => route.params, () => bookmarkStore.state.status], ([params]) => {
+      const {username, category} = params;
+      if (category === undefined) {
+        getAllBookmarksByUser(username);
+      } else {
+        getBookmarksByUserAndCategory(username, category);
+      }
     });
+    // 2개 묶어서 위에 메소드로 정의
+   /* watch(() => (route.params), (newValue) => {
+      if (newValue.category === undefined) {
+        getAllBookmarksByUser(newValue.username);
+      } else {
+        getBookmarksByUserAndCategory(newValue.username, newValue.category);
+      }
+    });
+    watch(() => (bookmarkStore.state.status), () => {
+      console.log(category);
+      if (category === undefined) {
+        getAllBookmarksByUser(username);
+      } else {
+        getBookmarksByUserAndCategory(username, category);
+      }
+    })*/
 
     // watch([() => data.bookmarks, () => route.params], ([newBookmarks, newParams], [oldBookmarks, oldParams]) => {
     //   if (newParams.category === undefined) {
@@ -164,71 +192,88 @@ export default {
     // })
 
     const getAllBookmarksByUser = async (username) => {
-      getAllBookmarks(username).then((res) => {
+      await getAllBookmarks(username).then((res) => {
         data.bookmarks = res.data.list;
       })
     };
 
     const getBookmarksByUserAndCategory = async (username, category) => {
-      getBookmarks(username, category).then((res) => {
+      await getBookmarks(username, category).then((res) => {
         data.bookmarks = res.data.list;
-        console.log(data.bookmarks);
       })
     }
-
+    //고려사항 -> setup()만으로는 구현 못하는지
     onMounted(() => {
       getAllBookmarksByUser(username);
     });
 
-    return { data };
+    return {data};
   },
 
   methods: {
-    updateBookmark(bookmark) {
-      console.log(bookmark);
-      updateBookmark(bookmark.id, bookmark);
-      // this.data.bookmark.push(bookmark);
-    },
-
-    deleteBookmark(bookmarkId) {
-      deleteBookmarkById(bookmarkId);
-
-      const index = this.data.bookmarks.findIndex(bookmark => bookmark.id === bookmarkId);
-      if (index !== -1) {
-        this.data.bookmarks.splice(index, 1);
-        bookmarkStore.commit('deleteBookmark', bookmarkStore, bookmarkId);
-      }
-    },
-
     clickEditBookmarkBtn(bookmark) {
       this.bookmarkDialogObj.bookmark = bookmark;
+      this.bookmarkDialogObj.dialog = true;
+
       getCategories(getUsernameFromCookie()).then((response) => {
         this.bookmarkDialogObj.categoryNames = response.data.list.map(c => c.name);
       });
-
-      getTags(getUserIdFromCookie()).then((response) => {
-        this.bookmarkDialogObj.bookmark.tagList = response.data.list.map(t => t.tag.name);
-      })
 
       getTagsByBookmarkId(getUsernameFromCookie(), bookmark.id).then((response) => {
         this.bookmarkDialogObj.bookmark.tags = response.data.list.map(t => t.tagName);
       })
 
-      this.bookmarkDialogObj.dialog = true;
+      getTags(getUserIdFromCookie()).then((response) => {
+        this.bookmarkDialogObj.bookmark.tagList = response.data.list.map(t => t.tag.name);
+      })
     },
 
-    clickDeleteBookmarkBtn(bookmarkId) {
-      this.confirmObj.bookmarkId = bookmarkId;
-      this.confirmObj.dialog=true;
-    },
+    async updateBookmark(bookmark) {
+      const category = "";
+      const username = getUsernameFromCookie();
+      await updateBookmark(bookmark.id, bookmark);
+      console.log("1" + bookmark.categoryName);
+      console.log("2" + category);
+      //북마크 업데이트 경우의 수 2가지
+      //1. 카테고리를 변경하고 데이터를 변경했을 경우
+      //2. 카테고리를 변경하지 않고 데이터를 변경했을 경우
 
-    clickStar(bookmark) {
-      bookmark.starred = !bookmark.starred;
-    },
+      // 비교 객체는 bookmark.categoryName(변경 카테고리) / 기존 북마크에 해당하는 카테고리(bookmarkId로 categoryName 구하는 쿼리)
+      //순서
+      //1. spring 쿼리 구현
+      //2. get api 요청으로 해당 북마크에 해당 하는 카테고리 이름 가져오기
+      //3. const category 변수에 매핑 해주기
 
-    clickLock(bookmark) {
-      bookmark.public = !bookmark.public;
+      //1번 = 카테고리를 변경하고 데이터를 변경했을 경우 -> 변경한 카테고리로 이동 (이동 하면서 컴포넌트 리랜더링)
+      if (bookmark.categoryName !== category) {
+        await router.push(`/${username}/${bookmark.categoryName}`);
+        return;
+      }
+      //2번 = 카테고리를 변경하지 않고 데이터만 변경했을 경우 -> 북마크 스토어에게 데이터가 변경된 것을 알림 watch 에 의해 api재호출
+      bookmarkStore.state.status = !bookmarkStore.state.status;
     }
+  },
+
+  clickDeleteBookmarkBtn(bookmarkId) {
+    this.confirmObj.bookmarkId = bookmarkId;
+    this.confirmObj.dialog = true;
+  },
+  //비동기 처리를 해주지 않으면 상태 변화 감지가 먼저 이루어짐
+  async deleteBookmark(bookmarkId) {
+    await deleteBookmarkById(bookmarkId);
+    const index = this.data.bookmarks.findIndex(bookmark => bookmark.id === bookmarkId);
+    if (index !== -1) {
+      this.data.bookmarks.splice(index, 1);
+    }
+    bookmarkStore.state.status = !bookmarkStore.state.status;
+  },
+
+  clickStar(bookmark) {
+    bookmark.starred = !bookmark.starred;
+  },
+
+  clickLock(bookmark) {
+    bookmark.public = !bookmark.public;
   }
 }
 </script>
