@@ -4,6 +4,7 @@ export const categoryStore = createStore({
     state: {
         category: {},
         categories: [],
+        status: false,
     },
 
     mutations: {
@@ -12,6 +13,6 @@ export const categoryStore = createStore({
         },
         setCategories(state, categories) {
             state.categories = categories;
-        }
+        },
     },
 })

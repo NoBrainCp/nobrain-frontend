@@ -4,6 +4,7 @@ export const bookmarkStore = createStore({
     state: {
         bookmark: {},
         bookmarks: [],
+        status: false,
     },
 
     getters: {
