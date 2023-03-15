@@ -6,9 +6,7 @@ export function getFollowCount(username) {
 }
 
 export function followAndUnfollow(toUserId) {
-    follow.defaults.headers.common['Authorization'] = store.state.accessToken;
-    console.log(store.state.accessToken);
-    return follow.get(`/user/${toUserId}/follow`);
+    return follow.post(`/user/${toUserId}/follow`);
 }
 
 export function getFollowerList(username) {
