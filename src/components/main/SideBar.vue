@@ -278,7 +278,7 @@ export default {
         this.followButton.color = "#03A9F4";
         this.followButton.icon = "mdi mdi-account-multiple-plus"
       }
-      followAndUnfollow(2);
+      followAndUnfollow(this.user.userId);
     },
 
     bookmarkDialogInit() {
