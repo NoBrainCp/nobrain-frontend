@@ -111,6 +111,7 @@ import {getCategories, getCategoryByBookmarkId} from "../../api/category/categor
 import {getTags, getTagsByBookmarkId} from "../../api/tag/tagApi";
 import {getUserIdFromCookie, getUsernameFromCookie} from "../../utils/cookies";
 import {categoryStore} from "../../store/category/category";
+import {store} from "../../store";
 
 export default {
   name: 'Bookmark',
