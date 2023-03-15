@@ -37,12 +37,11 @@
     >
 
       <v-chip
-          v-for="(tag, i) in tags"
+          v-for="(tag) in tags"
           :key="tag.id"
-          :value="tag.name"
+          :value="tag.id"
           filter
           elevation="2"
-          @click="selectTag(tag.id)"
       >
         {{tag.name}}
       </v-chip>
@@ -51,32 +50,54 @@
 </template>
 
 <script>
+import {onMounted, reactive, toRefs, watch} from "vue";
+import {useRoute} from "vue-router";
+import {getBookmarksByTags, getTags} from "../../api/tag/tagApi";
+import {bookmarkStore} from "../../store/bookmark/bookmark";
+
 export default {
   name: 'TagBar',
   data() {
     return {
+      route: useRoute(),
       drawer: true,
       rail: true,
-
-      tags: [
-        { id: 1, name : "Java", isOpen : false},
-        { id: 2, name : "Spring", isOpen : false},
-        { id: 3, name : "SpringBoot", isOpen : false},
-        { id: 4, name : "Vue", isOpen : false},
-        { id: 5, name : "JavaScript", isOpen : false},
-        { id: 6, name : "JPA", isOpen : false},
-        { id: 7, name : "DataBase", isOpen : false},
-      ],
-
-      selectedTags: [],
     }
   },
 
-  methods: {
-    selectTag(id) {
-      console.log(this.selectedTags);
+  setup() {
+    const route = useRoute();
+    const data = reactive({
+      bookmarks: [],
+      tags: [],
+      selectedTags: []
+    });
+
+    watch(() => data.selectedTags, () => {
+      getBookmarksByTags(route.params.username, data.selectedTags)
+          .then(response => {
+            bookmarkStore.commit("setBookmarks", response.data.list);
+          })
+          .catch(error => {
+            alert(error.data.message);
+          });
+    });
+
+    watch(() => bookmarkStore.state.status, findAllTagsByUser);
+    onMounted(findAllTagsByUser);
+
+    function findAllTagsByUser() {
+      const username = route.params.username;
+      getTags(username).then(response => {
+        const list = response.data.list;
+        data.tags = list.map(t => t.tag);
+        data.bookmarks = list.map(b => b.bookmark);
+      });
     }
-  }
+
+    return {...toRefs(data)};
+  },
+
 }
 </script>
 
