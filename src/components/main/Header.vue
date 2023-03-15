@@ -24,7 +24,7 @@
               append-icon="mdi mdi-menu-down"
               v-bind="props"
           >
-            {{searchObj.condition}}
+            {{ searchObj.condition }}
           </v-btn>
         </template>
         <v-list class="search-item-list">
@@ -64,7 +64,7 @@
           <v-avatar start>
             <v-img src="https://cdn.vuetifyjs.com/images/john.jpg"></v-img>
           </v-avatar>
-          {{store.state.username}}
+          {{ store.state.username }}
         </v-chip>
       </template>
 
@@ -75,9 +75,9 @@
               <v-avatar image="https://cdn.vuetifyjs.com/images/john.jpg"></v-avatar>
             </template>
 
-            <v-list-item-title>{{myInfo.username}}</v-list-item-title>
+            <v-list-item-title>{{ myInfo.username }}</v-list-item-title>
 
-            <v-list-item-subtitle>{{myInfo.email}}</v-list-item-subtitle>
+            <v-list-item-subtitle>{{ myInfo.email }}</v-list-item-subtitle>
 
             <template v-slot:append>
               <v-list-item-action>
@@ -121,6 +121,9 @@
 import {getEmailFromCookie, getUsernameFromCookie} from "../../utils/cookies";
 import {store} from "../../store";
 import router from "../../router";
+import {onMounted, ref} from "vue";
+import {searchBookmark} from "../../api/bookmark/bookmarkApi";
+import {bookmarkStore} from "../../store/bookmark/bookmark";
 
 export default {
   name: 'Header',
@@ -130,7 +133,7 @@ export default {
     }
   },
 
-  data () {
+  data() {
     return {
       myInfo: {
         username: getUsernameFromCookie(),
@@ -138,34 +141,40 @@ export default {
       },
 
       menus: [
-        { title: "Setting", icon: "mdi-cog" },
-        { title: "Logout", icon: "mdi-logout" },
+        {title: "Setting", icon: "mdi-cog"},
+        {title: "Logout", icon: "mdi-logout"},
       ],
 
       searchConditions: [
-        { title: "MY" },
-        { title: "FOLLOW" },
-        { title: "ALL" }
+        {title: "MY"},
+        {title: "FOLLOW"},
+        {title: "ALL"}
       ],
 
-      searchObj: {
-        condition: "My",
-        text: "",
-      },
 
       menu: false,
       gridView: false,
     }
   },
 
+  setup() {
+    const searchObj = ref({
+      condition: "My",
+      text: "",
+    });
+
+    return {searchObj}
+  },
+
   methods: {
     search() {
-      console.log(this.searchObj.text);
-      console.log(this.searchObj.condition);
+      searchBookmark(this.searchObj.text, this.searchObj.condition).then((response) =>{
+        bookmarkStore.commit("setBookmarks", response.data.list);
+      })
     },
 
     home() {
-      router.push("/"+getUsernameFromCookie());
+      router.push("/" + getUsernameFromCookie());
     },
 
     selectSearchCondition(title) {
