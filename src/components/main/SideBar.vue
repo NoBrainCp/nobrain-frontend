@@ -117,7 +117,7 @@ import router from "../../router";
 import CategoryDialog from "../dialog/CategoryDialog.vue";
 import BookmarkDialog from "../dialog/BookmarkDialog.vue";
 import {getUserInfo} from "../../api/user/userApi";
-import {reactive, toRefs, watch} from "vue";
+import {onMounted, reactive, toRefs, watch} from "vue";
 import {useRoute} from "vue-router";
 import {addCategory, getCategories} from "../../api/category/categoryApi";
 import {getUserIdFromCookie, getUsernameFromCookie} from "../../utils/cookies";
@@ -171,20 +171,6 @@ export default {
       categories: []
     });
 
-    getUserInfo(username)
-        .then((response) => {
-          data.user = response.data.data;
-        })
-        .catch((error) => {
-          alert(error.response.data.message);
-        });
-    getCategories(username)
-        .then((response) => {
-          data.categories = response.data.list;
-        })
-        .catch((error) => {
-          alert(error.response.data.message);
-        });
 
     function updateCategories() {
       getCategories(username)
@@ -207,6 +193,23 @@ export default {
       }
     }
 
+    onMounted(()=> {
+      getUserInfo(username)
+          .then((response) => {
+            data.user = response.data.data;
+          })
+          .catch((error) => {
+            alert(error.response.data.message);
+          });
+      getCategories(username)
+          .then((response) => {
+            data.categories = response.data.list;
+          })
+          .catch((error) => {
+            alert(error.response.data.message);
+          });
+    });
+
     return {
       addCategoryByUser,
       ...toRefs(data) //toRefs 를 사용 하면 template 에서 data.변수이름 -> 변수이름으로 사용 가능
@@ -225,7 +228,7 @@ export default {
         this.bookmarkDialogObj.categoryNames = response.data.list.map(c => c.name);
       });
 
-      getTags(getUserIdFromCookie()).then((response) => {
+      getTags(getUsernameFromCookie()).then((response) => {
         this.bookmarkDialogObj.bookmark.tagList = response.data.list.map(t => t.tag.name);
       })
     },
