@@ -143,93 +143,44 @@ export default {
     const data = reactive({
       bookmarks: [],
     });
-    watch([() => route.params, () => bookmarkStore.state.status], ([params]) => {
-      const {username, category} = params;
 
-      if (category === undefined) {
-        getAllBookmarksByUser(username);
-      } else {
-        getBookmarksByUserAndCategory(username, category);
-      }
-    });
-    // if (category === undefined) {
-    //   getAllBookmarksByUser(username);
-    // } else {
-    //   getBookmarksByUserAndCategory(username, category);
-    // }
+    watch([() => route.params, () => bookmarkStore.state.status], loadData);
+    watch(() => bookmarkStore.state.bookmarks, loadData);
 
-    // 2개 묶어서 위에 메소드로 정의
-    /* watch(() => (route.params), (newValue) => {
-       if (newValue.category === undefined) {
-         getAllBookmarksByUser(newValue.username);
-       } else {
-         getBookmarksByUserAndCategory(newValue.username, newValue.category);
-       }
-     });
-     watch(() => (bookmarkStore.state.status), () => {
-       console.log(category);
-       if (category === undefined) {
-         getAllBookmarksByUser(username);
-       } else {
-         getBookmarksByUserAndCategory(username, category);
-       }
-     })*/
-
-    // watch([() => data.bookmarks, () => route.params], ([newBookmarks, newParams], [oldBookmarks, oldParams]) => {
-    //   if (newParams.category === undefined) {
-    //     getAllBookmarksByUser(newParams.username);
-    //   } else {
-    //     getBookmarksByUserAndCategory(newParams.username, newParams.category);
-    //   }
-    // })
-
-
-    const getAllBookmarksByUser = async (username) => {
-      await getAllBookmarks(username).then((res) => {
-        data.bookmarks = res.data.list;
-      })
-    };
-
-    const getBookmarksByUserAndCategory = async (username, category) => {
-      await getBookmarks(username, category).then((res) => {
-        data.bookmarks = res.data.list;
-      })
-    }
-
-    onMounted(() => {
+    onMounted(loadData);
+    async function loadData() {
       const username = route.params.username;
       const categoryName = route.params.category;
-      if (categoryName === undefined) {
-        getAllBookmarksByUser(username);
+
+      if (Object.keys(bookmarkStore.state.bookmarks).length === 0) {
+        if (categoryName === undefined) {
+          data.bookmarks = await getAllBookmarks(username).then((res) => res.data.list);
+        } else {
+          data.bookmarks = await getBookmarks(username, categoryName).then((res) => res.data.list);
+        }
       } else {
-        getBookmarksByUserAndCategory(username, categoryName);
+        data.bookmarks = bookmarkStore.state.bookmarks;
       }
-    });
+    }
 
     return {data};
   },
 
   methods: {
-    clickEditBookmarkBtn(bookmark, bookmarkId) {
+    async clickEditBookmarkBtn(bookmark, bookmarkId) {
       this.bookmarkDialogObj.bookmark = bookmark;
       this.bookmarkDialogObj.dialog = true;
-      console.log(this.data.bookmarks);
-      getCategories(getUsernameFromCookie()).then((response) => {
-        this.bookmarkDialogObj.categoryNames = response.data.list.map(c => c.name);
-      });
 
-      getCategoryByBookmarkId(bookmarkId).then((response) => {
-        this.bookmarkDialogObj.bookmark.categoryName = response.data.data;
-        this.bookmarkDialogObj.originCategoryName = response.data.data;
-      });
+      const [categoryResp, tagsResp, allTagsResp] = await Promise.all([
+        getCategoryByBookmarkId(bookmarkId),
+        getTagsByBookmarkId(getUsernameFromCookie(), bookmark.id),
+        getTags(getUsernameFromCookie())
+      ]);
 
-      getTagsByBookmarkId(getUsernameFromCookie(), bookmark.id).then((response) => {
-        this.bookmarkDialogObj.bookmark.tags = response.data.list.map(t => t.tagName);
-      })
-
-      getTags(getUserIdFromCookie()).then((response) => {
-        this.bookmarkDialogObj.bookmark.tagList = response.data.list.map(t => t.tag.name);
-      })
+      this.bookmarkDialogObj.bookmark.categoryName = categoryResp.data.data;
+      this.bookmarkDialogObj.originCategoryName = categoryResp.data.data;
+      this.bookmarkDialogObj.bookmark.tags = tagsResp.data.list.map(t => t.tagName);
+      this.bookmarkDialogObj.bookmark.tagList = allTagsResp.data.list.map(t => t.tag.name);
     },
 
     async updateBookmark(bookmark) {
@@ -240,6 +191,7 @@ export default {
       if (bookmark.categoryName !== category) {
         await router.push(`/${username}/${bookmark.categoryName}`);
       }
+
       bookmarkStore.state.status = !bookmarkStore.state.status;
       categoryStore.commit('setCategory', {name: bookmark.categoryName});
     },
@@ -252,9 +204,11 @@ export default {
     async deleteBookmark(bookmarkId) {
       await deleteBookmarkById(bookmarkId);
       const index = this.data.bookmarks.findIndex(bookmark => bookmark.id === bookmarkId);
+
       if (index !== -1) {
         this.data.bookmarks.splice(index, 1);
       }
+
       bookmarkStore.state.status = !bookmarkStore.state.status;
     },
 
