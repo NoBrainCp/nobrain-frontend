@@ -23,3 +23,4 @@ export const user = createInstance('/api/user');
 export const category = instance;
 export const bookmark = instance;
 export const tag = instance;
+export const follow = instance;

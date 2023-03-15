@@ -27,8 +27,8 @@
       </v-list-item>
 
       <div v-if="!rail" id="follow-container">
-        <a href="#" class="follow-items">팔로워: {{ followObj.follower }}</a>
-        <a href="#" class="follow-items" id="following">팔로잉: {{ followObj.following }}</a>
+        <a href="#" class="follow-items">팔로워: {{ followObj.followerCount }}</a>
+        <a href="#" class="follow-items" id="following">팔로잉: {{ followObj.followingCount }}</a>
       </div>
 
       <div v-if="!rail" class="follow-btn-container">
@@ -124,6 +124,7 @@ import {getUserIdFromCookie, getUsernameFromCookie} from "../../utils/cookies";
 import {addBookmark} from "../../api/bookmark/bookmarkApi";
 import {bookmarkStore} from "../../store/bookmark/bookmark";
 import {getTags} from "../../api/tag/tagApi";
+import {followAndUnfollow, getFollowCount} from "../../api/follow/followApi";
 
 export default {
   name: 'SideBar',
@@ -150,11 +151,6 @@ export default {
       bookmark: {},
     },
 
-    followObj: {
-      follower: "12",
-      following: "235"
-    },
-
     followButton: {
       text: "팔로우",
       color: "#03A9F4",
@@ -168,9 +164,12 @@ export default {
     const data = reactive({
       isMe: username === getUsernameFromCookie(),
       user: {},
-      categories: []
+      categories: [],
+      followObj: {
+        followerCount: 0,
+        followingCount: 0,
+      },
     });
-
 
     function updateCategories() {
       getCategories(username)
@@ -181,6 +180,7 @@ export default {
             alert(error.response.data.message);
           });
     }
+
     watch(() => (categoryStore.state.status), updateCategories);
     watch(() => (bookmarkStore.state.status), updateCategories);
 
@@ -208,6 +208,11 @@ export default {
           .catch((error) => {
             alert(error.response.data.message);
           });
+      getFollowCount(username)
+          .then((response) => {
+            data.followObj.followerCount = response.data.data.followerCnt;
+            data.followObj.followingCount = response.data.data.followingCnt;
+          })
     });
 
     return {
@@ -273,6 +278,7 @@ export default {
         this.followButton.color = "#03A9F4";
         this.followButton.icon = "mdi mdi-account-multiple-plus"
       }
+      followAndUnfollow(this.user.userId);
     },
 
     bookmarkDialogInit() {
