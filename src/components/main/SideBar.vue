@@ -111,19 +111,19 @@
 </template>
 
 <script>
-import {store} from "../store";
-import {categoryStore} from "../store/category/category";
-import router from "../router";
-import CategoryDialog from "./dialog/CategoryDialog.vue";
-import BookmarkDialog from "./dialog/BookmarkDialog.vue";
-import {getUserInfo} from "../api/user/userApi";
+import {store} from "../../store";
+import {categoryStore} from "../../store/category/category";
+import router from "../../router";
+import CategoryDialog from "../dialog/CategoryDialog.vue";
+import BookmarkDialog from "../dialog/BookmarkDialog.vue";
+import {getUserInfo} from "../../api/user/userApi";
 import {reactive, toRefs, watch, computed} from "vue";
 import {useRoute, useRouter} from "vue-router";
-import {addCategory, getCategories} from "../api/category/categoryApi";
-import {getUserIdFromCookie, getUsernameFromCookie} from "../utils/cookies";
-import {addBookmark} from "../api/bookmark/bookmarkApi";
-import {bookmarkStore} from "../store/bookmark/bookmark";
-import {getTags} from "../api/tag/tagApi";
+import {addCategory, getCategories} from "../../api/category/categoryApi";
+import {getUserIdFromCookie, getUsernameFromCookie} from "../../utils/cookies";
+import {addBookmark} from "../../api/bookmark/bookmarkApi";
+import {bookmarkStore} from "../../store/bookmark/bookmark";
+import {getTags} from "../../api/tag/tagApi";
 
 export default {
   name: 'SideBar',

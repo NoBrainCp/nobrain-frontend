@@ -1,7 +1,7 @@
 <template>
   <v-app-bar height="100" style="position: fixed" flat border>
     <img
-        src="../assets/images/logo_transparent.png"
+        src="../../assets/images/logo_transparent.png"
         alt="nobrain-logo"
         class="logo"
         @click="home"
@@ -118,9 +118,9 @@
 
 
 <script>
-import {getEmailFromCookie, getUsernameFromCookie} from "../utils/cookies";
-import {store} from "../store";
-import router from "../router";
+import {getEmailFromCookie, getUsernameFromCookie} from "../../utils/cookies";
+import {store} from "../../store";
+import router from "../../router";
 
 export default {
   name: 'Header',

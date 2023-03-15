@@ -120,6 +120,7 @@ export default defineComponent ({
       btnName: String,
       dialog: false,
       categoryNames: [],
+      originCategoryName: String,
 
       bookmark: {
         url: String,
