@@ -21,14 +21,14 @@
 </template>
 
 <script>
-import SideBar from "../components/SideBar.vue";
-import Header from "../components/Header.vue";
-import CategoryBar from "../components/CategoryBar.vue";
-import TagBar from "../components/TagBar.vue";
-import Profile from "../components/Profile.vue";
+import SideBar from "../components/main/SideBar.vue";
+import Header from "../components/main/Header.vue";
+import CategoryBar from "../components/main/CategoryBar.vue";
+import TagBar from "../components/main/TagBar.vue";
+import Profile from "../components/main/Profile.vue";
 import {ref, watch} from "vue";
 import {store} from "../store";
-import Bookmark from "../components/Bookmark.vue";
+import Bookmark from "../components/main/Bookmark.vue";
 
 export default {
   name: 'main',

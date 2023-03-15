@@ -5,5 +5,5 @@ export function getTags(userId) {
 }
 
 export function getTagsByBookmarkId(username, bookmarkId) {
-    return tag.get(`user/${username}/${bookmarkId}/tags`);
+    return tag.get(`user/${username}/bookmark/${bookmarkId}/tags`);
 }

@@ -42,12 +42,12 @@
 <script>
 import {onMounted, ref, watch} from "vue";
 import {useRoute} from "vue-router";
-import {getUsernameFromCookie} from "../utils/cookies";
-import {deleteCategory, updateCategory} from "../api/category/categoryApi";
-import {categoryStore} from "../store/category/category";
-import router from "../router";
-import ConfirmDialog from "./dialog/ConfirmDialog.vue";
-import CategoryDialog from "./dialog/CategoryDialog.vue";
+import {getUsernameFromCookie} from "../../utils/cookies";
+import {deleteCategory, updateCategory} from "../../api/category/categoryApi";
+import {categoryStore} from "../../store/category/category";
+import router from "../../router";
+import ConfirmDialog from "../dialog/ConfirmDialog.vue";
+import CategoryDialog from "../dialog/CategoryDialog.vue";
 
 export default {
   name: 'CategoryBar',
@@ -71,7 +71,7 @@ export default {
   setup() {
     const route = useRoute();
     const data = ref({
-      category: {},
+      category: categoryStore.state.category,
       isMe: route.params.username === getUsernameFromCookie(),
       isAll: false,
     });
@@ -85,8 +85,8 @@ export default {
       public: Boolean,
     });
 
-    watch(() => (route.params), (newValue) => {
-      if (newValue.category === undefined) {
+    watch(() => (data.value.category), (newValue) => {
+      if (newValue.name === "전체보기") {
         data.value.isAll = true;
         data.value.category = {name: '전체 북마크'};
       } else {
@@ -99,13 +99,17 @@ export default {
       }
     });
 
-    watch(() => categoryStore.state.category, (newCategory, oldCategory) => {
+    watch(() => categoryStore.state.category, (newCategory) => {
       data.value.category = newCategory;
     });
 
     onMounted(() => {
-      data.value.isAll = true;
-      data.value.category = {name: '전체 북마크'};
+      const categoryName = route.params.category;
+      if (categoryName === undefined) {
+        categoryStore.commit('setCategory', {name: '전체보기'});
+      } else {
+        categoryStore.commit('setCategory', {name: categoryName});
+      }
     })
 
     return {
@@ -117,19 +121,22 @@ export default {
   methods: {
     async updateCategory(category) {
       try {
+        const categoryName = category.name;
+        const categoryDescription = category.description;
         await updateCategory(getUsernameFromCookie(), category.originName, category);
-        categoryStore.commit('setCategory', category);
-        await router.push(`/${getUsernameFromCookie()}/${category.name}`);
+        categoryStore.state.status = !categoryStore.state.status;
+        this.data.category.name = categoryName;
+        this.data.category.description = categoryDescription;
+        await router.push(`/${getUsernameFromCookie()}/${categoryName}`);
       } catch (error) {
         alert(error.response.data.message);
       }
-
     },
 
     async deleteCategory() {
       try {
         await deleteCategory(getUsernameFromCookie(), categoryStore.state.category.name);
-        categoryStore.commit('setCategory', '');
+        categoryStore.state.status = !categoryStore.state.status;
         await router.push(`/${getUsernameFromCookie()}`);
       } catch(error) {
         alert(error.response.data.message);
