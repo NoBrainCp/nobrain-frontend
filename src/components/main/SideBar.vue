@@ -117,8 +117,8 @@ import router from "../../router";
 import CategoryDialog from "../dialog/CategoryDialog.vue";
 import BookmarkDialog from "../dialog/BookmarkDialog.vue";
 import {getUserInfo} from "../../api/user/userApi";
-import {reactive, toRefs, watch, computed} from "vue";
-import {useRoute, useRouter} from "vue-router";
+import {reactive, toRefs, watch} from "vue";
+import {useRoute} from "vue-router";
 import {addCategory, getCategories} from "../../api/category/categoryApi";
 import {getUserIdFromCookie, getUsernameFromCookie} from "../../utils/cookies";
 import {addBookmark} from "../../api/bookmark/bookmarkApi";
@@ -127,11 +127,6 @@ import {getTags} from "../../api/tag/tagApi";
 
 export default {
   name: 'SideBar',
-  computed: {
-    store() {
-      return store
-    },
-  },
   components: {BookmarkDialog, CategoryDialog},
 
   data: () => ({
@@ -159,7 +154,6 @@ export default {
       follower: "12",
       following: "235"
     },
-    // categories: [],
 
     followButton: {
       text: "팔로우",
@@ -204,19 +198,10 @@ export default {
     watch(() => (categoryStore.state.status), updateCategories);
     watch(() => (bookmarkStore.state.status), updateCategories);
 
-    // watch(() => (route.params.category), (newValue) => {
-    //   getCategories(username).then((response) => {
-    //     data.categories = response.data.list;
-    //   });
-    // });
-
     const addCategoryByUser = async (category) => {
       try {
         await addCategory(getUsernameFromCookie(), category);
         categoryStore.state.status = !categoryStore.state.status;
-        // getCategories(getUsernameFromCookie()).then((response) => {
-        //   data.categories = response.data.list;
-        // })
       } catch (error) {
         alert(error.response.data.message);
       }
@@ -251,7 +236,6 @@ export default {
       const categoryName = this.route.params.category;
       try {
         await addBookmark(username, bookmark);
-        // bookmarkStore.commit('addBookmark', bookmark);
       } catch (error) {
         alert(error.response.data.message);
       }
@@ -264,13 +248,14 @@ export default {
     },
 
     showBookmark(category) {
-      categoryStore.commit('setCategory', category);
       const username = this.route.params.username;
+      categoryStore.commit('setCategory', category);
       router.push(`/${username}/${category.name}`);
     },
 
     showAllBookmarks() {
       const username = this.route.params.username;
+      categoryStore.commit('setCategory', {name: '전체보기'});
       router.push(`/${username}`);
     },
 

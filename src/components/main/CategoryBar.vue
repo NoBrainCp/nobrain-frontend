@@ -85,8 +85,8 @@ export default {
       public: Boolean,
     });
 
-    watch(() => (route.params), (newValue) => {
-      if (newValue.category === undefined) {
+    watch(() => (data.value.category), (newValue) => {
+      if (newValue.name === "전체보기") {
         data.value.isAll = true;
         data.value.category = {name: '전체 북마크'};
       } else {
@@ -99,13 +99,17 @@ export default {
       }
     });
 
-    watch(() => categoryStore.state.category, (newCategory, oldCategory) => {
+    watch(() => categoryStore.state.category, (newCategory) => {
       data.value.category = newCategory;
     });
 
     onMounted(() => {
-      data.value.isAll = true;
-      data.value.category = {name: '전체 북마크'};
+      const categoryName = route.params.category;
+      if (categoryName === undefined) {
+        categoryStore.commit('setCategory', {name: '전체보기'});
+      } else {
+        categoryStore.commit('setCategory', {name: categoryName});
+      }
     })
 
     return {
@@ -127,7 +131,6 @@ export default {
       } catch (error) {
         alert(error.response.data.message);
       }
-
     },
 
     async deleteCategory() {

@@ -102,31 +102,20 @@
 <script>
 import router from "../../router";
 import {useRoute} from "vue-router";
-
-//라이플 사이클 / 반응형 / 감지
 import {onMounted, reactive, watch} from "vue";
-
-//store
 import {bookmarkStore} from "../../store/bookmark/bookmark";
-
-//dialog
 import ConfirmDialog from "../dialog/ConfirmDialog.vue";
 import BookmarkDialog from "../dialog/BookmarkDialog.vue";
-
-//api
 import {deleteBookmarkById, getAllBookmarks, getBookmarks, updateBookmark} from "../../api/bookmark/bookmarkApi";
 import {getCategories, getCategoryByBookmarkId} from "../../api/category/categoryApi";
 import {getTags, getTagsByBookmarkId} from "../../api/tag/tagApi";
-
-//Cookie
 import {getUserIdFromCookie, getUsernameFromCookie} from "../../utils/cookies";
+import {categoryStore} from "../../store/category/category";
 
 export default {
   name: 'Bookmark',
   components: {BookmarkDialog, ConfirmDialog},
   data: () => ({
-    temp: "black",
-    // bookmarks: bookmarkStore.state.bookmarks,
     imagePath: [
       {noImage: "../assets/images/nobrain-no-image.png"}
     ],
@@ -151,14 +140,12 @@ export default {
 
   setup() {
     const route = useRoute();
-    const category = route.params.category;
-    const username = route.params.username;
-
     const data = reactive({
       bookmarks: [],
     });
     watch([() => route.params, () => bookmarkStore.state.status], ([params]) => {
       const {username, category} = params;
+
       if (category === undefined) {
         getAllBookmarksByUser(username);
       } else {
@@ -208,10 +195,16 @@ export default {
         data.bookmarks = res.data.list;
       })
     }
-    // 고려사항 -> setup()만으로는 구현 못하는지
-    // onMounted(() => {
-    //   getAllBookmarksByUser(username);
-    // });
+
+    onMounted(() => {
+      const username = route.params.username;
+      const categoryName = route.params.category;
+      if (categoryName === undefined) {
+        getAllBookmarksByUser(username);
+      } else {
+        getBookmarksByUserAndCategory(username, categoryName);
+      }
+    });
 
     return {data};
   },
@@ -248,13 +241,14 @@ export default {
         await router.push(`/${username}/${bookmark.categoryName}`);
       }
       bookmarkStore.state.status = !bookmarkStore.state.status;
+      categoryStore.commit('setCategory', {name: bookmark.categoryName});
     },
 
     clickDeleteBookmarkBtn(bookmarkId) {
       this.confirmObj.bookmarkId = bookmarkId;
       this.confirmObj.dialog = true;
     },
-    //비동기 처리를 해주지 않으면 상태 변화 감지가 먼저 이루어짐
+
     async deleteBookmark(bookmarkId) {
       await deleteBookmarkById(bookmarkId);
       const index = this.data.bookmarks.findIndex(bookmark => bookmark.id === bookmarkId);
