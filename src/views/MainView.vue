@@ -2,12 +2,12 @@
   <v-app id="inspire">
     <Header @setting="showSettingVue"/>
     <SideBar/>
-    <TagBar class="tag-bar"/>
 
     <v-window
       v-model="window">
       <v-main class="main">
         <v-window-item value="book">
+          <TagBar class="tag-bar"/>
           <CategoryBar/>
           <Bookmark/>
         </v-window-item>
