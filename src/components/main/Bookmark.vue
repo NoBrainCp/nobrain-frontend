@@ -115,6 +115,7 @@ import {categoryStore} from "../../store/category/category";
 export default {
   name: 'Bookmark',
   components: {BookmarkDialog, ConfirmDialog},
+
   data: () => ({
     imagePath: [
       {noImage: "../assets/images/nobrain-no-image.png"}
@@ -145,23 +146,26 @@ export default {
     });
 
     watch([() => route.params, () => bookmarkStore.state.status], loadData);
-    watch(() => bookmarkStore.state.bookmarks, loadData);
+    watch(() => bookmarkStore.state.bookmarks, () => {
+      if (Object.keys(bookmarkStore.state.bookmarks).length === 0) {
+        loadData();
+      } else {
+        data.bookmarks = bookmarkStore.state.bookmarks;
+      }
+    });
 
-    onMounted(loadData);
     async function loadData() {
       const username = route.params.username;
       const categoryName = route.params.category;
 
-      if (Object.keys(bookmarkStore.state.bookmarks).length === 0) {
-        if (categoryName === undefined) {
-          data.bookmarks = await getAllBookmarks(username).then((res) => res.data.list);
-        } else {
-          data.bookmarks = await getBookmarks(username, categoryName).then((res) => res.data.list);
-        }
+      if (categoryName === undefined) {
+        data.bookmarks = await getAllBookmarks(username).then((res) => res.data.list);
       } else {
-        data.bookmarks = bookmarkStore.state.bookmarks;
+        data.bookmarks = await getBookmarks(username, categoryName).then((res) => res.data.list);
       }
     }
+
+    onMounted(loadData);
 
     return {data};
   },

@@ -1,4 +1,4 @@
-import {bookmark} from "../index";
+import {bookmark, tag} from "../index";
 
 export function getAllBookmarks(username) {
     return bookmark.get(`/${username}/bookmarks`);
@@ -6,6 +6,12 @@ export function getAllBookmarks(username) {
 
 export function getBookmarks(username, categoryName) {
     return bookmark.get(`/${username}/${categoryName}/bookmarks`);
+}
+
+export function searchBookmark(keyword, condition) {
+    return bookmark.get(`/bookmark/search`, {
+        params: {keyword: keyword, condition: condition}
+    })
 }
 
 export function addBookmark(username, bookmarkData) {
