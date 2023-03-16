@@ -36,10 +36,10 @@
             v-if="!isMe"
             id="follow-btn"
             class="btn"
-            :color="followButton.color"
+            :color="followObj.followButton.color"
             @click="clickFollow">
-          <v-icon id="follow-icon">{{ followButton.icon }}</v-icon>
-          {{ followButton.text }}
+          <v-icon id="follow-icon">{{ followObj.followButton.icon }}</v-icon>
+          {{ followObj.followButton.text }}
         </v-btn>
       </div>
 
@@ -111,7 +111,6 @@
 </template>
 
 <script>
-import {store} from "../../store";
 import {categoryStore} from "../../store/category/category";
 import router from "../../router";
 import CategoryDialog from "../dialog/CategoryDialog.vue";
@@ -120,11 +119,11 @@ import {getUserInfo} from "../../api/user/userApi";
 import {onMounted, reactive, toRefs, watch} from "vue";
 import {useRoute} from "vue-router";
 import {addCategory, getCategories} from "../../api/category/categoryApi";
-import {getUserIdFromCookie, getUsernameFromCookie} from "../../utils/cookies";
+import {getUsernameFromCookie} from "../../utils/cookies";
 import {addBookmark} from "../../api/bookmark/bookmarkApi";
 import {bookmarkStore} from "../../store/bookmark/bookmark";
 import {getTags} from "../../api/tag/tagApi";
-import {followAndUnfollow, getFollowCount} from "../../api/follow/followApi";
+import {followAndUnfollow, getFollowCount, isFollow} from "../../api/follow/followApi";
 
 export default {
   name: 'SideBar',
@@ -150,12 +149,6 @@ export default {
 
       bookmark: {},
     },
-
-    followButton: {
-      text: "팔로우",
-      color: "#03A9F4",
-      icon: "mdi mdi-account-multiple-plus",
-    },
   }),
 
   setup() {
@@ -165,24 +158,38 @@ export default {
       isMe: username === getUsernameFromCookie(),
       user: {},
       categories: [],
+
       followObj: {
         followerCount: 0,
         followingCount: 0,
+        follow: Boolean,
+
+        followButton: {
+          text: String,
+          color: String,
+          icon: String,
+        }
       },
     });
 
-    function updateCategories() {
-      getCategories(username)
-          .then((response) => {
-            data.categories = response.data.list;
-          })
-          .catch((error) => {
-            alert(error.response.data.message);
-          });
-    }
+    const updateCategories = async () => {
+      try {
+        const response = await getCategories(username);
+        data.categories = response.data.list;
+      } catch (error) {
+        alert(error.response.data.message);
+      }
+    };
 
-    watch(() => (categoryStore.state.status), updateCategories);
-    watch(() => (bookmarkStore.state.status), updateCategories);
+    const showFollowCount = async () => {
+      try {
+        const followCount = await getFollowCount(username);
+        data.followObj.followerCount = followCount.data.data.followerCnt;
+        data.followObj.followingCount = followCount.data.data.followingCnt;
+      } catch (error) {
+        alert(error.response.data.message);
+      }
+    };
 
     const addCategoryByUser = async (category) => {
       try {
@@ -193,49 +200,59 @@ export default {
       }
     }
 
-    onMounted(()=> {
-      getUserInfo(username)
-          .then((response) => {
-            data.user = response.data.data;
-          })
-          .catch((error) => {
-            alert(error.response.data.message);
-          });
-      getCategories(username)
-          .then((response) => {
-            data.categories = response.data.list;
-          })
-          .catch((error) => {
-            alert(error.response.data.message);
-          });
-      getFollowCount(username)
-          .then((response) => {
-            data.followObj.followerCount = response.data.data.followerCnt;
-            data.followObj.followingCount = response.data.data.followingCnt;
-          })
+    watch(() => (categoryStore.state.status), updateCategories);
+    watch(() => (bookmarkStore.state.status), updateCategories);
+    watch(() => data.followObj.follow, (newValue) => {
+      const followButton = data.followObj.followButton;
+      followButton.text = newValue ? "팔로우 취소" : "팔로우";
+      followButton.color = newValue ? "#E53935" : "#03A9F4";
+      followButton.icon = newValue ? "mdi mdi-account-multiple-minus" : "mdi mdi-account-multiple-plus";
+      showFollowCount();
+    });
+
+    onMounted(async () => {
+      try {
+        const userInfo = await getUserInfo(username);
+        data.user = userInfo.data.data;
+
+        const follow = await isFollow(data.user.userId);
+        data.followObj.follow = follow.data.data;
+
+        const categories = await getCategories(username);
+        data.categories = categories.data.list;
+
+        const followCount = await getFollowCount(username);
+        data.followObj.followerCount = followCount.data.data.followerCnt;
+        data.followObj.followingCount = followCount.data.data.followingCnt;
+      } catch (error) {
+        alert(error.response.data.message);
+      }
     });
 
     return {
       addCategoryByUser,
-      ...toRefs(data) //toRefs 를 사용 하면 template 에서 data.변수이름 -> 변수이름으로 사용 가능
+      ...toRefs(data)
     };
   },
 
   methods: {
-    clickAddBookmarkBtn() {
+    async clickAddBookmarkBtn() {
       this.bookmarkDialogObj.dialog = true;
       const categoryName = this.route.params.category;
       if (categoryName !== undefined) {
         this.bookmarkDialogObj.bookmark.categoryName = categoryName;
       }
+      try {
+        const [categoriesResponse, tagsResponse] = await Promise.all([
+          getCategories(getUsernameFromCookie()),
+          getTags(getUsernameFromCookie())
+        ]);
 
-      getCategories(getUsernameFromCookie()).then((response) => {
-        this.bookmarkDialogObj.categoryNames = response.data.list.map(c => c.name);
-      });
-
-      getTags(getUsernameFromCookie()).then((response) => {
-        this.bookmarkDialogObj.bookmark.tagList = response.data.list.map(t => t.tag.name);
-      })
+        this.bookmarkDialogObj.categoryNames = categoriesResponse.data.list.map(c => c.name);
+        this.bookmarkDialogObj.bookmark.tagList = tagsResponse.data.list.map(t => t.tag.name);
+      } catch (error) {
+        alert(error.response.data.message);
+      }
     },
 
     async addBookmark(bookmark) {
@@ -253,39 +270,36 @@ export default {
       if (categoryName === undefined) {
         await router.push(`/${username}/${bookmark.categoryName}`)
       }
-    },
+    }
+    ,
 
     showBookmark(category) {
       const username = this.route.params.username;
       categoryStore.commit('setCategory', category);
       router.push(`/${username}/${category.name}`);
-    },
+    }
+    ,
 
     showAllBookmarks() {
       const username = this.route.params.username;
       categoryStore.commit('setCategory', {name: '전체보기'});
       router.push(`/${username}`);
-    },
+    }
+    ,
 
-    clickFollow() {
-      this.follow = !this.follow;
-      if (this.follow) {
-        this.followButton.text = "팔로우 취소";
-        this.followButton.color = "#E53935";
-        this.followButton.icon = "mdi mdi-account-multiple-minus"
-      } else {
-        this.followButton.text = "팔로우";
-        this.followButton.color = "#03A9F4";
-        this.followButton.icon = "mdi mdi-account-multiple-plus"
-      }
-      followAndUnfollow(this.user.userId);
-    },
+    async clickFollow() {
+      await followAndUnfollow(this.user.userId);
+      this.followObj.follow = !this.followObj.follow;
+    }
+    ,
 
     bookmarkDialogInit() {
-      this.bookmarkDialogObj.bookmark.url = "";
-      this.bookmarkDialogObj.bookmark.title = "";
-      this.bookmarkDialogObj.bookmark.description = "";
-      this.bookmarkDialogObj.bookmark.tags = [];
+      this.bookmarkDialogObj.bookmark = {
+        url: "",
+        title: "",
+        description: "",
+        tags: []
+      };
     }
   }
 }

@@ -5,8 +5,8 @@ export function getFollowCount(username) {
     return follow.get(`/user/${username}/follow-cnt`);
 }
 
-export function followAndUnfollow(toUserId) {
-    return follow.post(`/user/${toUserId}/follow`);
+export function isFollow(toUserId) {
+    return follow.get(`/user/${toUserId}/is-follow`);
 }
 
 export function getFollowerList(username) {
@@ -16,3 +16,8 @@ export function getFollowerList(username) {
 export function getFollowingList(username) {
     return follow.get(`/user/${username}/followings`);
 }
+
+export function followAndUnfollow(toUserId) {
+    return follow.post(`/user/${toUserId}/follow`);
+}
+
