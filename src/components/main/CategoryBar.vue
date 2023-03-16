@@ -125,6 +125,7 @@ export default {
         const categoryDescription = category.description;
         await updateCategory(getUsernameFromCookie(), category.originName, category);
         categoryStore.state.status = !categoryStore.state.status;
+        categoryStore.commit('setCategory', {name: categoryName});
         this.data.category.name = categoryName;
         this.data.category.description = categoryDescription;
         await router.push(`/${getUsernameFromCookie()}/${categoryName}`);
