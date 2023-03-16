@@ -13,5 +13,15 @@ export function getUserInfo(username) {
     return user.get(`/${username}/info`);
 }
 
+export function getMyProfile() {
+    return user.get(`/my-profile`);
+}
+
+export function changeName(userId, username) {
+    return user.put(`/${userId}/username/${username}`);
+}
+
+
+
 
 

@@ -124,6 +124,7 @@ import {addBookmark} from "../../api/bookmark/bookmarkApi";
 import {bookmarkStore} from "../../store/bookmark/bookmark";
 import {getTags} from "../../api/tag/tagApi";
 import {followAndUnfollow, getFollowCount, isFollow} from "../../api/follow/followApi";
+import {userStore} from "../../store/user/user";
 
 export default {
   name: 'SideBar',
@@ -199,7 +200,9 @@ export default {
         alert(error.response.data.message);
       }
     }
-
+    watch(() => (userStore.state.username), (newValue) => {
+      data.user.username = newValue;
+    })
     watch(() => (categoryStore.state.status), updateCategories);
     watch(() => (bookmarkStore.state.status), updateCategories);
     watch(() => data.followObj.follow, (newValue) => {

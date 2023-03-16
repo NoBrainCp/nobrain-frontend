@@ -34,9 +34,10 @@
                   <v-row class="ml-1 mt-2">
                     <v-col cols="12" sm="8">
                       <v-text-field
+                          v-model="name"
                           variant="outlined"
                           prepend-inner-icon="mdi-rename"
-                          :label=store.state.username
+                          :label="myInfo.username"
                           bg-color="white"
                           color="blue"
                       />
@@ -48,7 +49,7 @@
                           height="52"
                           class="btn-change-name"
                           elevation="3"
-                          @click=""
+                          @click="changeName(name)"
                       >
                         <!--클릭시 닉네임 판별 + 변경 메소드-->
                         변경하기
@@ -136,7 +137,7 @@
                           prepend-inner-icon="mdi-email"
                           bg-color="white"
                           color="blue"
-                      >{{ store.state.userEmail }}
+                      >{{ myInfo.email }}
                       </v-text-field>
                       <div class="font-weight-light ml-3 mb-3">
                         No brain을 제한없이 사용하기 위해 E-mail 인증을 해주세요.
@@ -214,14 +215,19 @@
 </template>
 
 <script>
-import {store} from "../../store";
+import {changeName, getMyProfile} from "../../api/user/userApi";
+import {
+  getUserIdFromCookie,
+  getUsernameFromCookie,
+  saveUsernameToCookie
+} from "../../utils/cookies";
+import router from "../../router";
+import {userStore} from "../../store/user/user";
+import {onMounted, ref, watch} from "vue";
 
 export default {
   name: 'profile',
   computed: {
-    store() {
-      return store
-    },
 
     buttonText() {
       return this.selectedFile ? this.selectedFile.name : this.defaultButtonText
@@ -231,20 +237,59 @@ export default {
   data: () => ({
     panel: ['name'],
     btnState: "Open All",
-
+    name: "",
+    originName: getUsernameFromCookie(),
     defaultButtonText: '변경하기',
     selectedFile: null,
     isSelecting: false
   }),
 
+  setup() {
+    const myInfo = ref({
+      username: "",
+      email: "",
+    });
+
+    watch(() => (userStore.state.status), async () => {
+      const myProfile = await getMyProfile();
+      myInfo.value.username = myProfile.data.data.username;
+    })
+
+    onMounted(async () => {
+      try {
+        const myProfile = await getMyProfile();
+        myInfo.value.username = myProfile.data.data.username;
+        myInfo.value.email = myProfile.data.data.email;
+      } catch (error) {
+        console.log(error);
+      }
+    });
+
+    return {myInfo};
+  },
+
   methods: {
     information() {
-      if (this.btnState==="Close All") {
+      if (this.btnState === "Close All") {
         this.panel = [];
         this.btnState = "Open All"
       } else {
         this.panel = ['name', 'profile', 'email', 'password'];
         this.btnState = "Close All"
+      }
+    },
+
+    async changeName(name) {
+      try {
+        await changeName(getUserIdFromCookie(), name);
+        saveUsernameToCookie(name);
+        userStore.state.status = !userStore.state.status;
+        userStore.commit('setUsername', name);
+        alert("변경이 완료되었습니다.");
+        this.name = "";
+        await router.push(`/${name}`);
+      } catch (error) {
+        alert(error);
       }
     },
 
@@ -257,7 +302,7 @@ export default {
       this.isSelecting = true
       window.addEventListener('focus', () => {
         this.isSelecting = false
-      }, { once: true })
+      }, {once: true})
 
       this.$refs.uploader.click()
     },
@@ -294,7 +339,6 @@ export default {
 }
 
 .main-container {
-  /*margin: 0 100px;*/
   position: relative;
   right: 15px;
   bottom: 50px;
