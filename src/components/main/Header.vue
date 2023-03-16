@@ -169,7 +169,11 @@ export default {
   methods: {
     search() {
       searchBookmark(this.searchObj.text, this.searchObj.condition).then((response) =>{
-        bookmarkStore.commit("setBookmarks", response.data.list);
+        if (this.searchObj.text === "") {
+          bookmarkStore.state.status = !bookmarkStore.state.status;
+        } else {
+          bookmarkStore.commit("setBookmarks", response.data.list);
+        }
       })
     },
 

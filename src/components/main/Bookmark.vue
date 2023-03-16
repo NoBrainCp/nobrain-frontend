@@ -151,6 +151,7 @@ export default {
       if (Object.keys(bookmarkStore.state.bookmarks).length === 0) {
         loadData();
       } else {
+        console.log(bookmarkStore.state.bookmarks);
         data.bookmarks = bookmarkStore.state.bookmarks;
       }
     });
