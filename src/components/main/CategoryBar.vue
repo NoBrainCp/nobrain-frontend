@@ -125,6 +125,7 @@ export default {
         const categoryDescription = category.description;
         await updateCategory(getUsernameFromCookie(), category.originName, category);
         categoryStore.state.status = !categoryStore.state.status;
+        categoryStore.commit('setCategory', {name: categoryName});
         this.data.category.name = categoryName;
         this.data.category.description = categoryDescription;
         await router.push(`/${getUsernameFromCookie()}/${categoryName}`);
@@ -136,6 +137,7 @@ export default {
     async deleteCategory() {
       try {
         await deleteCategory(getUsernameFromCookie(), categoryStore.state.category.name);
+        categoryStore.commit('setCategory', {name: '전체보기'});
         categoryStore.state.status = !categoryStore.state.status;
         await router.push(`/${getUsernameFromCookie()}`);
       } catch(error) {

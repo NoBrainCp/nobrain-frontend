@@ -151,6 +151,7 @@ export default {
       if (Object.keys(bookmarkStore.state.bookmarks).length === 0) {
         loadData();
       } else {
+        console.log(bookmarkStore.state.bookmarks);
         data.bookmarks = bookmarkStore.state.bookmarks;
       }
     });
@@ -176,16 +177,18 @@ export default {
       this.bookmarkDialogObj.bookmark = bookmark;
       this.bookmarkDialogObj.dialog = true;
 
-      const [categoryResp, tagsResp, allTagsResp] = await Promise.all([
+      const [categoryListResp, categoryResp, tagsResp, allTagsResp] = await Promise.all([
+        getCategories(getUsernameFromCookie()),
         getCategoryByBookmarkId(bookmarkId),
         getTagsByBookmarkId(getUsernameFromCookie(), bookmark.id),
         getTags(getUsernameFromCookie())
       ]);
 
+      this.bookmarkDialogObj.categoryNames = categoryListResp.data.list.map(({name}) => name);
       this.bookmarkDialogObj.bookmark.categoryName = categoryResp.data.data;
       this.bookmarkDialogObj.originCategoryName = categoryResp.data.data;
-      this.bookmarkDialogObj.bookmark.tags = tagsResp.data.list.map(t => t.tagName);
-      this.bookmarkDialogObj.bookmark.tagList = allTagsResp.data.list.map(t => t.tag.name);
+      this.bookmarkDialogObj.bookmark.tags = tagsResp.data.list.map(({tagName}) => tagName);
+      this.bookmarkDialogObj.bookmark.tagList = allTagsResp.data.list.map(({tag}) => tag.name);
     },
 
     async updateBookmark(bookmark) {
