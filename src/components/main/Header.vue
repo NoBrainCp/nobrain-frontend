@@ -64,7 +64,7 @@
           <v-avatar start>
             <v-img src="https://cdn.vuetifyjs.com/images/john.jpg"></v-img>
           </v-avatar>
-          {{ store.state.username }}
+          {{ myInfo.username }}
         </v-chip>
       </template>
 
@@ -121,9 +121,12 @@
 import {getEmailFromCookie, getUsernameFromCookie} from "../../utils/cookies";
 import {store} from "../../store";
 import router from "../../router";
-import {onMounted, ref} from "vue";
+import {onBeforeMount, onMounted, ref, toRefs, watch, watchEffect} from "vue";
 import {searchBookmark} from "../../api/bookmark/bookmarkApi";
 import {bookmarkStore} from "../../store/bookmark/bookmark";
+import {onBeforeRouteUpdate} from "vue-router";
+import {userStore} from "../../store/user/user";
+import {getMyProfile, getUserInfo} from "../../api/user/userApi";
 
 export default {
   name: 'Header',
@@ -135,11 +138,6 @@ export default {
 
   data() {
     return {
-      myInfo: {
-        username: getUsernameFromCookie(),
-        email: getEmailFromCookie(),
-      },
-
       menus: [
         {title: "Setting", icon: "mdi-cog"},
         {title: "Logout", icon: "mdi-logout"},
@@ -150,7 +148,6 @@ export default {
         {title: "FOLLOW"},
         {title: "ALL"}
       ],
-
 
       menu: false,
       gridView: false,
@@ -163,12 +160,37 @@ export default {
       text: "",
     });
 
-    return {searchObj}
+    const myInfo = ref({
+      username: "",
+      email: "",
+    });
+
+    watch(() => (userStore.state.status), async () => {
+      try {
+        const myProfile = await getMyProfile();
+        myInfo.value.username = myProfile.data.data.username;
+      } catch (error) {
+        console.log(error);
+      }
+    });
+
+    onMounted(async () => {
+      try {
+        const myProfile = await getMyProfile();
+        myInfo.value.username = myProfile.data.data.username;
+        myInfo.value.email = myProfile.data.data.email;
+      } catch (error) {
+        console.log(error);
+      }
+    });
+
+    return {searchObj, myInfo}
   },
+
 
   methods: {
     search() {
-      searchBookmark(this.searchObj.text, this.searchObj.condition).then((response) =>{
+      searchBookmark(this.searchObj.text, this.searchObj.condition).then((response) => {
         if (this.searchObj.text === "") {
           bookmarkStore.state.status = !bookmarkStore.state.status;
         } else {
