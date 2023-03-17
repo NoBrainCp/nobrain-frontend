@@ -65,12 +65,6 @@ export default {
     }
   },
 
-  data() {
-    return {
-
-    }
-  },
-
   methods: {
     submit() {
       this.imgFileObj.dialog = false;
