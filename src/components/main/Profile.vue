@@ -167,10 +167,14 @@
                           width="100"
                           height="52"
                           variant="outlined"
-                          @click=""
+                          @click="sendAuthentication"
                       >
                         인증하기
                       </v-btn>
+                      <AuthDialog
+                          :authObj="authObj"
+                          @submit="checkAuthCode"
+                      />
                     </v-col>
                   </v-row>
                 </v-card>
@@ -245,10 +249,12 @@ import router from "../../router";
 import {userStore} from "../../store/user/user";
 import {onMounted, ref, watch} from "vue";
 import ImageFileDialog from "../dialog/ImageFileDialog.vue";
+import AuthDialog from "../dialog/AuthDialog.vue";
+import {sendAuthenticationMail, sendEmailAndCode} from "../../api/mail/mailApi";
 
 export default {
   name: 'profile',
-  components: {ImageFileDialog},
+  components: {AuthDialog, ImageFileDialog},
 
   data: () => ({
     panel: ['name'],
@@ -269,6 +275,11 @@ export default {
       imgFile: null,
       imgUrl: "src/assets/images/nobrain-no-image.png"
     })
+
+    const authObj = ref({
+      dialog: false,
+    })
+
     watch(() => (imgFileObj.value.imgUrl), (newValue) => {
       imgFileObj.value.imgUrl = newValue;
     })
@@ -280,7 +291,8 @@ export default {
 
     onMounted(async () => {
       try {
-        const myProfile = await this.$nextTick(getMyProfile);
+        const myProfile = await getMyProfile();
+        console.log(myProfile);
         myInfo.value.username = myProfile.data.data.username;
         myInfo.value.email = myProfile.data.data.email;
       } catch (error) {
@@ -288,7 +300,7 @@ export default {
       }
     });
 
-    return {myInfo, imgFileObj};
+    return {myInfo, imgFileObj, authObj};
   },
 
   methods: {
@@ -326,11 +338,34 @@ export default {
     },
 
     updateProfileImg() {
-      //먼저 이미지 연결부터 하고
+      //먼저 이미지 연결부터 하고 db에 유저 이미지 추가해야함
     },
 
-    deleteProfileImg() {현
+    deleteProfileImg() {
       this.imgFileObj.imgUrl = "src/assets/images/nobrain-no-image.png";
+    },
+
+    sendAuthentication() {
+      try {
+        this.authObj.dialog = true;
+        const email = getEmailFromCookie();
+        sendAuthenticationMail(email);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    async checkAuthCode(authCode) {
+      try {
+        const email = getEmailFromCookie();
+        console.log(authCode);
+        await sendEmailAndCode(email, authCode);
+        alert("인증이 성공 하였습니다.");
+      } catch {
+        console.log(authCode);
+        alert("인증번호가 일치하지 않습니다.");
+      }
+
     },
 
     clickPanels(pan) {

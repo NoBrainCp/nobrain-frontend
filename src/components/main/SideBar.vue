@@ -11,7 +11,7 @@
 
     <div class="side-bar-header">
       <v-list-item
-          prepend-avatar="https://cdn.vuetifyjs.com/images/john.jpg"
+          :prepend-avatar=profile
           nav
           :title=user.username
           :subtitle=user.email
@@ -158,6 +158,7 @@ export default {
     const data = reactive({
       isMe: username === getUsernameFromCookie(),
       user: {},
+      profile: "src/assets/images/nobrain-no-image.png",
       categories: [],
 
       followObj: {
