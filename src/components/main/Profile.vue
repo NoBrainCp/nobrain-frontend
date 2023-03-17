@@ -47,6 +47,7 @@
                           color="blue"
                           width="100"
                           height="52"
+                          variant="outlined"
                           class="btn-change-name"
                           elevation="3"
                           @click="changeName(name)"
@@ -70,7 +71,8 @@
                   <v-row class="ml-1 mt-2">
                     <v-col cols="12" sm="3">
                       <div class="mt-7">
-                        ㆍ프로필 이미지<v-spacer/>
+                        ㆍ프로필 이미지
+                        <v-spacer/>
                         (최대 2MB 이미지까지 업로드 하실 수 있어요)
                         (gif,png,jpg,jpeg 확장자인 이미지 파일을 업로드 하실 수 있어요)
                       </div>
@@ -93,8 +95,9 @@
                             elevation="3"
                             min-width="130"
                             height="50"
+                            variant="outlined"
                             prepend-icon="mdi mdi-upload"
-                            @click=""
+                            @click="updateProfileImg"
                         >
                           변경하기
                         </v-btn>
@@ -105,8 +108,11 @@
                             elevation="3"
                             width="130"
                             height="50"
+                            variant="outlined"
                             prepend-icon="mdi mdi-delete"
-                            color="red">
+                            color="red"
+                            @click="deleteProfileImg"
+                        >
                           삭제하기
                         </v-btn>
                       </v-row>
@@ -160,6 +166,7 @@
                           elevation="3"
                           width="100"
                           height="52"
+                          variant="outlined"
                           @click=""
                       >
                         인증하기
@@ -208,6 +215,7 @@
                           elevation="3"
                           width="100"
                           height="52"
+                          variant="outlined"
                           @click=""
                       >
                         변경하기
@@ -246,8 +254,6 @@ export default {
     panel: ['name'],
     btnState: "Open All",
     name: "",
-    originName: getUsernameFromCookie(),
-    defaultButtonText: '변경하기',
   }),
 
   setup() {
@@ -311,18 +317,28 @@ export default {
       }
     },
 
+    onFileChanged(file) {
+      if (file.map(v => v.size) > 2000000) {
+        alert("이미지의 크기가 적절하지 않습니다.");
+        return;
+      }
+      this.imgFileObj.imgUrl = URL.createObjectURL(file[0]);
+    },
+
+    updateProfileImg() {
+      //먼저 이미지 연결부터 하고
+    },
+
+    deleteProfileImg() {
+      this.imgFileObj.imgUrl = "src/assets/images/nobrain-no-image.png";
+    },
+
     clickPanels(pan) {
       this.panel = [pan];
       this.btnState = "Open All";
     },
 
-    onFileChanged(file) {
-      if (file.map(v => v.size) > 2000000) {
-        alert("사진의 용량이 적절하지 않습니다.");
-        return;
-      }
-      this.imgFileObj.imgUrl = URL.createObjectURL(file[0]);
-    }
+
   },
 }
 </script>
