@@ -44,10 +44,8 @@
       </v-menu>
 
     </v-text-field>
-
     <v-spacer/>
     <v-spacer/>
-
     <v-menu
         v-model="menu"
         location="top start"
@@ -62,7 +60,7 @@
             class="account-chip"
         >
           <v-avatar start>
-            <v-img src="https://cdn.vuetifyjs.com/images/john.jpg"></v-img>
+            <v-img :src="myInfo.profileImage"></v-img>
           </v-avatar>
           {{ myInfo.username }}
         </v-chip>
@@ -72,7 +70,8 @@
         <v-list bg-color="light-blue">
           <v-list-item class="search-list">
             <template v-slot:prepend>
-              <v-avatar image="https://cdn.vuetifyjs.com/images/john.jpg"></v-avatar>
+              <v-avatar
+                  :image="myInfo.profileImage"></v-avatar>
             </template>
 
             <v-list-item-title>{{ myInfo.username }}</v-list-item-title>
@@ -118,15 +117,14 @@
 
 
 <script>
-import {getEmailFromCookie, getUsernameFromCookie} from "../../utils/cookies";
+import {getUsernameFromCookie} from "../../utils/cookies";
 import {store} from "../../store";
 import router from "../../router";
-import {onBeforeMount, onMounted, ref, toRefs, watch, watchEffect} from "vue";
+import {onMounted, ref, watch} from "vue";
 import {searchBookmark} from "../../api/bookmark/bookmarkApi";
 import {bookmarkStore} from "../../store/bookmark/bookmark";
-import {onBeforeRouteUpdate} from "vue-router";
 import {userStore} from "../../store/user/user";
-import {getMyProfile, getUserInfo} from "../../api/user/userApi";
+import {getMyProfile} from "../../api/user/userApi";
 
 export default {
   name: 'Header',
@@ -163,15 +161,15 @@ export default {
     const myInfo = ref({
       username: "",
       email: "",
+      profileImage: "",
     });
 
-    watch(() => (userStore.state.status), async () => {
-      try {
-        const myProfile = await getMyProfile();
-        myInfo.value.username = myProfile.data.data.username;
-      } catch (error) {
-        console.log(error);
-      }
+    watch(() => (userStore.state.profileImage), (newValue) => {
+      myInfo.value.profileImage = newValue;
+    });
+
+    watch(() => (userStore.state.username), (newValue) => {
+        myInfo.value.username = newValue;
     });
 
     onMounted(async () => {
@@ -179,6 +177,11 @@ export default {
         const myProfile = await getMyProfile();
         myInfo.value.username = myProfile.data.data.username;
         myInfo.value.email = myProfile.data.data.email;
+        myInfo.value.profileImage = myProfile.data.data.profileImage;
+        if (myInfo.value.profileImage === null) {
+          myInfo.value.profileImage = "src/assets/images/nobrain-no-image.png";
+        }
+
       } catch (error) {
         console.log(error);
       }
