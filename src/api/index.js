@@ -24,3 +24,4 @@ export const category = instance;
 export const bookmark = instance;
 export const tag = instance;
 export const follow = instance;
+export const mail = createInstance('/api/mail');
