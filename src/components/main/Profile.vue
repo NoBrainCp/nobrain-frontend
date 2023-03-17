@@ -329,7 +329,7 @@ export default {
       //먼저 이미지 연결부터 하고
     },
 
-    deleteProfileImg() {
+    deleteProfileImg() {현
       this.imgFileObj.imgUrl = "src/assets/images/nobrain-no-image.png";
     },
 
