@@ -70,17 +70,18 @@
                   <v-row class="ml-1 mt-2">
                     <v-col cols="12" sm="3">
                       <div class="mt-7">
-                        ㆍ프로필 이미지<br>
+                        ㆍ프로필 이미지<v-spacer/>
                         (최대 2MB 이미지까지 업로드 하실 수 있어요)
                         (gif,png,jpg,jpeg 확장자인 이미지 파일을 업로드 하실 수 있어요)
                       </div>
                     </v-col>
                     <v-col cols="12" sm="6" class="img-container">
                       <v-img
+                          v-model="imgFileObj.imgFile"
                           class="profile-img"
-                          width="300"
-                          height="300"
-                          src="src/assets/images/nobrain-no-image.png"
+                          width="250"
+                          height="250"
+                          :src="imgFileObj.imgUrl"
                       >
                       </v-img>
                     </v-col>
@@ -92,19 +93,11 @@
                             elevation="3"
                             min-width="130"
                             height="50"
-                            :loading="isSelecting"
                             prepend-icon="mdi mdi-upload"
-                            @click="onButtonClick"
+                            @click=""
                         >
-                          {{ buttonText }}
+                          변경하기
                         </v-btn>
-                        <input
-                            ref="uploader"
-                            class="d-none"
-                            type="file"
-                            accept="image/*"
-                            @change="onFileChanged"
-                        >
                       </v-row>
                       <v-row justify="end">
                         <v-btn
@@ -117,7 +110,24 @@
                           삭제하기
                         </v-btn>
                       </v-row>
-
+                      <v-row justify="end">
+                        <v-btn
+                            class="mt-15 mr-10"
+                            elevation="3"
+                            width="130"
+                            height="50"
+                            variant="outlined"
+                            prepend-icon="mdi mdi-file"
+                            color="grey"
+                            @click="imgFileObj.dialog = true;"
+                        >
+                          파일 가져오기
+                        </v-btn>
+                        <ImageFileDialog
+                            :imgFileObj="imgFileObj"
+                            @submit="onFileChanged"
+                        />
+                      </v-row>
                     </v-col>
                   </v-row>
                 </v-card>
@@ -140,7 +150,7 @@
                       >{{ myInfo.email }}
                       </v-text-field>
                       <div class="font-weight-light ml-3 mb-3">
-                        No brain을 제한없이 사용하기 위해 E-mail 인증을 해주세요.
+                        No brain 을 제한없이 사용하기 위해 E-mail 인증을 해주세요.
                       </div>
                     </v-col>
                     <v-col cols="12" sm="4">
@@ -226,15 +236,11 @@ import {
 import router from "../../router";
 import {userStore} from "../../store/user/user";
 import {onMounted, ref, watch} from "vue";
+import ImageFileDialog from "../dialog/ImageFileDialog.vue";
 
 export default {
   name: 'profile',
-  computed: {
-
-    buttonText() {
-      return this.selectedFile ? this.selectedFile.name : this.defaultButtonText
-    }
-  },
+  components: {ImageFileDialog},
 
   data: () => ({
     panel: ['name'],
@@ -242,8 +248,6 @@ export default {
     name: "",
     originName: getUsernameFromCookie(),
     defaultButtonText: '변경하기',
-    selectedFile: null,
-    isSelecting: false
   }),
 
   setup() {
@@ -251,6 +255,17 @@ export default {
       username: getUsernameFromCookie(),
       email: getEmailFromCookie(),
     });
+
+    const imgFileObj = ref({
+      dialog: false,
+      title: "프로필 이미지 변경",
+      files: [],
+      imgFile: null,
+      imgUrl: "src/assets/images/nobrain-no-image.png"
+    })
+    watch(() => (imgFileObj.value.imgUrl), (newValue) => {
+      imgFileObj.value.imgUrl = newValue;
+    })
 
     watch(() => (userStore.state.status), async () => {
       const myProfile = await getMyProfile();
@@ -267,7 +282,7 @@ export default {
       }
     });
 
-    return {myInfo};
+    return {myInfo, imgFileObj};
   },
 
   methods: {
@@ -301,17 +316,12 @@ export default {
       this.btnState = "Open All";
     },
 
-    onButtonClick() {
-      this.isSelecting = true
-      window.addEventListener('focus', () => {
-        this.isSelecting = false
-      }, {once: true})
-
-      this.$refs.uploader.click()
-    },
-    onFileChanged(e) {
-      this.selectedFile = e.target.files[0]
-      // do something
+    onFileChanged(file) {
+      if (file.map(v => v.size) > 2000000) {
+        alert("사진의 용량이 적절하지 않습니다.");
+        return;
+      }
+      this.imgFileObj.imgUrl = URL.createObjectURL(file[0]);
     }
   },
 }
