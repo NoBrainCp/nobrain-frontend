@@ -11,7 +11,7 @@
 
     <div class="side-bar-header">
       <v-list-item
-          :prepend-avatar=profile
+          :prepend-avatar= user.profileImage
           nav
           :title=user.username
           :subtitle=user.email
@@ -158,7 +158,7 @@ export default {
     const data = reactive({
       isMe: username === getUsernameFromCookie(),
       user: {},
-      profile: "src/assets/images/nobrain-no-image.png",
+      profileNoImage: "src/assets/images/nobrain-no-image.png",
       categories: [],
 
       followObj: {
@@ -203,7 +203,10 @@ export default {
     }
     watch(() => (userStore.state.username), (newValue) => {
       data.user.username = newValue;
-    })
+    });
+    watch(() => (userStore.state.profileImage), (newValue) => {
+      data.user.profileImage = newValue;
+    });
     watch(() => (categoryStore.state.status), updateCategories);
     watch(() => (bookmarkStore.state.status), updateCategories);
     watch(() => data.followObj.follow, (newValue) => {
@@ -216,8 +219,13 @@ export default {
 
     onMounted(async () => {
       try {
+        const noProfileImage = "src/assets/images/nobrain-no-image.png";
         const userInfo = await getUserInfo(username);
         data.user = userInfo.data.data;
+
+        if (data.user.profileImage === null) {
+          data.user.profileImage = noProfileImage;
+        }
 
         const follow = await isFollow(data.user.userId);
         data.followObj.follow = follow.data.data;
