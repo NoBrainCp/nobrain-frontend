@@ -217,6 +217,8 @@
 <script>
 import {changeName, getMyProfile} from "../../api/user/userApi";
 import {
+  deleteUsernameFromCookie,
+  getEmailFromCookie,
   getUserIdFromCookie,
   getUsernameFromCookie,
   saveUsernameToCookie
@@ -246,8 +248,8 @@ export default {
 
   setup() {
     const myInfo = ref({
-      username: "",
-      email: "",
+      username: getUsernameFromCookie(),
+      email: getEmailFromCookie(),
     });
 
     watch(() => (userStore.state.status), async () => {
@@ -257,7 +259,7 @@ export default {
 
     onMounted(async () => {
       try {
-        const myProfile = await getMyProfile();
+        const myProfile = await this.$nextTick(getMyProfile);
         myInfo.value.username = myProfile.data.data.username;
         myInfo.value.email = myProfile.data.data.email;
       } catch (error) {
@@ -282,6 +284,7 @@ export default {
     async changeName(name) {
       try {
         await changeName(getUserIdFromCookie(), name);
+        deleteUsernameFromCookie();
         saveUsernameToCookie(name);
         userStore.state.status = !userStore.state.status;
         userStore.commit('setUsername', name);
@@ -289,7 +292,7 @@ export default {
         this.name = "";
         await router.push(`/${name}`);
       } catch (error) {
-        alert(error);
+        alert("동일한 닉네임이 존재합니다.");
       }
     },
 
