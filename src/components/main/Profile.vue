@@ -47,6 +47,7 @@
                           color="blue"
                           width="100"
                           height="52"
+                          variant="outlined"
                           class="btn-change-name"
                           elevation="3"
                           @click="changeName(name)"
@@ -70,17 +71,19 @@
                   <v-row class="ml-1 mt-2">
                     <v-col cols="12" sm="3">
                       <div class="mt-7">
-                        ㆍ프로필 이미지<br>
+                        ㆍ프로필 이미지
+                        <v-spacer/>
                         (최대 2MB 이미지까지 업로드 하실 수 있어요)
                         (gif,png,jpg,jpeg 확장자인 이미지 파일을 업로드 하실 수 있어요)
                       </div>
                     </v-col>
                     <v-col cols="12" sm="6" class="img-container">
                       <v-img
+                          v-model="imgFileObj.imgFile"
                           class="profile-img"
-                          width="300"
-                          height="300"
-                          src="src/assets/images/nobrain-no-image.png"
+                          width="250"
+                          height="250"
+                          :src="imgFileObj.imgUrl"
                       >
                       </v-img>
                     </v-col>
@@ -92,19 +95,12 @@
                             elevation="3"
                             min-width="130"
                             height="50"
-                            :loading="isSelecting"
+                            variant="outlined"
                             prepend-icon="mdi mdi-upload"
-                            @click="onButtonClick"
+                            @click="updateProfileImg"
                         >
-                          {{ buttonText }}
+                          변경하기
                         </v-btn>
-                        <input
-                            ref="uploader"
-                            class="d-none"
-                            type="file"
-                            accept="image/*"
-                            @change="onFileChanged"
-                        >
                       </v-row>
                       <v-row justify="end">
                         <v-btn
@@ -112,12 +108,32 @@
                             elevation="3"
                             width="130"
                             height="50"
+                            variant="outlined"
                             prepend-icon="mdi mdi-delete"
-                            color="red">
+                            color="red"
+                            @click="deleteProfileImg"
+                        >
                           삭제하기
                         </v-btn>
                       </v-row>
-
+                      <v-row justify="end">
+                        <v-btn
+                            class="mt-15 mr-10"
+                            elevation="3"
+                            width="130"
+                            height="50"
+                            variant="outlined"
+                            prepend-icon="mdi mdi-file"
+                            color="grey"
+                            @click="imgFileObj.dialog = true;"
+                        >
+                          파일 가져오기
+                        </v-btn>
+                        <ImageFileDialog
+                            :imgFileObj="imgFileObj"
+                            @submit="onFileChanged"
+                        />
+                      </v-row>
                     </v-col>
                   </v-row>
                 </v-card>
@@ -140,7 +156,7 @@
                       >{{ myInfo.email }}
                       </v-text-field>
                       <div class="font-weight-light ml-3 mb-3">
-                        No brain을 제한없이 사용하기 위해 E-mail 인증을 해주세요.
+                        No brain 을 제한없이 사용하기 위해 E-mail 인증을 해주세요.
                       </div>
                     </v-col>
                     <v-col cols="12" sm="4">
@@ -150,10 +166,15 @@
                           elevation="3"
                           width="100"
                           height="52"
-                          @click=""
+                          variant="outlined"
+                          @click="sendAuthentication"
                       >
                         인증하기
                       </v-btn>
+                      <AuthDialog
+                          :authObj="authObj"
+                          @submit="checkAuthCode"
+                      />
                     </v-col>
                   </v-row>
                 </v-card>
@@ -198,6 +219,7 @@
                           elevation="3"
                           width="100"
                           height="52"
+                          variant="outlined"
                           @click=""
                       >
                         변경하기
@@ -217,6 +239,8 @@
 <script>
 import {changeName, getMyProfile} from "../../api/user/userApi";
 import {
+  deleteUsernameFromCookie,
+  getEmailFromCookie,
   getUserIdFromCookie,
   getUsernameFromCookie,
   saveUsernameToCookie
@@ -224,31 +248,41 @@ import {
 import router from "../../router";
 import {userStore} from "../../store/user/user";
 import {onMounted, ref, watch} from "vue";
+import ImageFileDialog from "../dialog/ImageFileDialog.vue";
+import AuthDialog from "../dialog/AuthDialog.vue";
+import {sendAuthenticationMail, sendEmailAndCode} from "../../api/mail/mailApi";
 
 export default {
   name: 'profile',
-  computed: {
-
-    buttonText() {
-      return this.selectedFile ? this.selectedFile.name : this.defaultButtonText
-    }
-  },
+  components: {AuthDialog, ImageFileDialog},
 
   data: () => ({
     panel: ['name'],
     btnState: "Open All",
     name: "",
-    originName: getUsernameFromCookie(),
-    defaultButtonText: '변경하기',
-    selectedFile: null,
-    isSelecting: false
   }),
 
   setup() {
     const myInfo = ref({
-      username: "",
-      email: "",
+      username: getUsernameFromCookie(),
+      email: getEmailFromCookie(),
     });
+
+    const imgFileObj = ref({
+      dialog: false,
+      title: "프로필 이미지 변경",
+      files: [],
+      imgFile: null,
+      imgUrl: "src/assets/images/nobrain-no-image.png"
+    })
+
+    const authObj = ref({
+      dialog: false,
+    })
+
+    watch(() => (imgFileObj.value.imgUrl), (newValue) => {
+      imgFileObj.value.imgUrl = newValue;
+    })
 
     watch(() => (userStore.state.status), async () => {
       const myProfile = await getMyProfile();
@@ -258,6 +292,7 @@ export default {
     onMounted(async () => {
       try {
         const myProfile = await getMyProfile();
+        console.log(myProfile);
         myInfo.value.username = myProfile.data.data.username;
         myInfo.value.email = myProfile.data.data.email;
       } catch (error) {
@@ -265,7 +300,7 @@ export default {
       }
     });
 
-    return {myInfo};
+    return {myInfo, imgFileObj, authObj};
   },
 
   methods: {
@@ -282,6 +317,7 @@ export default {
     async changeName(name) {
       try {
         await changeName(getUserIdFromCookie(), name);
+        deleteUsernameFromCookie();
         saveUsernameToCookie(name);
         userStore.state.status = !userStore.state.status;
         userStore.commit('setUsername', name);
@@ -289,8 +325,47 @@ export default {
         this.name = "";
         await router.push(`/${name}`);
       } catch (error) {
-        alert(error);
+        alert("동일한 닉네임이 존재합니다.");
       }
+    },
+
+    onFileChanged(file) {
+      if (file.map(v => v.size) > 2000000) {
+        alert("이미지의 크기가 적절하지 않습니다.");
+        return;
+      }
+      this.imgFileObj.imgUrl = URL.createObjectURL(file[0]);
+    },
+
+    updateProfileImg() {
+      //먼저 이미지 연결부터 하고 db에 유저 이미지 추가해야함
+    },
+
+    deleteProfileImg() {
+      this.imgFileObj.imgUrl = "src/assets/images/nobrain-no-image.png";
+    },
+
+    sendAuthentication() {
+      try {
+        this.authObj.dialog = true;
+        const email = getEmailFromCookie();
+        sendAuthenticationMail(email);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    async checkAuthCode(authCode) {
+      try {
+        const email = getEmailFromCookie();
+        console.log(authCode);
+        await sendEmailAndCode(email, authCode);
+        alert("인증이 성공 하였습니다.");
+      } catch {
+        console.log(authCode);
+        alert("인증번호가 일치하지 않습니다.");
+      }
+
     },
 
     clickPanels(pan) {
@@ -298,18 +373,7 @@ export default {
       this.btnState = "Open All";
     },
 
-    onButtonClick() {
-      this.isSelecting = true
-      window.addEventListener('focus', () => {
-        this.isSelecting = false
-      }, {once: true})
 
-      this.$refs.uploader.click()
-    },
-    onFileChanged(e) {
-      this.selectedFile = e.target.files[0]
-      // do something
-    }
   },
 }
 </script>
