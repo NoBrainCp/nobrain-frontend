@@ -79,11 +79,10 @@
                     </v-col>
                     <v-col cols="12" sm="6" class="img-container">
                       <v-img
-                          v-model="imgFileObj.imgFile"
                           class="profile-img"
                           width="250"
                           height="250"
-                          :src="imgFileObj.imgUrl"
+                          :src="myInfo.profileImage"
                       >
                       </v-img>
                     </v-col>
@@ -237,7 +236,7 @@
 </template>
 
 <script>
-import {changeName, getMyProfile} from "../../api/user/userApi";
+import {changeName, changeProfileImage, getMyProfile} from "../../api/user/userApi";
 import {
   deleteUsernameFromCookie,
   getEmailFromCookie,
@@ -266,22 +265,23 @@ export default {
     const myInfo = ref({
       username: getUsernameFromCookie(),
       email: getEmailFromCookie(),
+      profileImage: ""
     });
 
     const imgFileObj = ref({
       dialog: false,
       title: "프로필 이미지 변경",
       files: [],
-      imgFile: null,
-      imgUrl: "src/assets/images/nobrain-no-image.png"
+      // imgFile: null,
+      imgUrl: ""
     })
 
     const authObj = ref({
       dialog: false,
     })
 
-    watch(() => (imgFileObj.value.imgUrl), (newValue) => {
-      imgFileObj.value.imgUrl = newValue;
+    watch(() => (myInfo.value.profileImage), (newValue) => {
+      myInfo.value.profileImage = newValue;
     })
 
     watch(() => (userStore.state.status), async () => {
@@ -292,9 +292,12 @@ export default {
     onMounted(async () => {
       try {
         const myProfile = await getMyProfile();
-        console.log(myProfile);
         myInfo.value.username = myProfile.data.data.username;
         myInfo.value.email = myProfile.data.data.email;
+        myInfo.value.profileImage = myProfile.data.data.profileImage;
+        if (myInfo.value.profileImage === null) {
+          myInfo.value.profileImage = "src/assets/images/nobrain-no-image.png";
+        }
       } catch (error) {
         console.log(error);
       }
@@ -334,11 +337,18 @@ export default {
         alert("이미지의 크기가 적절하지 않습니다.");
         return;
       }
-      this.imgFileObj.imgUrl = URL.createObjectURL(file[0]);
+      console.log(file[0]);
+      this.myInfo.profileImage = URL.createObjectURL(file[0]);
+      console.log(this.myInfo.profileImage);
     },
 
-    updateProfileImg() {
-      //먼저 이미지 연결부터 하고 db에 유저 이미지 추가해야함
+    async updateProfileImg() {
+      try {
+        await changeProfileImage(this.myInfo.profileImage);
+        userStore.commit("setProfileImage", this.myInfo.profileImage);
+      } catch (error) {
+        alert(error);
+      }
     },
 
     deleteProfileImg() {

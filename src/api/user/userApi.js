@@ -21,6 +21,16 @@ export function changeName(userId, username) {
     return user.put(`/${userId}/username/${username}`);
 }
 
+export function changeProfileImage(profileImage) {
+    return user.put(`/profile-image`, {
+        profileImage: profileImage
+    });
+}
+
+export function deleteProfileImage() {
+    return user.delete(`/profile-image`);
+}
+
 
 
 
