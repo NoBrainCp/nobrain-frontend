@@ -21,10 +21,18 @@ export function changeName(userId, username) {
     return user.put(`/${userId}/username/${username}`);
 }
 
+export function changePassword(passwordData) {
+    return user.put(`/password`,passwordData);
+}
+
 export function changeProfileImage(profileImage) {
     return user.put(`/profile-image`, {
         profileImage: profileImage
     });
+}
+
+export function deactivateAccount(userId) {
+    return user.delete(`/${userId}`);
 }
 
 export function deleteProfileImage() {

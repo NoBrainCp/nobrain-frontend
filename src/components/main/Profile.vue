@@ -52,7 +52,6 @@
                           elevation="3"
                           @click="changeName(name)"
                       >
-                        <!--클릭시 닉네임 판별 + 변경 메소드-->
                         변경하기
                       </v-btn>
                     </v-col>
@@ -189,23 +188,29 @@
                   <v-row class="ml-1 mt-2">
                     <v-col cols="12" sm="8">
                       <v-text-field
+                          v-model="passwordData.prePassword"
                           variant="outlined"
                           label="현재 비밀번호"
                           prepend-inner-icon="mdi-lock"
                           bg-color="white"
+                          type="password"
                           color="blue"
                       />
                       <v-text-field
+                          v-model="passwordData.newPassword"
                           variant="outlined"
                           label="새로운 비밀번호"
                           hint="숫자와 특수문자를 포함한 8글자 이상"
                           prepend-inner-icon="mdi-lock"
+                          type="password"
                           bg-color="white"
                           color="blue"
                       />
                       <v-text-field
+                          v-model="passwordData.passwordCheck"
                           variant="outlined"
                           label="비밀번호 확인"
+                          type="password"
                           prepend-inner-icon="mdi-lock"
                           bg-color="white"
                           color="blue"
@@ -219,10 +224,54 @@
                           width="100"
                           height="52"
                           variant="outlined"
-                          @click=""
+                          @click="changePassword"
                       >
                         변경하기
                       </v-btn>
+                    </v-col>
+                  </v-row>
+                </v-card>
+              </v-expansion-panel-text>
+            </v-expansion-panel>
+            <v-expansion-panel value="deactivate" elevation="6" @click="clickPanels('deactivate')">
+              <v-expansion-panel-title
+                  color="blue">
+                회원 탈퇴
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <v-card>
+                  <v-row class="ml-1 mt-2">
+                    <v-col cols="12" sm="8">
+                      <v-text-field
+                          v-model="userName"
+                          variant="outlined"
+                          prepend-inner-icon="mdi-account"
+                          bg-color="white"
+                          color="blue"
+                          label="닉네임"
+                          :hint="myInfo.username"
+                      >
+                      </v-text-field>
+                      <div class="font-weight-light ml-3 mb-3">
+                        No brain 을 탈퇴하기 위해서는 닉네임을 입력해야 합니다.
+                      </div>
+                    </v-col>
+                    <v-col cols="12" sm="4">
+                      <v-btn
+                          color="red"
+                          class="btn"
+                          elevation="3"
+                          width="100"
+                          height="52"
+                          variant="outlined"
+                          @click="validateUsername"
+                      >
+                        탈퇴하기
+                      </v-btn>
+                      <ConfirmDialog
+                        v-bind:confirmObj="confirmObj"
+                        @delete="deleteAccount"
+                      />
                     </v-col>
                   </v-row>
                 </v-card>
@@ -236,7 +285,14 @@
 </template>
 
 <script>
-import {changeName, changeProfileImage, getMyProfile} from "../../api/user/userApi";
+import {
+  changeName,
+  changePassword,
+  changeProfileImage, deactivateAccount,
+  existsLoginId,
+  existsUsername,
+  getMyProfile
+} from "../../api/user/userApi";
 import {
   deleteUsernameFromCookie,
   getEmailFromCookie,
@@ -250,15 +306,30 @@ import {onMounted, ref, watch} from "vue";
 import ImageFileDialog from "../dialog/ImageFileDialog.vue";
 import AuthDialog from "../dialog/AuthDialog.vue";
 import {sendAuthenticationMail, sendEmailAndCode} from "../../api/mail/mailApi";
+import ConfirmDialog from "../dialog/ConfirmDialog.vue";
 
 export default {
   name: 'profile',
-  components: {AuthDialog, ImageFileDialog},
+  components: {ConfirmDialog, AuthDialog, ImageFileDialog},
 
   data: () => ({
     panel: ['name'],
     btnState: "Open All",
     name: "",
+    userName: "",
+
+    passwordData: {
+      prePassword: "",
+      newPassword: "",
+      passwordCheck: "",
+    },
+
+    confirmObj: {
+      title: "회원 탈퇴",
+      text: "정말 No brain 을 탈퇴 하시겠습니까?",
+      dialog: false,
+    },
+
   }),
 
   setup() {
@@ -312,7 +383,7 @@ export default {
         this.panel = [];
         this.btnState = "Open All"
       } else {
-        this.panel = ['name', 'profile', 'email', 'password'];
+        this.panel = ['name', 'profile', 'email', 'password', 'deactivate'];
         this.btnState = "Close All"
       }
     },
@@ -376,6 +447,34 @@ export default {
         alert("인증번호가 일치하지 않습니다.");
       }
 
+    },
+
+    async changePassword() {
+      try {
+        await changePassword(this.passwordData);
+        alert("비밀번호가 변경되었습니다.");
+        console.log(this.passwordData.prePassword);
+      } catch (error) {
+        alert(error.data);
+      }
+    },
+
+    async validateUsername() {
+      try {
+        if (this.userName === this.myInfo.username) {
+          this.confirmObj.dialog = true;
+        } else {
+          alert("사용자의 닉네임이 일치하지 않습니다.");
+        }
+      } catch (error) {
+        alert(error.data);
+      }
+    },
+
+    async deleteAccount() {
+      await deactivateAccount(getUserIdFromCookie());
+      alert("회원 탈퇴가 완료되었습니다.");
+      await router.push('/sign-in');
     },
 
     clickPanels(pan) {
