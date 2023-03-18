@@ -152,6 +152,8 @@ export default {
 <style scoped>
 .app-bar {
   opacity: 0.9;
+  border-left: none;
+  border-right: none;
 }
 
 .icon-folder {
