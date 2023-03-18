@@ -83,7 +83,7 @@ export default {
   methods: {
     async checkPassword(password, passwordCheck) {
       try {
-        let result = await axios.put("/api/user/password", {
+        const result = await axios.put("/api/user/forgot-password", {
           loginId: this.route.params.loginId,
           password: password,
           passwordCheck: passwordCheck
