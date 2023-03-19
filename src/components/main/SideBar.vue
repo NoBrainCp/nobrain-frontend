@@ -27,8 +27,8 @@
       </v-list-item>
 
       <div v-if="!rail" id="follow-container">
-        <a href="#" class="follow-items">팔로워: {{ followObj.followerCount }}</a>
-        <a href="#" class="follow-items" id="following">팔로잉: {{ followObj.followingCount }}</a>
+        <span class="follow-items" @click="clickFollower">팔로워: {{ followObj.followerCount }}</span>
+        <span class="follow-items" id="following" @click="clickFollowing">팔로잉: {{ followObj.followingCount }}</span>
       </div>
 
       <div v-if="!rail" class="follow-btn-container">
@@ -121,7 +121,9 @@ import {useRoute} from "vue-router";
 import {addCategory, getCategories} from "../../api/category/categoryApi";
 import {getUsernameFromCookie} from "../../utils/cookies";
 import {addBookmark} from "../../api/bookmark/bookmarkApi";
+import {store} from "../../store/index"
 import {bookmarkStore} from "../../store/bookmark/bookmark";
+import {followStore} from "../../store/follow/follow"
 import {getTags} from "../../api/tag/tagApi";
 import {followAndUnfollow, getFollowCount, isFollow} from "../../api/follow/followApi";
 import {userStore} from "../../store/user/user";
@@ -167,7 +169,7 @@ export default {
         follow: Boolean,
 
         followButton: {
-          text: String,
+          text: '',
           color: String,
           icon: String,
         }
@@ -201,14 +203,18 @@ export default {
         alert(error.response.data.message);
       }
     }
+
+    watch(() => (categoryStore.state.status), updateCategories);
+    watch(() => (bookmarkStore.state.status), updateCategories);
+
     watch(() => (userStore.state.username), (newValue) => {
       data.user.username = newValue;
     });
+
     watch(() => (userStore.state.profileImage), (newValue) => {
       data.user.profileImage = newValue;
     });
-    watch(() => (categoryStore.state.status), updateCategories);
-    watch(() => (bookmarkStore.state.status), updateCategories);
+
     watch(() => data.followObj.follow, (newValue) => {
       const followButton = data.followObj.followButton;
       followButton.text = newValue ? "팔로우 취소" : "팔로우";
@@ -282,28 +288,34 @@ export default {
       if (categoryName === undefined) {
         await router.push(`/${username}/${bookmark.categoryName}`)
       }
-    }
-    ,
+    },
+
+    clickFollower() {
+      followStore.commit('setFollowWindow', 'follower');
+      store.commit('setWindow', 'follow');
+    },
+
+    clickFollowing() {
+      followStore.commit('setFollowWindow', 'following');
+      store.commit('setWindow', 'follow');
+    },
 
     showBookmark(category) {
       const username = this.route.params.username;
       categoryStore.commit('setCategory', category);
       router.push(`/${username}/${category.name}`);
-    }
-    ,
+    },
 
     showAllBookmarks() {
       const username = this.route.params.username;
       categoryStore.commit('setCategory', {name: '전체보기'});
       router.push(`/${username}`);
-    }
-    ,
+    },
 
     async clickFollow() {
       await followAndUnfollow(this.user.userId);
       this.followObj.follow = !this.followObj.follow;
-    }
-    ,
+    },
 
     bookmarkDialogInit() {
       this.bookmarkDialogObj.bookmark = {
@@ -343,9 +355,8 @@ export default {
 }
 
 .follow-items:hover {
+  cursor: pointer;
   color: #03A9F4;
-  text-decoration: underline;
-  text-underline: #03A9F4;
 }
 
 #follow-container {
