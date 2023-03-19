@@ -57,13 +57,7 @@
 </template>
 
 <script>
-import IconPlusBox from "../icons/IconPlusBox.vue";
-import IconDocumentation from "../icons/IconDocumentation.vue";
 import {useRoute} from "vue-router";
-import axios from 'axios';
-import {category} from "../../api";
-import {addCategory} from "../../api/category/categoryApi";
-import {getUsernameFromCookie} from "../../utils/cookies";
 
 export default {
   name: 'CategoryDialog',

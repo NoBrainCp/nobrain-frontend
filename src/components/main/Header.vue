@@ -203,7 +203,9 @@ export default {
     },
 
     home() {
-      router.push("/" + getUsernameFromCookie());
+      router.push("/" + getUsernameFromCookie()).then(() => {
+        window.location.reload();
+      });
     },
 
     selectSearchCondition(title) {

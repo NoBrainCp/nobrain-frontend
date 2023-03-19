@@ -9,7 +9,7 @@
             v-bind="props"
             :elevation="isHovering ? 15 : 3">
           <v-img
-              :src="bookmark.image === null ? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLe5nUtk5JoD4sdl1VSGYazqdLh7to9LYI_Q&usqp=CAU' : bookmark.image"
+              :src="bookmark.image === null ? '../src/assets/images/nobrain-no-image.png' : bookmark.image"
               class="bookmark-img"
               cover>
             <v-overlay
@@ -27,7 +27,7 @@
           </v-img>
           <div class="card-header">
             <v-card-subtitle class="mt-3">{{ bookmark.createdAt }}</v-card-subtitle>
-            <v-col class="icon-container">
+            <v-col v-if="data.isMe" class="icon-container">
               <v-icon
                   size="27"
                   :color="bookmark.public ? 'indigo' : 'green-darken-3'"
@@ -142,8 +142,10 @@ export default {
 
   setup() {
     const route = useRoute();
+    const username = route.params.username;
     const data = reactive({
       bookmarks: [],
+      isMe: username === getUsernameFromCookie(),
     });
 
     watch([() => route.params, () => bookmarkStore.state.status], loadData);
