@@ -231,18 +231,18 @@ export default {
 
 .bookmark-text-container {
   display: flex;
-  margin: 17px 0 0 2px;
+  margin: 17px 0 0 20px;
 }
 
 .bookmark-icon {
-  width: 60px;
+  width: 75px;
   display: flex;
   align-content: center;
   justify-content: center;
 
   margin-right: 5px;
-  font-size: 10px;
-  font-weight: bold;
+  font-size: 12px;
+  font-weight: 500;
   color: #9d9d9d;
 
   border: 2px solid #d2d2d2;
@@ -252,19 +252,20 @@ export default {
 .bookmark-text {
   margin-top: 1px;
   font-size: 12px;
-  font-weight: bold;
+  font-weight: 500;
   color: #9d9d9d;
 }
 
 .follow-container {
-  margin: 10px 0 0 15px;
+  margin: 15px 0 0 40px;
 }
 
 .follow-text {
-
+  font-weight: 200;
 }
 
 .follow-count {
+  margin-left: 5px;
   color: #03A9F4;
 }
 

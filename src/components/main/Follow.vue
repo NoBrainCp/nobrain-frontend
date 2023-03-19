@@ -1,6 +1,7 @@
 <template>
   <v-card style="width: 105%">
     <v-tabs
+        class="tabs"
         v-model="tab"
         style="position: fixed; top: 100px;">
       <v-tab value="follower" class="tab">팔로워</v-tab>
@@ -48,6 +49,11 @@ export default {
 </script>
 
 <style scoped>
+.tabs {
+  width: 100%;
+  border-bottom: 1px solid #d2d2d2;
+}
+
 .tab {
   width: 150px;
   color: #03A9F4;

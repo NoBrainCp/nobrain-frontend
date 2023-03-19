@@ -16,8 +16,8 @@
           <Profile/>
         </v-window-item>
 
-        <v-window-item value="follow">
-          <Follow/>
+        <v-window-item class="follow-window" value="follow">
+          <Follow class="follow-vue"/>
         </v-window-item>
       </v-main>
     </v-window>
