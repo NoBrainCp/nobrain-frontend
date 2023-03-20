@@ -167,9 +167,7 @@ export default {
 
   methods: {
     moveToUser(username) {
-      router.push(`/${username}`).then(() => {
-        window.location.reload();
-      });
+      router.push(`/${username}`);
     },
 
     async clickFollow() {

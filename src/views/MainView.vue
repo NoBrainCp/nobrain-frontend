@@ -35,19 +35,29 @@ import {ref, watch} from "vue";
 import {store} from "../store";
 import Bookmark from "../components/main/Bookmark.vue";
 import Follow from "../components/main/Follow.vue";
+import {useRoute} from "vue-router";
+import router from "../router";
 
 export default {
   name: 'main',
   components: {Follow, CategoryBar, Profile, TagBar,  Header, SideBar, Bookmark},
 
   setup() {
-    const window = ref();
+    const route = useRoute();
+    const windowValue = ref();
 
     watch(() => store.state.window, (newWindow) => {
-      window.value = newWindow;
-    })
+      windowValue.value = newWindow;
+    });
 
-    return { window };
+    watch(() => route.params.username, (newUsername) => {
+      console.log("watch: " + newUsername);
+      router.push(`/${newUsername}`).then(() => {
+        window.location.reload();
+      });
+    });
+
+    return { window: windowValue };
   },
 }
 </script>
