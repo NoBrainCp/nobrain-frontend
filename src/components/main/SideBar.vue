@@ -45,7 +45,8 @@
 
       <div v-if="!rail" id="btn-container">
         <v-btn
-            class="btn btn-show-all"
+            :style="{width: buttonWidth, height: buttonHeight}"
+            class="btn"
             color="#00BCD4"
             prepend-icon="mdi mdi-text-box-multiple"
             @click="showAllBookmarks">
@@ -53,6 +54,8 @@
         </v-btn>
 
         <v-btn
+            :style="{width: buttonWidth, height: buttonHeight}"
+            v-if="isMe"
             class="btn"
             color="#009688"
             prepend-icon="mdi mdi-bookmark"
@@ -86,11 +89,10 @@
 
         <v-divider v-if="!rail"/>
         <v-list-item
-            v-for="(category, i) in categories" key="i"
+            v-for="(category, i) in categories"
+            :key="i"
             :value="category"
-            active-color="light-blue"
-            class="category-list-item"
-            @click="showBookmark(category)">
+            @click="showBookmark(category); toggleActive(i, category)">
 
           <template v-slot:prepend>
             <v-icon icon="mdi mdi-folder"></v-icon>
@@ -137,6 +139,7 @@ export default {
     follow: false,
     drawer: true,
     rail: false,
+    // activeIndex: null,
 
     categoryObj: {
       title: "카테고리 추가",
@@ -159,6 +162,10 @@ export default {
     const username = route.params.username;
     const data = reactive({
       isMe: username === getUsernameFromCookie(),
+
+      buttonWidth: '150px',
+      buttonHeight: '75px',
+
       user: {},
       profileNoImage: "src/assets/images/nobrain-no-image.png",
       categories: [],
@@ -239,6 +246,14 @@ export default {
         const categories = await getCategories(username);
         data.categories = categories.data.list;
 
+        if (!data.isMe) {
+          data.buttonWidth = '305px';
+          data.buttonHeight = '55px';
+        }
+        // const category = route.params.category;
+        // data.activeIndex = data.categories.findIndex(c => c.name === category);
+        // console.log(data.activeIndex);
+
         const followCount = await getFollowCount(username);
         data.followObj.followerCount = followCount.data.data.followerCnt;
         data.followObj.followingCount = followCount.data.data.followingCnt;
@@ -308,7 +323,7 @@ export default {
 
     showAllBookmarks() {
       const username = this.route.params.username;
-      categoryStore.commit('setCategory', {name: '전체보기'});
+      categoryStore.commit('setCategory', {name: '전체 북마크'});
       router.push(`/${username}`);
     },
 
@@ -330,6 +345,10 @@ export default {
 </script>
 
 <style scoped>
+.category-active {
+  background: #03A9F4;
+}
+
 .side-bar-header {
   /*background: white;*/
   /*position: fixed;*/
@@ -386,20 +405,14 @@ export default {
   font-size: 15px;
 }
 
-.btn-show-all {
-  margin-right: 5px;
-}
-
 #btn-container {
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   margin-bottom: 10px;
   margin-top: 15px;
 }
 
 .btn {
-  width: 150px;
-  height: 65px;
   color: white;
   font-size: 13px;
   font-weight: bold;
