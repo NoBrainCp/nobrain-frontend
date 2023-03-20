@@ -176,6 +176,7 @@ export default {
 
   methods: {
     async clickEditBookmarkBtn(bookmark, bookmarkId) {
+      bookmarkStore.state.status = !bookmarkStore.state.status;
       this.bookmarkDialogObj.bookmark = bookmark;
       this.bookmarkDialogObj.dialog = true;
 
