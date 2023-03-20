@@ -79,10 +79,10 @@
 
           <div class="input-row">
             <v-checkbox
-                v-model="bookmarkDialogObj.bookmark.isPublic"
+                v-model="bookmarkDialogObj.bookmark.public"
                 label="비공개"
                 color="info"
-                :prepend-icon="bookmarkDialogObj.bookmark.isPublic ? 'mdi mdi-lock':'mdi mdi-lock-open-variant'"
+                :prepend-icon="bookmarkDialogObj.bookmark.public ? 'mdi mdi-lock':'mdi mdi-lock-open-variant'"
                 hide-details/>
           </div>
         </v-container>
@@ -93,7 +93,7 @@
         <v-btn
             color="blue-darken-1"
             variant="text"
-            @click="bookmarkDialogObj.dialog= false">
+            @click="closeDialog">
           닫기
         </v-btn>
         <v-btn
@@ -129,7 +129,7 @@ export default defineComponent ({
         categoryName: String,
         tags: [], //수정시 기존 보여지는 태그들
         tagList: [],  //자신의 북마크 전체 태그 리스트
-        isPublic: true,
+        public: Boolean,
       },
     },
   },
@@ -158,7 +158,12 @@ export default defineComponent ({
     remove (item) {
       this.chips.splice(this.chips.indexOf(item), 1);
     },
-    
+
+    closeDialog() {
+      this.bookmarkDialogObj.dialog = false;
+      this.bookmarkDialogObj.bookmark = {};
+    },
+
     handleChangeTag(tags) {
       this.bookmark.tags = tags;
     }

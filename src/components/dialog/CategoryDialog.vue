@@ -42,7 +42,7 @@
         <v-btn
             color="blue-darken-1"
             variant="text"
-            @click="categoryDialog.dialog=false">
+            @click="closeDialog">
           닫기
         </v-btn>
         <v-btn
@@ -80,11 +80,19 @@ export default {
   methods: {
     submit() {
       this.$emit('submit', this.categoryDialog);
+      this.initDialog();
+    },
+
+    closeDialog() {
+      this.initDialog();
+    },
+
+    initDialog() {
       this.categoryDialog.dialog = false;
       this.categoryDialog.name = "";
       this.categoryDialog.description = "";
       this.categoryDialog.public = false;
-    },
+    }
   }
 }
 </script>
