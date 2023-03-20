@@ -86,7 +86,7 @@ export default {
     });
 
     watch(() => (data.value.category), (newValue) => {
-      if (newValue.name === "전체보기") {
+      if (newValue.name === "전체 북마크") {
         data.value.isAll = true;
         data.value.category = {name: '전체 북마크'};
       } else {
@@ -106,7 +106,7 @@ export default {
     onMounted(() => {
       const categoryName = route.params.category;
       if (categoryName === undefined) {
-        categoryStore.commit('setCategory', {name: '전체보기'});
+        categoryStore.commit('setCategory', {name: '전체 북마크'});
       } else {
         categoryStore.commit('setCategory', {name: categoryName});
       }
