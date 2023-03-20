@@ -164,7 +164,7 @@ export default {
       isMe: username === getUsernameFromCookie(),
 
       buttonWidth: '150px',
-      buttonHeight: '75px',
+      buttonHeight: '70px',
 
       user: {},
       profileNoImage: "src/assets/images/nobrain-no-image.png",
@@ -230,6 +230,13 @@ export default {
       showFollowCount();
     });
 
+    onMounted(() => {
+      if (!data.isMe) {
+        data.buttonWidth = '305px';
+        data.buttonHeight = '55px';
+      }
+    });
+
     onMounted(async () => {
       try {
         const noProfileImage = "src/assets/images/nobrain-no-image.png";
@@ -245,14 +252,6 @@ export default {
 
         const categories = await getCategories(username);
         data.categories = categories.data.list;
-
-        if (!data.isMe) {
-          data.buttonWidth = '305px';
-          data.buttonHeight = '55px';
-        }
-        // const category = route.params.category;
-        // data.activeIndex = data.categories.findIndex(c => c.name === category);
-        // console.log(data.activeIndex);
 
         const followCount = await getFollowCount(username);
         data.followObj.followerCount = followCount.data.data.followerCnt;
