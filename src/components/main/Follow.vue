@@ -4,20 +4,10 @@
         class="tabs"
         v-model="tab"
         style="position: fixed; top: 100px;">
-      <v-tab value="follower" class="tab">팔로워</v-tab>
-      <v-tab value="following" class="tab">팔로잉</v-tab>
+      <v-tab value="follower" class="tab" @click="followerClick">팔로워</v-tab>
+      <v-tab value="following" class="tab" @click="followingClick">팔로잉</v-tab>
     </v-tabs>
-
-    <v-card-text>
-      <v-window v-model="tab">
-        <v-window-item value="follower">
-          <UserCard/>
-        </v-window-item>
-        <v-window-item value="following">
-          <UserCard/>
-        </v-window-item>
-      </v-window>
-    </v-card-text>
+    <UserCard/>
   </v-card>
 </template>
 
@@ -38,13 +28,24 @@ export default {
       tab.value = newValue;
     });
 
-    watch(() => (tab.value), (newValue) => {
-      console.log("TAB VALUE WATCH");
-      followStore.commit('setUserCardWindow', newValue);
-    });
+    // watch(() => (tab.value), (newValue) => {
+    //   console.log("TAB VALUE WATCH");
+    //   followStore.commit('setUserCardWindow', newValue);
+    // });
 
-    return { tab };
+    return {tab};
   },
+
+  methods: {
+    followerClick() {
+      followStore.commit('setFollowWindow', this.tab);
+    },
+
+    followingClick() {
+      followStore.commit('setFollowWindow', this.tab);
+    }
+
+  }
 }
 </script>
 

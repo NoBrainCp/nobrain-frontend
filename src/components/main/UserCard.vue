@@ -81,20 +81,20 @@ export default {
       },
     });
 
-    watchEffect(async () => {
-      const window = followStore.state.userCardWindow;
-      console.log("USER CARD WATCH EFFECT");
-      setFollowUsers(window, username);
-    }, {
-      lazy: false,
-      deep: false
-    });
-
-    // watch(() => (followStore.state.userCardWindow), (newValue) => {
-    //   const username = route.params.username;
-    //   console.log("USER CARD WATCH");
-    //   setFollowUsers(newValue, username);
+    // watchEffect(async () => {
+    //   const window = followStore.state.window;
+    //   console.log("USER CARD WATCH EFFECT");
+    //   setFollowUsers(window, username);
+    // }, {
+    //   lazy: false,
+    //   deep: false
     // });
+
+    watch(() => (followStore.state.followWindow), (newValue) => {
+      const username = route.params.username;
+      console.log("USER CARD WATCH");
+      setFollowUsers(newValue, username);
+    });
 
     onMounted(async () => {
       try {
@@ -102,7 +102,6 @@ export default {
         const value = followStore.state.followWindow;
         console.log("USER CARD ON MOUNTED");
         setFollowUsers(value, username);
-
         const follow = await isFollow(data.user.userId);
         data.value.followObj.follow = follow.data.data;
       } catch (error) {
@@ -128,6 +127,11 @@ export default {
       showFollowCount();
     });
 
+    watch(() => followStore.state.followWindow, (newValue) => {
+      setFollowUsers(newValue, username);
+      console.log(newValue);
+    })
+
     const setFollowUsers = (value, username) => {
       if (value === 'follower') {
         getUserFollowers(username);
@@ -149,6 +153,7 @@ export default {
       try {
         const response = await getFollowingList(username);
         followUsers.value = response.data.list;
+        console.log(response.data.list);
       } catch (error) {
         console.log(error);
       }
