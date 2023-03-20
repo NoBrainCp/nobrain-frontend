@@ -51,7 +51,6 @@ export default {
     });
 
     watch(() => route.params.username, (newUsername) => {
-      console.log("watch: " + newUsername);
       router.push(`/${newUsername}`).then(() => {
         window.location.reload();
       });
