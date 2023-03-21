@@ -17,7 +17,7 @@
         elevation="3"
         prepend-icon="mdi mdi-pencil-outline"
         border
-        @click="categoryDialog.dialog=true">
+        @click="updateClick">
       수정
     </v-btn>
     <CategoryDialog
@@ -75,6 +75,7 @@ export default {
       isMe: route.params.username === getUsernameFromCookie(),
       isAll: false,
     });
+
     const categoryDialog = ref({
       dialog: false,
       title: "카테고리 수정",
@@ -82,7 +83,7 @@ export default {
       originName: String,
       name: String,
       description: String,
-      public: Boolean,
+      isPublic: Boolean,
     });
 
     watch(() => (data.value.category), (newValue) => {
@@ -119,15 +120,23 @@ export default {
   },
 
   methods: {
+    updateClick() {
+      this.categoryDialog.dialog=true
+      this.categoryDialog.name = categoryStore.state.category.name;
+      this.categoryDialog.description = categoryStore.state.category.description;
+      this.categoryDialog.isPublic = categoryStore.state.category.public;
+    },
+
     async updateCategory(category) {
       try {
         const categoryName = category.name;
         const categoryDescription = category.description;
+        const isPublic = category.public;
         await updateCategory(getUsernameFromCookie(), category.originName, category);
         categoryStore.state.status = !categoryStore.state.status;
-        categoryStore.commit('setCategory', {name: categoryName});
         this.data.category.name = categoryName;
         this.data.category.description = categoryDescription;
+        categoryStore.commit('setCategory', {name: categoryName, description: categoryDescription, public: isPublic});
         await router.push(`/${getUsernameFromCookie()}/${categoryName}`);
       } catch (error) {
         alert(error.response.data.message);

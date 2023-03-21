@@ -18,6 +18,7 @@
                   v-model="categoryDialog.name"
                   label="카테고리 이름"
                   prepend-icon="mdi-rename"
+                  :rules="[rules.name]"
                   required></v-text-field>
             </v-col>
             <v-col cols="12">
@@ -28,10 +29,10 @@
                   prepend-icon="mdi-tooltip-text"
                   required/>
               <v-checkbox
-                  v-model="categoryDialog.public"
-                  label="비공개"
+                  v-model="categoryDialog.isPublic"
+                  :label="categoryDialog.isPublic ? '공개' : '비공개'"
                   color="info"
-                  :prepend-icon="categoryDialog.public ? 'mdi mdi-lock':'mdi mdi-lock-open-variant'"
+                  :prepend-icon="categoryDialog.isPublic ? 'mdi mdi-lock-open-variant' : 'mdi mdi-lock'"
                   hide-details/>
             </v-col>
           </v-row>
@@ -69,12 +70,16 @@ export default {
       originName: String,
       name: String,
       description: String,
-      public: Boolean,
+      isPublic: Boolean,
     }
   },
   data: () => ({
     route: useRoute(),
     dialog: true,
+
+    rules: {
+      name: v => !!v || '이름은 필수 입력 항목입니다.'
+    }
   }),
 
   methods: {
@@ -91,7 +96,7 @@ export default {
       this.categoryDialog.dialog = false;
       this.categoryDialog.name = "";
       this.categoryDialog.description = "";
-      this.categoryDialog.public = false;
+      this.categoryDialog.isPublic = true;
     }
   }
 }
