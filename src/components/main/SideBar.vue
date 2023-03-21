@@ -145,6 +145,7 @@ export default {
       title: "카테고리 추가",
       btnName: "추가",
       dialog: false,
+      isPublic: true
     },
 
     bookmarkDialogObj: {
@@ -187,6 +188,7 @@ export default {
       try {
         const response = await getCategories(username);
         data.categories = response.data.list;
+        console.log(response.data.list);
       } catch (error) {
         alert(error.response.data.message);
       }
@@ -208,8 +210,6 @@ export default {
       }).catch(() => {
         alert("빈 문자열 혹은 동일한 카테고리 이름을 생성 할 수 없습니다.")
       });
-
-
     }
 
     watch(() => (categoryStore.state.status), updateCategories);

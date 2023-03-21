@@ -29,10 +29,10 @@
                   prepend-icon="mdi-tooltip-text"
                   required/>
               <v-checkbox
-                  v-model="categoryDialog.public"
-                  label="비공개"
+                  v-model="categoryDialog.isPublic"
+                  :label="categoryDialog.isPublic ? '공개' : '비공개'"
                   color="info"
-                  :prepend-icon="categoryDialog.public ? 'mdi mdi-lock':'mdi mdi-lock-open-variant'"
+                  :prepend-icon="categoryDialog.isPublic ? 'mdi mdi-lock-open-variant' : 'mdi mdi-lock'"
                   hide-details/>
             </v-col>
           </v-row>
@@ -70,7 +70,7 @@ export default {
       originName: String,
       name: String,
       description: String,
-      public: Boolean,
+      isPublic: Boolean,
     }
   },
   data: () => ({
@@ -96,7 +96,7 @@ export default {
       this.categoryDialog.dialog = false;
       this.categoryDialog.name = "";
       this.categoryDialog.description = "";
-      this.categoryDialog.public = false;
+      this.categoryDialog.isPublic = true;
     }
   }
 }

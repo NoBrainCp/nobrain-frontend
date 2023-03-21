@@ -83,7 +83,7 @@ export default {
       originName: String,
       name: String,
       description: String,
-      public: Boolean,
+      isPublic: Boolean,
     });
 
     watch(() => (data.value.category), (newValue) => {
@@ -124,7 +124,7 @@ export default {
       this.categoryDialog.dialog=true
       this.categoryDialog.name = categoryStore.state.category.name;
       this.categoryDialog.description = categoryStore.state.category.description;
-      this.categoryDialog.public = categoryStore.state.category.public;
+      this.categoryDialog.isPublic = categoryStore.state.category.public;
     },
 
     async updateCategory(category) {
