@@ -106,12 +106,11 @@ import {onMounted, reactive, watch} from "vue";
 import {bookmarkStore} from "../../store/bookmark/bookmark";
 import ConfirmDialog from "../dialog/ConfirmDialog.vue";
 import BookmarkDialog from "../dialog/BookmarkDialog.vue";
-import {deleteBookmarkById, getAllBookmarks, getBookmarks, updateBookmark} from "../../api/bookmark/bookmarkApi";
+import {deleteBookmarkById, getAllBookmarks, getBookmarks, updateBookmark, updatePublic, updateStarred} from "../../api/bookmark/bookmarkApi";
 import {getCategories, getCategoryByBookmarkId} from "../../api/category/categoryApi";
 import {getTags, getTagsByBookmarkId} from "../../api/tag/tagApi";
-import {getUserIdFromCookie, getUsernameFromCookie} from "../../utils/cookies";
+import {getUsernameFromCookie} from "../../utils/cookies";
 import {categoryStore} from "../../store/category/category";
-import {store} from "../../store";
 
 export default {
   name: 'Bookmark',
@@ -153,7 +152,6 @@ export default {
       if (Object.keys(bookmarkStore.state.bookmarks).length === 0) {
         loadData();
       } else {
-        console.log(bookmarkStore.state.bookmarks);
         data.bookmarks = bookmarkStore.state.bookmarks;
       }
     });
@@ -166,6 +164,7 @@ export default {
         data.bookmarks = await getAllBookmarks(username).then((res) => res.data.list);
       } else {
         data.bookmarks = await getBookmarks(username, categoryName).then((res) => res.data.list);
+
       }
     }
 
@@ -177,8 +176,6 @@ export default {
   methods: {
     async clickEditBookmarkBtn(bookmark, bookmarkId) {
       bookmarkStore.state.status = !bookmarkStore.state.status;
-      this.bookmarkDialogObj.bookmark = bookmark;
-      this.bookmarkDialogObj.dialog = true;
 
       const [categoryListResp, categoryResp, tagsResp, allTagsResp] = await Promise.all([
         getCategories(getUsernameFromCookie()),
@@ -187,24 +184,29 @@ export default {
         getTags(getUsernameFromCookie())
       ]);
 
+      this.bookmarkDialogObj.dialog = true;
+      this.bookmarkDialogObj.bookmark = bookmark;
+      this.bookmarkDialogObj.bookmark.isPublic = bookmark.public;
       this.bookmarkDialogObj.categoryNames = categoryListResp.data.list.map(({name}) => name);
       this.bookmarkDialogObj.bookmark.categoryName = categoryResp.data.data;
       this.bookmarkDialogObj.originCategoryName = categoryResp.data.data;
       this.bookmarkDialogObj.bookmark.tags = tagsResp.data.list.map(({tagName}) => tagName);
       this.bookmarkDialogObj.bookmark.tagList = allTagsResp.data.list.map(({tag}) => tag.name);
+
     },
 
     async updateBookmark(bookmark) {
       const category = this.bookmarkDialogObj.originCategoryName;
       const username = getUsernameFromCookie();
-      await updateBookmark(bookmark.id, bookmark);
+
+      updateBookmark(bookmark.id, bookmark).then(()=>{
+        bookmarkStore.state.status = !bookmarkStore.state.status;
+        categoryStore.commit('setCategory', {name: bookmark.categoryName});
+      });
 
       if (bookmark.categoryName !== category) {
         await router.push(`/${username}/${bookmark.categoryName}`);
       }
-
-      bookmarkStore.state.status = !bookmarkStore.state.status;
-      categoryStore.commit('setCategory', {name: bookmark.categoryName});
     },
 
     clickDeleteBookmarkBtn(bookmarkId) {
@@ -223,12 +225,16 @@ export default {
       bookmarkStore.state.status = !bookmarkStore.state.status;
     },
 
-    clickStar(bookmark) {
+    async clickStar(bookmark) {
       bookmark.starred = !bookmark.starred;
+
+      await updateStarred(bookmark.id, bookmark.starred);
     },
 
-    clickLock(bookmark) {
+    async clickLock(bookmark) {
       bookmark.public = !bookmark.public;
+
+      await updatePublic(bookmark.id, bookmark.public);
     },
   }
 }

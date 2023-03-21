@@ -79,10 +79,10 @@
 
           <div class="input-row">
             <v-checkbox
-                v-model="bookmarkDialogObj.bookmark.public"
-                label="비공개"
+                v-model="bookmarkDialogObj.bookmark.isPublic"
+                :label="bookmarkDialogObj.bookmark.isPublic ? '공개' : '비공개'"
                 color="info"
-                :prepend-icon="bookmarkDialogObj.bookmark.public ? 'mdi mdi-lock':'mdi mdi-lock-open-variant'"
+                :prepend-icon="bookmarkDialogObj.bookmark.isPublic ? 'mdi mdi-lock-open-variant' : 'mdi mdi-lock'"
                 hide-details/>
           </div>
         </v-container>
@@ -108,9 +108,9 @@
 </template>
 <script>
 
-import {defineComponent, ref} from "vue";
+import {defineComponent} from "vue";
 import {useRoute} from "vue-router";
-import {bookmarkStore} from "../../store/bookmark/bookmark";
+
 export default defineComponent ({
   name: 'BookmarkDialog',
 
@@ -129,19 +129,15 @@ export default defineComponent ({
         categoryName: String,
         tags: [], //수정시 기존 보여지는 태그들
         tagList: [],  //자신의 북마크 전체 태그 리스트
-        public: Boolean,
+        isPublic: Boolean,
       },
     },
   },
 
   data: () => ({
-
-    bookmarkObj: {},
-
     route: useRoute(),
     dialog: true,
     chips: [],
-    // items: ['Streaming', 'Eating'],
 
     rules: {
       url: v => !!v || 'URL은 필수 입력 항목입니다.',
@@ -163,10 +159,6 @@ export default defineComponent ({
       this.bookmarkDialogObj.dialog = false;
       this.bookmarkDialogObj.bookmark = {};
     },
-
-    handleChangeTag(tags) {
-      this.bookmark.tags = tags;
-    }
   }
 })
 </script>
@@ -196,16 +188,6 @@ export default defineComponent ({
 .input-text-area-icon {
   color: #888888;
   margin-bottom: 10px;
-}
-
-#input-tags {
-  background: #f6f6f6;
-  height: 56px;
-  align-content: center;
-}
-
-#input-tags:focus {
-  background: #aeaeae;
 }
 
 .v3ti-content > .v3ti-tag > span {
