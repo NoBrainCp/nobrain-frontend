@@ -131,11 +131,12 @@ export default {
       try {
         const categoryName = category.name;
         const categoryDescription = category.description;
+        const isPublic = category.public;
         await updateCategory(getUsernameFromCookie(), category.originName, category);
         categoryStore.state.status = !categoryStore.state.status;
         this.data.category.name = categoryName;
         this.data.category.description = categoryDescription;
-        categoryStore.commit('setCategory', {name: categoryName, description: categoryDescription});
+        categoryStore.commit('setCategory', {name: categoryName, description: categoryDescription, public: isPublic});
         await router.push(`/${getUsernameFromCookie()}/${categoryName}`);
       } catch (error) {
         alert(error.response.data.message);

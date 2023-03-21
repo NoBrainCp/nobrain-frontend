@@ -271,12 +271,12 @@ export default {
 
   methods: {
     async clickAddBookmarkBtn() {
-      this.bookmarkDialogObj.dialog = true;
-      const categoryName = this.route.params.category;
-      if (categoryName !== undefined) {
-        this.bookmarkDialogObj.bookmark.categoryName = categoryName;
-      }
       try {
+        this.bookmarkDialogObj.dialog = true;
+        const categoryName = this.route.params.category;
+        if (categoryName !== undefined) {
+          this.bookmarkDialogObj.bookmark.categoryName = categoryName;
+        }
         const [categoriesResponse, tagsResponse] = await Promise.all([
           getCategories(getUsernameFromCookie()),
           getTags(getUsernameFromCookie())
@@ -284,13 +284,13 @@ export default {
 
         this.bookmarkDialogObj.categoryNames = categoriesResponse.data.list.map(c => c.name);
         this.bookmarkDialogObj.bookmark.tagList = tagsResponse.data.list.map(t => t.tag.name);
+        this.bookmarkDialogObj.bookmark.isPublic = true;
       } catch (error) {
         alert(error.response.data.message);
       }
     },
 
     async addBookmark(bookmark) {
-      bookmark.isPublic = !bookmark.isPublic;
       const username = getUsernameFromCookie();
       const categoryName = this.route.params.category;
       try {
