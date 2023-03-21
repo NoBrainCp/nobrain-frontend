@@ -22,6 +22,14 @@ export function updateBookmark(bookmarkId, bookmarkData) {
     return bookmark.put(`/bookmark/${bookmarkId}`, bookmarkData);
 }
 
+export function updatePublic(bookmarkId, isPublic) {
+    return bookmark.put(`/bookmark/${bookmarkId}/public?isPublic=${isPublic}`);
+}
+
+export function updateStarred(bookmarkId, isStarred) {
+    return bookmark.put(`/bookmark/${bookmarkId}/starred?isStarred=${isStarred}`);
+}
+
 export function deleteBookmarkById(bookmarkId) {
     return bookmark.delete(`/bookmark/${bookmarkId}`);
 }
