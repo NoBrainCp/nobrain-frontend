@@ -318,7 +318,6 @@ export default {
     showBookmark(category) {
       const username = this.route.params.username;
       categoryStore.commit('setCategory', category);
-      console.log(category);
       router.push(`/${username}/${category.name}`);
     },
 

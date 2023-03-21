@@ -121,13 +121,10 @@ export default {
 
   methods: {
     updateClick() {
-      const categoryName = this.route.params.category;
       this.categoryDialog.dialog=true
-      if (categoryName === undefined) {
-        categoryStore.commit('setCategory', {name: '전체 북마크'});
-      } else {
-        categoryStore.commit('setCategory', {name: categoryName});
-      }
+      this.categoryDialog.name = categoryStore.state.category.name;
+      this.categoryDialog.description = categoryStore.state.category.description;
+      this.categoryDialog.public = categoryStore.state.category.public;
     },
 
     async updateCategory(category) {
@@ -136,9 +133,9 @@ export default {
         const categoryDescription = category.description;
         await updateCategory(getUsernameFromCookie(), category.originName, category);
         categoryStore.state.status = !categoryStore.state.status;
-        categoryStore.commit('setCategory', {name: categoryName});
         this.data.category.name = categoryName;
         this.data.category.description = categoryDescription;
+        categoryStore.commit('setCategory', {name: categoryName, description: categoryDescription});
         await router.push(`/${getUsernameFromCookie()}/${categoryName}`);
       } catch (error) {
         alert(error.response.data.message);
