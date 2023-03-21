@@ -17,7 +17,7 @@
         elevation="3"
         prepend-icon="mdi mdi-pencil-outline"
         border
-        @click="categoryDialog.dialog=true">
+        @click="updateClick">
       수정
     </v-btn>
     <CategoryDialog
@@ -75,6 +75,7 @@ export default {
       isMe: route.params.username === getUsernameFromCookie(),
       isAll: false,
     });
+
     const categoryDialog = ref({
       dialog: false,
       title: "카테고리 수정",
@@ -119,6 +120,16 @@ export default {
   },
 
   methods: {
+    updateClick() {
+      const categoryName = this.route.params.category;
+      this.categoryDialog.dialog=true
+      if (categoryName === undefined) {
+        categoryStore.commit('setCategory', {name: '전체 북마크'});
+      } else {
+        categoryStore.commit('setCategory', {name: categoryName});
+      }
+    },
+
     async updateCategory(category) {
       try {
         const categoryName = category.name;
