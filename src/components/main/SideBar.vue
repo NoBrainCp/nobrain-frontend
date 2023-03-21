@@ -11,7 +11,7 @@
 
     <div class="side-bar-header">
       <v-list-item
-          :prepend-avatar= user.profileImage
+          :prepend-avatar=user.profileImage
           nav
           :title=user.username
           :subtitle=user.email
@@ -202,13 +202,14 @@ export default {
       }
     };
 
-    const addCategoryByUser = async (category) => {
-      try {
-        await addCategory(getUsernameFromCookie(), category);
+    const addCategoryByUser = (category) => {
+      addCategory(getUsernameFromCookie(), category).then(() => {
         categoryStore.state.status = !categoryStore.state.status;
-      } catch (error) {
-        alert(error.response.data.message);
-      }
+      }).catch(() => {
+        alert("빈 문자열 혹은 동일한 카테고리 이름을 생성 할 수 없습니다.")
+      });
+
+
     }
 
     watch(() => (categoryStore.state.status), updateCategories);
