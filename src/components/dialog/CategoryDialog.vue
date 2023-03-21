@@ -18,6 +18,7 @@
                   v-model="categoryDialog.name"
                   label="카테고리 이름"
                   prepend-icon="mdi-rename"
+                  :rules="[rules.name]"
                   required></v-text-field>
             </v-col>
             <v-col cols="12">
@@ -75,6 +76,10 @@ export default {
   data: () => ({
     route: useRoute(),
     dialog: true,
+
+    rules: {
+      name: v => !!v || '이름은 필수 입력 항목입니다.'
+    }
   }),
 
   methods: {
