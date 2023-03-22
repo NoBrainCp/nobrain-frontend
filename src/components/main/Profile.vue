@@ -294,6 +294,7 @@ import {
   getMyProfile
 } from "../../api/user/userApi";
 import {
+  deleteAccessTokenFromCookie,
   deleteUsernameFromCookie,
   getEmailFromCookie,
   getUserIdFromCookie,
@@ -473,6 +474,7 @@ export default {
 
     async deleteAccount() {
       await deactivateAccount(getUserIdFromCookie());
+      deleteAccessTokenFromCookie();
       alert("회원 탈퇴가 완료되었습니다.");
       await router.push('/sign-in');
     },

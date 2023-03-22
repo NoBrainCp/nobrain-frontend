@@ -101,7 +101,7 @@
               </div>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item>
+          <v-list-item @click="this.confirmObj.dialog = true">
             <v-list-item-content>
               <div class="account-container">
                 <v-icon class="mdi mdi-logout"></v-icon>
@@ -113,11 +113,15 @@
       </v-card>
     </v-menu>
   </v-app-bar>
+  <ConfirmDialog
+      v-bind:confirmObj="confirmObj"
+      @delete="logout"
+  ></ConfirmDialog>
 </template>
 
 
 <script>
-import {getUsernameFromCookie} from "../../utils/cookies";
+import {deleteAccessTokenFromCookie, getUsernameFromCookie} from "../../utils/cookies";
 import {store} from "../../store";
 import router from "../../router";
 import {onMounted, ref, watch} from "vue";
@@ -125,9 +129,11 @@ import {searchBookmark} from "../../api/bookmark/bookmarkApi";
 import {bookmarkStore} from "../../store/bookmark/bookmark";
 import {userStore} from "../../store/user/user";
 import {getMyProfile} from "../../api/user/userApi";
+import ConfirmDialog from "../dialog/ConfirmDialog.vue";
 
 export default {
   name: 'Header',
+  components: {ConfirmDialog},
   computed: {
     store() {
       return store
@@ -146,6 +152,12 @@ export default {
         {title: "FOLLOW"},
         {title: "ALL"}
       ],
+
+      confirmObj: {
+        title: "로그아웃",
+        text: "정말 로그아웃 하시겠습니까?",
+        dialog: false,
+      },
 
       menu: false,
       gridView: false,
@@ -214,6 +226,12 @@ export default {
 
     clickProfile() {
       store.commit('setWindow', 'profile');
+    },
+
+    async logout() {
+      deleteAccessTokenFromCookie();
+      alert("로그아웃이 완료되었습니다.");
+      await router.push('/sign-in');
     }
   }
 }
