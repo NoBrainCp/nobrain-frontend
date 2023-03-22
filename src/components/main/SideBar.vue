@@ -165,7 +165,7 @@ export default {
       isMe: username === getUsernameFromCookie(),
 
       buttonWidth: '150px',
-      buttonHeight: '75px',
+      buttonHeight: '70px',
 
       user: {},
       profileNoImage: "src/assets/images/nobrain-no-image.png",
@@ -223,12 +223,19 @@ export default {
       data.user.profileImage = newValue;
     });
 
-    watch(() => data.followObj.follow, (newValue) => {
+    watch([() => data.followObj.follow, () => followStore.state.status], (newValue) => {
       const followButton = data.followObj.followButton;
       followButton.text = newValue ? "팔로우 취소" : "팔로우";
       followButton.color = newValue ? "#E53935" : "#03A9F4";
       followButton.icon = newValue ? "mdi mdi-account-multiple-minus" : "mdi mdi-account-multiple-plus";
       showFollowCount();
+    });
+
+    onMounted(() => {
+      if (!data.isMe) {
+        data.buttonWidth = '305px';
+        data.buttonHeight = '55px';
+      }
     });
 
     onMounted(async () => {
@@ -246,14 +253,6 @@ export default {
 
         const categories = await getCategories(username);
         data.categories = categories.data.list;
-
-        if (!data.isMe) {
-          data.buttonWidth = '305px';
-          data.buttonHeight = '55px';
-        }
-        // const category = route.params.category;
-        // data.activeIndex = data.categories.findIndex(c => c.name === category);
-        // console.log(data.activeIndex);
 
         const followCount = await getFollowCount(username);
         data.followObj.followerCount = followCount.data.data.followerCnt;

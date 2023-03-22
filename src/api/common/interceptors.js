@@ -16,7 +16,7 @@ export function setInterceptors(axiosService) {
     axiosService.interceptors.response.use(
         function (response) {
             // 서버에 요청을 보내고 나서 응답을 받기 전 처리
-            if (response.config.method === 'get' && !['auth-code', 'my-profile', 'followers', 'followings'].some(endpoint => response.config.url.includes(endpoint))) {
+            if (response.config.method === 'get' && !['auth-code', 'my-profile', 'follower-cards', 'following-cards', 'follow-cnt'].some(endpoint => response.config.url.includes(endpoint))) {
                 store.commit('setWindow', 'book');
             }
 

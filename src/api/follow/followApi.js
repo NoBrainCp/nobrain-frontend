@@ -10,11 +10,11 @@ export function isFollow(toUserId) {
 }
 
 export function getFollowerList(username) {
-    return follow.get(`/user/${username}/followers`);
+    return follow.get(`/user/${username}/follower-cards`);
 }
 
 export function getFollowingList(username) {
-    return follow.get(`/user/${username}/followings`);
+    return follow.get(`/user/${username}/following-cards`);
 }
 
 export function followAndUnfollow(toUserId) {
