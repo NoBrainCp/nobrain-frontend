@@ -103,10 +103,10 @@ export default {
         }
       }
     };
-
-    watch(() => data.value.category, (newValue) => {
-      data.value.category = newValue;
-    })
+    //
+    // watch(() => data.value.category, (newValue) => {
+    //   data.value.category = newValue;
+    // })
 
     watch(() => route.params.category, () => {
       getCategoryList();
@@ -134,14 +134,16 @@ export default {
       try {
         const categoryName = category.name;
         const categoryOriginName = this.data.category.name;
-        await updateCategory(getUsernameFromCookie(), categoryOriginName, category);
-        //순서 바꾸면 동작 x
+
         this.data.category.name = category.name;
         this.data.category.description = category.description;
-        this.data.category.public = category.public;
+        this.data.category.public = category.isPublic;
+
+        await updateCategory(getUsernameFromCookie(), categoryOriginName, category);
 
         await router.push(`/${getUsernameFromCookie()}/${categoryName}`);
         categoryStore.state.status = !categoryStore.state.status;
+
       } catch (error) {
         alert(error.response);
       }
