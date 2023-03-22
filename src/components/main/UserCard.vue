@@ -34,6 +34,7 @@
               </div>
             </div>
             <v-btn
+                v-if="myName !== followUser.username"
                 :color="followUser.isFollow ? '#E53935' : '#03A9F4'"
                 class="follow-btn"
                 @click="clickFollow(followUser.userId)">
@@ -54,11 +55,10 @@ import {followStore} from "../../store/follow/follow";
 import router from "../../router";
 import {
   followAndUnfollow,
-  getFollowCount,
   getFollowerList,
   getFollowingList,
-  isFollow
 } from "../../api/follow/followApi";
+import {getUsernameFromCookie} from "../../utils/cookies";
 
 export default {
   name: 'UserCard',
@@ -66,12 +66,8 @@ export default {
   setup() {
     const route = useRoute();
     const username = route.params.username;
+    const myName = getUsernameFromCookie();
     const followUsers = ref([]);
-    const followButton = ref({
-      text: '',
-      color: '',
-      icon: '',
-    });
 
     onMounted(async () => {
       try {
@@ -113,19 +109,8 @@ export default {
       }
     };
 
-    const getFollowButton = (isFollow) => {
-      if (isFollow) {
-        followButton.value.text = '팔로우 취소';
-        followButton.value.color = '#E53935';
-        followButton.value.icon = 'mdi mdi-account-multiple-minus';
-      } else {
-        followButton.value.text = '팔로우';
-        followButton.value.color = '#03A9F4';
-        followButton.value.icon = 'mdi mdi-account-multiple-plus';
-      }
-    };
-
     return {
+      myName,
       followUsers,
     }
   },
