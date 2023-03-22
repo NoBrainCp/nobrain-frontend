@@ -210,7 +210,15 @@ export default {
       }).catch(() => {
         alert("빈 문자열 혹은 동일한 카테고리 이름을 생성 할 수 없습니다.")
       });
-    }
+    };
+
+    const clickFollowButton = (isFollow) => {
+      const followButton = data.followObj.followButton;
+      followButton.text = isFollow ? "팔로우 취소" : "팔로우";
+      followButton.color = isFollow ? "#E53935" : "#03A9F4";
+      followButton.icon = isFollow ? "mdi mdi-account-multiple-minus" : "mdi mdi-account-multiple-plus";
+      showFollowCount();
+    };
 
     watch(() => (categoryStore.state.status), updateCategories);
     watch(() => (bookmarkStore.state.status), updateCategories);
@@ -224,13 +232,20 @@ export default {
     });
 
     watch(() => data.followObj.follow, (newValue) => {
-      const followButton = data.followObj.followButton;
-      followButton.text = newValue ? "팔로우 취소" : "팔로우";
-      followButton.color = newValue ? "#E53935" : "#03A9F4";
-      followButton.icon = newValue ? "mdi mdi-account-multiple-minus" : "mdi mdi-account-multiple-plus";
-      showFollowCount();
+      clickFollowButton(newValue);
     });
 
+    watch(() => followStore.state.status, (newValue) => {
+      showFollowCount();
+    })
+
+    onMounted(() => {
+      if (!data.isMe) {
+        data.buttonWidth = '305px';
+        data.buttonHeight = '55px';
+      }
+    });
+    
     onMounted(async () => {
       try {
         const noProfileImage = "src/assets/images/nobrain-no-image.png";
