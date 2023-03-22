@@ -107,7 +107,7 @@
             @click="showBookmark(category); toggleActive(i, category)">
 
           <template v-slot:prepend>
-            <v-icon icon="mdi mdi-folder"></v-icon>
+            <v-icon :icon="category.public ? 'mdi mdi-folder' : 'mdi mdi-folder-lock'">  </v-icon>
           </template>
           <v-list-item-title>{{ category.name }}</v-list-item-title>
           <template v-slot:append>
@@ -133,7 +133,7 @@ import {getUserInfo} from "../../api/user/userApi";
 import {onMounted, reactive, toRefs, watch} from "vue";
 import {useRoute} from "vue-router";
 import {addCategory, getCategories} from "../../api/category/categoryApi";
-import {getUsernameFromCookie} from "../../utils/cookies";
+import {deleteCategoryIdFromCookie, getUsernameFromCookie, saveCategoryId} from "../../utils/cookies";
 import {addBookmark, getStarredBookmarksCount} from "../../api/bookmark/bookmarkApi";
 import {store} from "../../store/index"
 import {bookmarkStore} from "../../store/bookmark/bookmark";
@@ -302,7 +302,12 @@ export default {
 
   methods: {
     async clickAddBookmarkBtn() {
+
       try {
+        if (this.categories.length === 0) {
+          alert("카테고리를 먼저 추가해주세요.");
+          return;
+        }
         this.bookmarkDialogObj.dialog = true;
         const categoryName = this.route.params.category;
         if (categoryName !== undefined) {
@@ -347,24 +352,22 @@ export default {
       store.commit('setWindow', 'follow');
     },
 
-    showBookmark(category) {
+    async showBookmark(category) {
       const username = this.route.params.username;
-      categoryStore.commit('setCategory', category);
-      router.push(`/${username}/${category.name}`);
+      deleteCategoryIdFromCookie();
+      saveCategoryId(category.id);
+      await router.push(`/${username}/${category.name}`);
     },
 
-    showAllBookmarks() {
+    async showAllBookmarks() {
       const username = this.route.params.username;
-      
-      categoryStore.commit('setCategory', {name: '전체 북마크'});
+      await router.push(`/${username}`);
       bookmarkStore.state.status = !bookmarkStore.state.status;
-
-      router.push(`/${username}`);
     },
 
-    showStarredBookmarks() {
+    async showStarredBookmarks() {
       const username = this.route.params.username;
-      router.push(`/${username}/starred`);
+      await router.push(`/${username}/starred`);
     },
 
     async clickFollow() {
