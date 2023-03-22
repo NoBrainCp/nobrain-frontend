@@ -119,6 +119,7 @@ import {getCategories, getCategoryByBookmarkId} from "../../api/category/categor
 import {getTags, getTagsByBookmarkId} from "../../api/tag/tagApi";
 import {getUsernameFromCookie} from "../../utils/cookies";
 import {categoryStore} from "../../store/category/category";
+import {favoritesStore} from "../../store/favorites/favorites";
 
 export default {
   name: 'Bookmark',
@@ -231,14 +232,14 @@ export default {
       if (index !== -1) {
         this.data.bookmarks.splice(index, 1);
       }
-
+      favoritesStore.state.status = !favoritesStore.state.status;
       bookmarkStore.state.status = !bookmarkStore.state.status;
     },
 
     async clickStar(bookmark) {
       bookmark.starred = !bookmark.starred;
-
       await updateStarred(bookmark.id, bookmark.starred);
+      favoritesStore.state.status = !favoritesStore.state.status;
     },
 
     async clickLock(bookmark) {

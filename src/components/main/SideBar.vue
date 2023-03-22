@@ -92,7 +92,7 @@
           <template v-slot:prepend>
             <v-icon color="light-blue" icon="mdi mdi-star"></v-icon>
           </template>
-          <v-list-item-title>Starred</v-list-item-title>
+          <v-list-item-title>Favorites</v-list-item-title>
           <template v-slot:append>
             <v-badge
                 color="blue"
@@ -107,7 +107,7 @@
             @click="showBookmark(category); toggleActive(i, category)">
 
           <template v-slot:prepend>
-            <v-icon :icon="category.public ? 'mdi mdi-folder' : 'mdi mdi-folder-lock'">  </v-icon>
+            <v-icon :icon="category.public ? 'mdi mdi-folder' : 'mdi mdi-folder-lock'"></v-icon>
           </template>
           <v-list-item-title>{{ category.name }}</v-list-item-title>
           <template v-slot:append>
@@ -141,6 +141,7 @@ import {followStore} from "../../store/follow/follow"
 import {getTags} from "../../api/tag/tagApi";
 import {followAndUnfollow, getFollowCount, isFollow} from "../../api/follow/followApi";
 import {userStore} from "../../store/user/user";
+import {favoritesStore} from "../../store/favorites/favorites";
 
 export default {
   name: 'SideBar',
@@ -233,12 +234,20 @@ export default {
       showFollowCount();
     };
 
+    async function getStarredCount() {
+      const starredCnt = await getStarredBookmarksCount(username);
+      data.starredCount = starredCnt.data.data;
+      console.log(starredCnt.data);
+    }
+
     watch(() => (categoryStore.state.status), updateCategories);
     watch(() => (bookmarkStore.state.status), updateCategories);
 
     watch(() => (userStore.state.username), (newValue) => {
       data.user.username = newValue;
     });
+
+    watch(() => favoritesStore.state.status, getStarredCount);
 
     watch(() => (userStore.state.profileImage), (newValue) => {
       data.user.profileImage = newValue;
@@ -257,8 +266,9 @@ export default {
         data.buttonWidth = '305px';
         data.buttonHeight = '55px';
       }
+
     });
-    
+
     onMounted(async () => {
       try {
         const noProfileImage = "src/assets/images/nobrain-no-image.png";
@@ -289,6 +299,7 @@ export default {
 
         const starredCnt = await getStarredBookmarksCount(username)
         data.starredCount = starredCnt.data.data;
+
       } catch (error) {
         alert(error.response.data.message);
       }
@@ -302,7 +313,6 @@ export default {
 
   methods: {
     async clickAddBookmarkBtn() {
-
       try {
         if (this.categories.length === 0) {
           alert("카테고리를 먼저 추가해주세요.");
@@ -310,7 +320,7 @@ export default {
         }
         this.bookmarkDialogObj.dialog = true;
         const categoryName = this.route.params.category;
-        if (categoryName !== undefined) {
+        if (categoryName !== undefined && categoryName !== 'starred') {
           this.bookmarkDialogObj.bookmark.categoryName = categoryName;
         }
         const [categoriesResponse, tagsResponse] = await Promise.all([
