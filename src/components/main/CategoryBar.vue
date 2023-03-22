@@ -42,8 +42,8 @@
 <script>
 import {onMounted, ref, watch} from "vue";
 import {useRoute} from "vue-router";
-import {getUsernameFromCookie} from "../../utils/cookies";
-import {deleteCategory, updateCategory} from "../../api/category/categoryApi";
+import {deleteCategoryIdFromCookie, getCategoryIdFromCookie, getUsernameFromCookie} from "../../utils/cookies";
+import {deleteCategory, getCategory, updateCategory} from "../../api/category/categoryApi";
 import {categoryStore} from "../../store/category/category";
 import router from "../../router";
 import ConfirmDialog from "../dialog/ConfirmDialog.vue";
@@ -53,13 +53,8 @@ export default {
   name: 'CategoryBar',
   components: {ConfirmDialog, CategoryDialog},
 
-  props: {
-    isCreated: true,
-  },
-
   data: () => ({
     route: useRoute(),
-    test: "",
 
     confirmObj: {
       title: "카테고리 삭제",
@@ -71,7 +66,11 @@ export default {
   setup() {
     const route = useRoute();
     const data = ref({
-      category: categoryStore.state.category,
+      category: {
+        name: "",
+        description: "",
+        public: "",
+      },
       isMe: route.params.username === getUsernameFromCookie(),
       isAll: false,
     });
@@ -80,37 +79,40 @@ export default {
       dialog: false,
       title: "카테고리 수정",
       btnName: "수정",
-      originName: String,
       name: String,
       description: String,
       isPublic: Boolean,
     });
 
-    watch(() => (data.value.category), (newValue) => {
-      if (newValue.name === "전체 북마크") {
-        data.value.isAll = true;
-        data.value.category = {name: '전체 북마크'};
-      } else {
-        data.value.isAll = false;
-        data.value.category = categoryStore.state.category;
-        categoryDialog.value.originName = categoryStore.state.category.name;
-        categoryDialog.value.name = categoryStore.state.category.name;
-        categoryDialog.value.description = categoryStore.state.category.description;
-        categoryDialog.value.public = categoryStore.state.category.public;
-      }
-    });
+    async function getCategoryList() {
+      const categoryName = route.params.category;
+      const categoryId = getCategoryIdFromCookie();
 
-    watch(() => categoryStore.state.category, (newCategory) => {
-      data.value.category = newCategory;
+      if (categoryName === undefined || categoryName === "starred") {
+        data.value.category.name = categoryName === undefined ? "전체 북마크" : "즐겨찾기";
+        data.value.category.description = "";
+        data.value.isAll = true;
+      } else {
+        try {
+          const response = await getCategory(categoryId);
+          data.value.category = response.data.data;
+          data.value.isAll = false;
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    };
+
+    watch(() => data.value.category, (newValue) => {
+      data.value.category = newValue;
+    })
+
+    watch(() => route.params.category, () => {
+      getCategoryList();
     });
 
     onMounted(() => {
-      const categoryName = route.params.category;
-      if (categoryName === undefined) {
-        categoryStore.commit('setCategory', {name: '전체 북마크'});
-      } else {
-        categoryStore.commit('setCategory', {name: categoryName});
-      }
+      getCategoryList();
     })
 
     return {
@@ -121,35 +123,34 @@ export default {
 
   methods: {
     updateClick() {
-      this.categoryDialog.dialog=true
-      this.categoryDialog.name = categoryStore.state.category.name;
-      this.categoryDialog.description = categoryStore.state.category.description;
-      this.categoryDialog.isPublic = categoryStore.state.category.public;
+      this.categoryDialog.dialog = true
+      this.categoryDialog.name = this.data.category.name;
+      this.categoryDialog.description = this.data.category.description;
+      this.categoryDialog.isPublic = this.data.category.public;
     },
 
     async updateCategory(category) {
       try {
         const categoryName = category.name;
-        const categoryDescription = category.description;
-        const isPublic = category.public;
-        await updateCategory(getUsernameFromCookie(), category.originName, category);
-        categoryStore.state.status = !categoryStore.state.status;
-        this.data.category.name = categoryName;
-        this.data.category.description = categoryDescription;
-        categoryStore.commit('setCategory', {name: categoryName, description: categoryDescription, public: isPublic});
+        const categoryOriginName = this.data.category.name;
+        await updateCategory(getUsernameFromCookie(), categoryOriginName, category);
         await router.push(`/${getUsernameFromCookie()}/${categoryName}`);
+        categoryStore.state.status = !categoryStore.state.status;
+        this.data.category.name = category.name;
+        this.data.category.description = category.description;
+        this.data.category.public = category.public;
       } catch (error) {
-        alert(error.response.data.message);
+        alert(error.response);
       }
     },
 
     async deleteCategory() {
       try {
-        await deleteCategory(getUsernameFromCookie(), categoryStore.state.category.name);
-        categoryStore.commit('setCategory', {name: '전체보기'});
-        categoryStore.state.status = !categoryStore.state.status;
+        await deleteCategory(getUsernameFromCookie(), this.data.category.name);
+        deleteCategoryIdFromCookie();
         await router.push(`/${getUsernameFromCookie()}`);
-      } catch(error) {
+        categoryStore.state.status = !categoryStore.state.status;
+      } catch (error) {
         alert(error.response.data.message);
       }
     },
@@ -163,10 +164,6 @@ export default {
   opacity: 0.9;
   border-left: none;
   border-right: none;
-}
-
-.icon-folder {
-  margin-right: 10px;
 }
 
 .category-title {

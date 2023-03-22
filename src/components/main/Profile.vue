@@ -398,7 +398,7 @@ export default {
         userStore.commit('setUsername', name);
         alert("변경이 완료되었습니다.");
         this.name = "";
-        await router.push(`/${name}`);
+        await router.replace(`/${name}`);
       } catch (error) {
         alert("동일한 닉네임이 존재합니다.");
       }
@@ -476,7 +476,7 @@ export default {
       await deactivateAccount(getUserIdFromCookie());
       deleteAccessTokenFromCookie();
       alert("회원 탈퇴가 완료되었습니다.");
-      await router.push('/sign-in');
+      await router.replace('/sign-in');
     },
 
     clickPanels(pan) {
