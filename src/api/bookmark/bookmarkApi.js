@@ -1,11 +1,15 @@
 import {bookmark, tag} from "../index";
 
 export function getAllBookmarks(username) {
-    return bookmark.get(`/${username}/bookmarks`);
+    return bookmark.get(`/user/${username}/bookmarks`);
 }
 
 export function getBookmarks(username, categoryName) {
-    return bookmark.get(`/${username}/${categoryName}/bookmarks`);
+    return bookmark.get(`/user/${username}/${categoryName}/bookmarks`);
+}
+
+export function getStarredBookmarks(username) {
+    return bookmark.get(`/user/${username}/starred-bookmarks`);
 }
 
 export function searchBookmark(keyword, condition) {
@@ -15,7 +19,7 @@ export function searchBookmark(keyword, condition) {
 }
 
 export function addBookmark(username, bookmarkData) {
-    return bookmark.post(`/${username}/bookmark`, bookmarkData);
+    return bookmark.post(`/user/${username}/bookmark`, bookmarkData);
 }
 
 export function updateBookmark(bookmarkId, bookmarkData) {
