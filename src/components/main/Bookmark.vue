@@ -106,7 +106,15 @@ import {onMounted, reactive, watch} from "vue";
 import {bookmarkStore} from "../../store/bookmark/bookmark";
 import ConfirmDialog from "../dialog/ConfirmDialog.vue";
 import BookmarkDialog from "../dialog/BookmarkDialog.vue";
-import {deleteBookmarkById, getAllBookmarks, getBookmarks, updateBookmark, updatePublic, updateStarred} from "../../api/bookmark/bookmarkApi";
+import {
+  deleteBookmarkById,
+  getAllBookmarks,
+  getBookmarks,
+  getStarredBookmarks,
+  updateBookmark,
+  updatePublic,
+  updateStarred
+} from "../../api/bookmark/bookmarkApi";
 import {getCategories, getCategoryByBookmarkId} from "../../api/category/categoryApi";
 import {getTags, getTagsByBookmarkId} from "../../api/tag/tagApi";
 import {getUsernameFromCookie} from "../../utils/cookies";
@@ -162,6 +170,8 @@ export default {
 
       if (categoryName === undefined) {
         data.bookmarks = await getAllBookmarks(username).then((res) => res.data.list);
+      } else if (categoryName === 'starred') {
+        data.bookmarks = await getStarredBookmarks(username).then((res) => res.data.list);
       } else {
         data.bookmarks = await getBookmarks(username, categoryName).then((res) => res.data.list);
 
