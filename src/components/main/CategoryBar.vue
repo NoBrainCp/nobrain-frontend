@@ -134,11 +134,13 @@ export default {
         const categoryName = category.name;
         const categoryOriginName = this.data.category.name;
         await updateCategory(getUsernameFromCookie(), categoryOriginName, category);
-        await router.push(`/${getUsernameFromCookie()}/${categoryName}`);
-        categoryStore.state.status = !categoryStore.state.status;
+        //순서 바꾸면 동작 x
         this.data.category.name = category.name;
         this.data.category.description = category.description;
         this.data.category.public = category.public;
+
+        await router.push(`/${getUsernameFromCookie()}/${categoryName}`);
+        categoryStore.state.status = !categoryStore.state.status;
       } catch (error) {
         alert(error.response);
       }
