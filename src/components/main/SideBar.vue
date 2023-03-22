@@ -223,7 +223,7 @@ export default {
       data.user.profileImage = newValue;
     });
 
-    watch(() => data.followObj.follow, (newValue) => {
+    watch([() => data.followObj.follow, () => followStore.state.status], (newValue) => {
       const followButton = data.followObj.followButton;
       followButton.text = newValue ? "팔로우 취소" : "팔로우";
       followButton.color = newValue ? "#E53935" : "#03A9F4";

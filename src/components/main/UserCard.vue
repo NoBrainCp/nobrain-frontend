@@ -21,24 +21,24 @@
           <div>
             <div class="bookmark-text-container">
               <div class="bookmark-icon">Bookmark</div>
-              <span class="bookmark-text">15개</span>
+              <span class="bookmark-text">{{followUser.bookmarkCount}}개</span>
             </div>
             <div class="follow-container">
               <div class="follow-text">
-                팔로우
-                <span class="follow-count">15</span>
+                팔로워
+                <span class="follow-count">{{followUser.followerCount}}</span>
               </div>
               <div class="follow-text">
                 팔로잉
-                <span class="follow-count">10</span>
+                <span class="follow-count">{{followUser.followingCount}}</span>
               </div>
             </div>
             <v-btn
-                color="red-darken-1"
+                :color="followUser.isFollow ? '#E53935' : '#03A9F4'"
                 class="follow-btn"
-                @click="clickFollow">
-              <v-icon class="follow-icon">mdi mdi-account-multiple-minus</v-icon>
-              팔로우 취소
+                @click="clickFollow(followUser.userId)">
+              <v-icon class="follow-icon">{{followUser.isFollow ? 'mdi-account-multiple-minus' : 'mdi-account-multiple-plus'}}</v-icon>
+              {{followUser.isFollow ? '팔로우 취소' : '팔로우'}}
             </v-btn>
           </div>
         </div>
@@ -67,69 +67,23 @@ export default {
     const route = useRoute();
     const username = route.params.username;
     const followUsers = ref([]);
-    const data = ref({
-      followObj: {
-        followerCount: 0,
-        followingCount: 0,
-        follow: Boolean,
-
-        followButton: {
-          text: '',
-          color: String,
-          icon: String,
-        }
-      },
-    });
-
-    // watchEffect(async () => {
-    //   const window = followStore.state.window;
-    //   console.log("USER CARD WATCH EFFECT");
-    //   setFollowUsers(window, username);
-    // }, {
-    //   lazy: false,
-    //   deep: false
-    // });
-
-    watch(() => (followStore.state.followWindow), (newValue) => {
-      const username = route.params.username;
-      console.log("USER CARD WATCH");
-      setFollowUsers(newValue, username);
+    const followButton = ref({
+      text: '',
+      color: '',
+      icon: '',
     });
 
     onMounted(async () => {
       try {
-        const username = route.params.username;
         const value = followStore.state.followWindow;
-        console.log("USER CARD ON MOUNTED");
         setFollowUsers(value, username);
-        const follow = await isFollow(data.user.userId);
-        data.value.followObj.follow = follow.data.data;
       } catch (error) {
         console.log(error);
       }
     });
 
-    const showFollowCount = async () => {
-      try {
-        const followCount = await getFollowCount(username);
-        data.value.followObj.followerCount = followCount.data.data.followerCnt;
-        data.value.followObj.followingCount = followCount.data.data.followingCnt;
-      } catch (error) {
-        alert(error.response.data.message);
-      }
-    };
-
-    watch(() => data.value.followObj.follow, (newValue) => {
-      const followButton = data.value.followObj.followButton;
-      followButton.text = newValue ? "팔로우 취소" : "팔로우";
-      followButton.color = newValue ? "#E53935" : "#03A9F4";
-      followButton.icon = newValue ? "mdi mdi-account-multiple-minus" : "mdi mdi-account-multiple-plus";
-      showFollowCount();
-    });
-
     watch(() => followStore.state.followWindow, (newValue) => {
       setFollowUsers(newValue, username);
-      console.log(newValue);
     })
 
     const setFollowUsers = (value, username) => {
@@ -159,9 +113,20 @@ export default {
       }
     };
 
+    const getFollowButton = (isFollow) => {
+      if (isFollow) {
+        followButton.value.text = '팔로우 취소';
+        followButton.value.color = '#E53935';
+        followButton.value.icon = 'mdi mdi-account-multiple-minus';
+      } else {
+        followButton.value.text = '팔로우';
+        followButton.value.color = '#03A9F4';
+        followButton.value.icon = 'mdi mdi-account-multiple-plus';
+      }
+    };
+
     return {
       followUsers,
-      ...toRefs(data)
     }
   },
 
@@ -170,9 +135,11 @@ export default {
       router.push(`/${username}`);
     },
 
-    async clickFollow() {
-      await followAndUnfollow(this.user.userId);
-      this.data.followObj.follow = !this.data.followObj.follow;
+    async clickFollow(userId) {
+      await followAndUnfollow(userId);
+      const followUser = this.followUsers.find(follow => follow.userId === userId);
+      followUser.isFollow = !followUser.isFollow;
+      followStore.state.status = !followStore.state.status;
     },
   }
 }
@@ -273,11 +240,13 @@ export default {
 }
 
 .follow-icon {
+  color: white;
   margin-right: 7px;
 }
 
 .follow-btn {
   width: 40%;
+  color: white;
   border-radius: 30px;
   position: absolute;
   bottom: 15px;
