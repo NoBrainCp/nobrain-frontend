@@ -48,6 +48,7 @@ import {categoryStore} from "../../store/category/category";
 import router from "../../router";
 import ConfirmDialog from "../dialog/ConfirmDialog.vue";
 import CategoryDialog from "../dialog/CategoryDialog.vue";
+import {favoritesStore} from "../../store/favorites/favorites";
 
 export default {
   name: 'CategoryBar',
@@ -152,6 +153,7 @@ export default {
         deleteCategoryIdFromCookie();
         await router.push(`/${getUsernameFromCookie()}`);
         categoryStore.state.status = !categoryStore.state.status;
+        favoritesStore.state.status = !favoritesStore.state.status;
       } catch (error) {
         alert(error.response.data.message);
       }
