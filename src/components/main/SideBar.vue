@@ -96,10 +96,8 @@
           <template v-slot:append>
             <v-badge
                 color="blue"
-                inline
-            >
-
-            </v-badge>
+                :content="starredCount"
+                inline/>
           </template>
         </v-list-item>
         <v-list-item
@@ -136,7 +134,7 @@ import {onMounted, reactive, toRefs, watch} from "vue";
 import {useRoute} from "vue-router";
 import {addCategory, getCategories} from "../../api/category/categoryApi";
 import {getUsernameFromCookie} from "../../utils/cookies";
-import {addBookmark, getStarredBookmarks} from "../../api/bookmark/bookmarkApi";
+import {addBookmark, getStarredBookmarksCount} from "../../api/bookmark/bookmarkApi";
 import {store} from "../../store/index"
 import {bookmarkStore} from "../../store/bookmark/bookmark";
 import {followStore} from "../../store/follow/follow"
@@ -177,6 +175,7 @@ export default {
     const username = route.params.username;
     const data = reactive({
       isMe: username === getUsernameFromCookie(),
+      starredCount: '',
 
       buttonWidth: '150px',
       buttonHeight: '75px',
@@ -287,6 +286,9 @@ export default {
         const followCount = await getFollowCount(username);
         data.followObj.followerCount = followCount.data.data.followerCnt;
         data.followObj.followingCount = followCount.data.data.followingCnt;
+
+        const starredCnt = await getStarredBookmarksCount(username)
+        data.starredCount = starredCnt.data.data;
       } catch (error) {
         alert(error.response.data.message);
       }

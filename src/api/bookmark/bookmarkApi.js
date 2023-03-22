@@ -12,6 +12,10 @@ export function getStarredBookmarks(username) {
     return bookmark.get(`/user/${username}/starred-bookmarks`);
 }
 
+export function getStarredBookmarksCount(username) {
+    return bookmark.get(`/user/${username}/starred-bookmarks/count`);
+}
+
 export function searchBookmark(keyword, condition) {
     return bookmark.get(`/bookmark/search`, {
         params: {keyword: keyword, condition: condition}
