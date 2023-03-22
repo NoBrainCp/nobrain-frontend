@@ -14,6 +14,10 @@ function saveLoginIdToCookie(loginId) {
     document.cookie = `loginId=${loginId}`;
 }
 
+function saveCategoryId(categoryId) {
+    document.cookie = `categoryId=${categoryId}`;
+}
+
 function saveAccessTokenToCookie(accessToken) {
     document.cookie = `accessToken=${accessToken}`;
 }
@@ -58,6 +62,13 @@ function getLoginIdFromCookie() {
     );
 }
 
+function getCategoryIdFromCookie() {
+    return document.cookie.replace(
+        /(?:(?:^|.*;\s*)categoryId\s*=\s*([^;]*).*$)|^.*$/,
+        '$1',
+    );
+}
+
 function getAccessTokenFromCookie() {
     return document.cookie.replace(
         /(?:(?:^|.*;\s*)accessToken\s*=\s*([^;]*).*$)|^.*$/,
@@ -76,6 +87,10 @@ function deleteUsernameFromCookie() {
     document.cookie = `username=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
 }
 
+function deleteCategoryIdFromCookie() {
+    document.cookie = `categoryId=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+}
+
 function deleteAccessTokenFromCookie() {
     document.cookie = `accessToken=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
 }
@@ -90,6 +105,7 @@ export {
     saveUsernameToCookie,
     saveEmailToCookie,
     saveLoginIdToCookie,
+    saveCategoryId,
     saveAccessTokenToCookie,
     saveRefreshTokenToCookie,
     saveUserInfoToCookie,
@@ -98,10 +114,12 @@ export {
     getUsernameFromCookie,
     getEmailFromCookie,
     getLoginIdFromCookie,
+    getCategoryIdFromCookie,
     getAccessTokenFromCookie,
     getRefreshTokenFromCookie,
 
     deleteUsernameFromCookie,
+    deleteCategoryIdFromCookie,
     deleteAccessTokenFromCookie,
     deleteCookie,
 };
