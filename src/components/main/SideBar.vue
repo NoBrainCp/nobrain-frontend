@@ -339,7 +339,10 @@ export default {
 
     showAllBookmarks() {
       const username = this.route.params.username;
+      
       categoryStore.commit('setCategory', {name: '전체 북마크'});
+      bookmarkStore.state.status = !bookmarkStore.state.status;
+
       router.push(`/${username}`);
     },
 
