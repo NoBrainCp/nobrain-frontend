@@ -88,6 +88,20 @@
         </div>
 
         <v-divider v-if="!rail"/>
+        <v-list-item @click="showStarredBookmarks">
+          <template v-slot:prepend>
+            <v-icon color="light-blue" icon="mdi mdi-star"></v-icon>
+          </template>
+          <v-list-item-title>Starred</v-list-item-title>
+          <template v-slot:append>
+            <v-badge
+                color="blue"
+                inline
+            >
+
+            </v-badge>
+          </template>
+        </v-list-item>
         <v-list-item
             v-for="(category, i) in categories"
             :key="i"
@@ -122,7 +136,7 @@ import {onMounted, reactive, toRefs, watch} from "vue";
 import {useRoute} from "vue-router";
 import {addCategory, getCategories} from "../../api/category/categoryApi";
 import {getUsernameFromCookie} from "../../utils/cookies";
-import {addBookmark} from "../../api/bookmark/bookmarkApi";
+import {addBookmark, getStarredBookmarks} from "../../api/bookmark/bookmarkApi";
 import {store} from "../../store/index"
 import {bookmarkStore} from "../../store/bookmark/bookmark";
 import {followStore} from "../../store/follow/follow"
@@ -341,6 +355,11 @@ export default {
       const username = this.route.params.username;
       categoryStore.commit('setCategory', {name: '전체 북마크'});
       router.push(`/${username}`);
+    },
+
+    showStarredBookmarks() {
+      const username = this.route.params.username;
+      router.push(`/${username}/starred`);
     },
 
     async clickFollow() {
