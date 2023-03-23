@@ -282,13 +282,14 @@ export default {
 }
 
 .bookmark-sub-btn-list {
+  margin-top: 5px;
   position: relative;
-  right: 50px;
+  right: 55px;
   border: 1px solid #f3f3f3;
 }
 
 .card-text {
-  margin-top: -20px;
+  margin-top: -25px;
 }
 
 .icon-link {
