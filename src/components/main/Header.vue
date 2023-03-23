@@ -157,6 +157,7 @@ export default {
         title: "로그아웃",
         text: "정말 로그아웃 하시겠습니까?",
         dialog: false,
+        buttonText: "로그아웃"
       },
 
       menu: false,
