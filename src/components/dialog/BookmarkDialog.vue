@@ -79,12 +79,18 @@
 
           <div class="input-row">
             <v-checkbox
-                v-model="bookmarkDialogObj.bookmark.isPublic"
-                :label="bookmarkDialogObj.bookmark.isPublic ? '공개' : '비공개'"
+                v-model="bookmarkDialogObj.bookmark.public"
+                :label="bookmarkDialogObj.bookmark.public ? '공개' : '비공개'"
                 color="info"
-                :prepend-icon="bookmarkDialogObj.bookmark.isPublic ? 'mdi mdi-lock-open-variant' : 'mdi mdi-lock'"
+                :disabled=bookmarkDialogObj.categoryIsPublic
+                :prepend-icon="bookmarkDialogObj.bookmark.public ? 'mdi mdi-lock-open-variant' : 'mdi mdi-lock'"
                 hide-details/>
           </div>
+          <v-card-text class="ml-n4">
+            <v-icon v-if="bookmarkDialogObj.categoryIsPublic" class="mdi mdi-alert mr-3" color="yellow"/>
+            {{bookmarkDialogObj.categoryIsPublic ? bookmarkDialogObj.publicText : ''}}
+          </v-card-text>
+
         </v-container>
       </v-card-text>
 
@@ -108,11 +114,19 @@
 </template>
 <script>
 
-import {defineComponent} from "vue";
+import {defineComponent, watch} from "vue";
 import {useRoute} from "vue-router";
+import {getUserIdFromCookie} from "../../utils/cookies";
+import {getCategoryIsPublic} from "../../api/category/categoryApi";
+import categoryDialog from "./CategoryDialog.vue";
 
 export default defineComponent ({
   name: 'BookmarkDialog',
+  computed: {
+    categoryDialog() {
+      return categoryDialog
+    }
+  },
 
   props: {
     bookmarkDialogObj: {
@@ -121,6 +135,8 @@ export default defineComponent ({
       dialog: false,
       categoryNames: [],
       originCategoryName: String,
+      categoryIsPublic: Boolean,
+      publicText: "카테고리가 비공개로 설정되어 있습니다.",
 
       bookmark: {
         url: String,
@@ -129,7 +145,8 @@ export default defineComponent ({
         categoryName: String,
         tags: [], //수정시 기존 보여지는 태그들
         tagList: [],  //자신의 북마크 전체 태그 리스트
-        isPublic: Boolean,
+        public: Boolean,
+        starred: false,
       },
     },
   },
@@ -144,6 +161,29 @@ export default defineComponent ({
       title: v => !!v || '이름은 필수 입력 항목입니다.'
     }
   }),
+
+  setup(props) {
+    const userId = getUserIdFromCookie();
+
+    watch(() => (props.bookmarkDialogObj.bookmark.categoryName), async (categoryName) => {
+      if (!categoryName || categoryName === 'starred') {
+        props.bookmarkDialogObj.bookmark.categoryName = '';
+        props.bookmarkDialogObj.bookmark.public = true;
+        props.bookmarkDialogObj.categoryIsPublic = false;
+        return;
+      }
+      await getCategoryIsPublic(userId, categoryName).then((response) => {
+        console.log(response.data.data);
+        props.bookmarkDialogObj.categoryIsPublic = !response.data.data;
+        if (!response.data.data) {
+          props.bookmarkDialogObj.bookmark.isPublic = false;
+          props.bookmarkDialogObj.publicText = "카테고리가 비공개로 설정되어 있습니다.";
+        }
+      }).catch((error) => {
+        console.log(error.response.data);
+      });
+    })
+  },
 
   methods: {
     submitBookmark() {

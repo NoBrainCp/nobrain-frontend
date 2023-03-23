@@ -121,7 +121,7 @@
 
 
 <script>
-import {deleteAccessTokenFromCookie, getUsernameFromCookie} from "../../utils/cookies";
+import {deleteAccessTokenFromCookie, deleteCategoryIdFromCookie, getUsernameFromCookie} from "../../utils/cookies";
 import {store} from "../../store";
 import router from "../../router";
 import {onMounted, ref, watch} from "vue";
@@ -217,6 +217,7 @@ export default {
     home() {
       router.push("/" + getUsernameFromCookie()).then(() => {
         window.location.reload();
+        deleteCategoryIdFromCookie();
       });
     },
 
