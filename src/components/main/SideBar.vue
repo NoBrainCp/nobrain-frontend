@@ -270,7 +270,7 @@ export default {
 
     onMounted(async () => {
       try {
-        const noProfileImage = "src/assets/images/nobrain-no-image.png";
+        const noProfileImage = "src/assets/images/user-no-image.png";
         const userInfo = await getUserInfo(username);
         data.user = userInfo.data.data;
 

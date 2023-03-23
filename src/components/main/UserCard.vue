@@ -10,7 +10,7 @@
               <v-img
                   cover
                   class="user-profile-image"
-                  :src="followUser.profileImage === null ? '../src/assets/images/nobrain-no-image.png' : followUser.profileImage"
+                  :src="followUser.profileImage === null ? '../src/assets/images/user-no-image.png' : followUser.profileImage"
                   @click="moveToUser(followUser.username)">
               </v-img>
             </div>
@@ -160,7 +160,7 @@ export default {
 }
 
 .card-left:hover .image-container {
-  border: 1px solid #03A9F4;
+  border: 1px solid #0363f4;
 }
 
 .user-profile-image {

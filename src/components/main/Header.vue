@@ -192,7 +192,7 @@ export default {
         myInfo.value.email = myProfile.data.data.email;
         myInfo.value.profileImage = myProfile.data.data.profileImage;
         if (myInfo.value.profileImage === null) {
-          myInfo.value.profileImage = "src/assets/images/nobrain-no-image.png";
+          myInfo.value.profileImage = "src/assets/images/user-no-image.png";
         }
 
       } catch (error) {
