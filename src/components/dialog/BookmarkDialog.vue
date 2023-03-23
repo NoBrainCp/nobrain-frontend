@@ -79,11 +79,11 @@
 
           <div class="input-row">
             <v-checkbox
-                v-model="bookmarkDialogObj.bookmark.public"
-                :label="bookmarkDialogObj.bookmark.public ? '공개' : '비공개'"
+                v-model="bookmarkDialogObj.bookmark.isPublic"
+                :label="bookmarkDialogObj.bookmark.isPublic ? '공개' : '비공개'"
                 color="info"
                 :disabled=bookmarkDialogObj.categoryIsPublic
-                :prepend-icon="bookmarkDialogObj.bookmark.public ? 'mdi mdi-lock-open-variant' : 'mdi mdi-lock'"
+                :prepend-icon="bookmarkDialogObj.bookmark.isPublic ? 'mdi mdi-lock-open-variant' : 'mdi mdi-lock'"
                 hide-details/>
           </div>
           <v-card-text class="ml-n4">
@@ -145,8 +145,8 @@ export default defineComponent ({
         categoryName: String,
         tags: [], //수정시 기존 보여지는 태그들
         tagList: [],  //자신의 북마크 전체 태그 리스트
-        public: Boolean,
-        starred: false,
+        isPublic: Boolean,
+        isStarred: false,
       },
     },
   },
@@ -168,12 +168,12 @@ export default defineComponent ({
     watch(() => (props.bookmarkDialogObj.bookmark.categoryName), async (categoryName) => {
       if (!categoryName || categoryName === 'starred') {
         props.bookmarkDialogObj.bookmark.categoryName = '';
-        props.bookmarkDialogObj.bookmark.public = true;
+        // props.bookmarkDialogObj.bookmark.isPublic = true;
         props.bookmarkDialogObj.categoryIsPublic = false;
         return;
       }
       await getCategoryIsPublic(userId, categoryName).then((response) => {
-        console.log(response.data.data);
+        // console.log(response.data.data);
         props.bookmarkDialogObj.categoryIsPublic = !response.data.data;
         if (!response.data.data) {
           props.bookmarkDialogObj.bookmark.isPublic = false;

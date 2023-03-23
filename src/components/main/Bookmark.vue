@@ -71,7 +71,7 @@
           </div>
 
           <v-card-text class="card-text">
-            <div class="text-h6 text-light-blue font-weight-bold">
+            <div class="text-h6 text-light-blue font-weight-bold mt-3">
               {{ bookmark.title }}
             </div>
             <div class="mt-1">
@@ -118,7 +118,6 @@ import {
 import {getCategories, getCategoryByBookmarkId} from "../../api/category/categoryApi";
 import {getTags, getTagsByBookmarkId} from "../../api/tag/tagApi";
 import {getUsernameFromCookie} from "../../utils/cookies";
-import {categoryStore} from "../../store/category/category";
 import {favoritesStore} from "../../store/favorites/favorites";
 
 export default {
@@ -134,6 +133,7 @@ export default {
       title: "북마크 삭제",
       text: "정말 북마크를 삭제하시겠습니까?",
       dialog: false,
+      buttonText: "삭제",
 
       bookmarkId: '',
     },
@@ -175,7 +175,6 @@ export default {
         data.bookmarks = await getStarredBookmarks(username).then((res) => res.data.list);
       } else {
         data.bookmarks = await getBookmarks(username, categoryName).then((res) => res.data.list);
-
       }
     }
 
@@ -187,19 +186,22 @@ export default {
   methods: {
     async clickEditBookmarkBtn(bookmark, bookmarkId) {
       bookmarkStore.state.status = !bookmarkStore.state.status;
-
       const [categoryListResp, categoryResp, tagsResp, allTagsResp] = await Promise.all([
         getCategories(getUsernameFromCookie()),
         getCategoryByBookmarkId(bookmarkId),
-        getTagsByBookmarkId(getUsernameFromCookie(), bookmark.id),
+        getTagsByBookmarkId(getUsernameFromCookie(), bookmarkId),
         getTags(getUsernameFromCookie())
       ]);
-
-      this.bookmarkDialogObj.dialog = true;
       this.bookmarkDialogObj.bookmark = bookmark;
-      this.bookmarkDialogObj.bookmark.isPublic = bookmark.public;
-      this.bookmarkDialogObj.categoryNames = categoryListResp.data.list.map(({name}) => name);
+      // console.log(this.bookmarkDialogObj.bookmark);
+      this.bookmarkDialogObj.dialog = true;
+      // this.bookmarkDialogObj.bookmark.id = bookmark.id;
+      // this.bookmarkDialogObj.bookmark.url = bookmark.url;
       this.bookmarkDialogObj.bookmark.categoryName = categoryResp.data.data;
+      // this.bookmarkDialogObj.bookmark.description = bookmark.description;
+      this.bookmarkDialogObj.bookmark.isPublic = bookmark.public;
+
+      this.bookmarkDialogObj.categoryNames = categoryListResp.data.list.map(({name}) => name);
       this.bookmarkDialogObj.originCategoryName = categoryResp.data.data;
       this.bookmarkDialogObj.bookmark.tags = tagsResp.data.list.map(({tagName}) => tagName);
       this.bookmarkDialogObj.bookmark.tagList = allTagsResp.data.list.map(({tag}) => tag.name);
@@ -207,17 +209,15 @@ export default {
     },
 
     async updateBookmark(bookmark) {
-      const category = this.bookmarkDialogObj.originCategoryName;
       const username = getUsernameFromCookie();
-
-      updateBookmark(bookmark.id, bookmark).then(()=>{
+      const bookmarkId = this.bookmarkDialogObj.bookmark.id;
+      console.log(bookmark);
+      await updateBookmark(bookmarkId, bookmark).then(()=>{
+        router.push(`/${username}/${bookmark.categoryName}`);
         bookmarkStore.state.status = !bookmarkStore.state.status;
-        categoryStore.commit('setCategory', {name: bookmark.categoryName});
+      }).catch((error)=> {
+        alert(error);
       });
-
-      if (bookmark.categoryName !== category) {
-        await router.push(`/${username}/${bookmark.categoryName}`);
-      }
     },
 
     clickDeleteBookmarkBtn(bookmarkId) {
