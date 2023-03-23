@@ -61,6 +61,7 @@ export default {
       title: "카테고리 삭제",
       text: "정말 카테고리를 삭제하시겠습니까?<br/>삭제하시면 관련된 북마크들까지 모두 삭제됩니다.",
       dialog: false,
+      buttonText: "삭제"
     },
   }),
 
@@ -89,8 +90,8 @@ export default {
       const categoryName = route.params.category;
       const categoryId = getCategoryIdFromCookie();
 
-      if (categoryName === undefined || categoryName === "starred") {
-        data.value.category.name = categoryName === undefined ? "전체 북마크" : "즐겨찾기";
+      if (!categoryName || categoryName === "starred") {
+        data.value.category.name = !categoryName ? "전체 북마크" : "즐겨찾기";
         data.value.category.description = "";
         data.value.isAll = true;
       } else {

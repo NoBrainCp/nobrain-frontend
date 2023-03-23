@@ -202,7 +202,6 @@ export default {
       try {
         const response = await getCategories(username);
         data.categories = response.data.list;
-        console.log(response.data.list);
       } catch (error) {
         alert(error.response.data.message);
       }
@@ -318,19 +317,18 @@ export default {
           alert("카테고리를 먼저 추가해주세요.");
           return;
         }
-        this.bookmarkDialogObj.dialog = true;
         const categoryName = this.route.params.category;
-        if (categoryName !== undefined && categoryName !== 'starred') {
-          this.bookmarkDialogObj.bookmark.categoryName = categoryName;
-        }
+        this.bookmarkDialogObj.dialog = true;
+        this.bookmarkDialogObj.bookmark.categoryName = categoryName;
+        this.bookmarkDialogObj.bookmark.isPublic = true;
+
         const [categoriesResponse, tagsResponse] = await Promise.all([
           getCategories(getUsernameFromCookie()),
           getTags(getUsernameFromCookie())
         ]);
-
         this.bookmarkDialogObj.categoryNames = categoriesResponse.data.list.map(c => c.name);
         this.bookmarkDialogObj.bookmark.tagList = tagsResponse.data.list.map(t => t.tag.name);
-        this.bookmarkDialogObj.bookmark.isPublic = true;
+
       } catch (error) {
         alert(error.response.data.message);
       }
@@ -338,17 +336,14 @@ export default {
 
     async addBookmark(bookmark) {
       const username = getUsernameFromCookie();
-      const categoryName = this.route.params.category;
       try {
         await addBookmark(username, bookmark);
+        this.bookmarkDialogInit();
+        await router.push(`/${username}/${bookmark.categoryName}`);
+        categoryStore.state.status = !categoryStore.state.status;
+        bookmarkStore.state.status = !bookmarkStore.state.status;
       } catch (error) {
         alert(error.response.data.message);
-      }
-      categoryStore.state.status = !categoryStore.state.status;
-      bookmarkStore.state.status = !bookmarkStore.state.status;
-      this.bookmarkDialogInit();
-      if (categoryName === undefined) {
-        await router.push(`/${username}/${bookmark.categoryName}`)
       }
     },
 
@@ -364,13 +359,13 @@ export default {
 
     async showBookmark(category) {
       const username = this.route.params.username;
-      deleteCategoryIdFromCookie();
       saveCategoryId(category.id);
       await router.push(`/${username}/${category.name}`);
     },
 
     async showAllBookmarks() {
       const username = this.route.params.username;
+      deleteCategoryIdFromCookie();
       await router.push(`/${username}`);
       bookmarkStore.state.status = !bookmarkStore.state.status;
     },

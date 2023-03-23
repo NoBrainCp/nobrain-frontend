@@ -329,6 +329,7 @@ export default {
       title: "회원 탈퇴",
       text: "정말 No brain 을 탈퇴 하시겠습니까?",
       dialog: false,
+      buttonText: "탈퇴"
     },
 
   }),

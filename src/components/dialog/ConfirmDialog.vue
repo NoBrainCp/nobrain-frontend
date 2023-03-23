@@ -23,7 +23,7 @@
             color="red"
             variant="text"
             @click="submit">
-          삭제
+          {{confirmObj.buttonText}}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -40,6 +40,7 @@ export default {
       text: "",
       dialog: Boolean,
       bookmarkId: Number,
+      buttonText: String,
     }
   },
 

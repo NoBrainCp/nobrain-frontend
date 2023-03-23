@@ -121,7 +121,7 @@
 
 
 <script>
-import {deleteAccessTokenFromCookie, getUsernameFromCookie} from "../../utils/cookies";
+import {deleteAccessTokenFromCookie, deleteCategoryIdFromCookie, getUsernameFromCookie} from "../../utils/cookies";
 import {store} from "../../store";
 import router from "../../router";
 import {onMounted, ref, watch} from "vue";
@@ -157,6 +157,7 @@ export default {
         title: "로그아웃",
         text: "정말 로그아웃 하시겠습니까?",
         dialog: false,
+        buttonText: "로그아웃"
       },
 
       menu: false,
@@ -217,6 +218,7 @@ export default {
     home() {
       router.push("/" + getUsernameFromCookie()).then(() => {
         window.location.reload();
+        deleteCategoryIdFromCookie();
       });
     },
 
