@@ -42,13 +42,19 @@
 <script>
 import {onMounted, ref, watch} from "vue";
 import {useRoute} from "vue-router";
-import {deleteCategoryIdFromCookie, getCategoryIdFromCookie, getUsernameFromCookie} from "../../utils/cookies";
+import {
+  deleteCategoryIdFromCookie,
+  getUserIdFromCookie,
+  getUsernameFromCookie
+} from "../../utils/cookies";
 import {deleteCategory, getCategory, updateCategory} from "../../api/category/categoryApi";
 import {categoryStore} from "../../store/category/category";
 import router from "../../router";
 import ConfirmDialog from "../dialog/ConfirmDialog.vue";
 import CategoryDialog from "../dialog/CategoryDialog.vue";
 import {favoritesStore} from "../../store/favorites/favorites";
+import {updateAllBookmarksToPrivate} from "../../api/bookmark/bookmarkApi";
+import {bookmarkStore} from "../../store/bookmark/bookmark";
 
 export default {
   name: 'CategoryBar',
@@ -87,27 +93,24 @@ export default {
     });
 
     async function getCategoryList() {
-      const categoryName = route.params.category;
-      const categoryId = getCategoryIdFromCookie();
+      try {
+        const username = route.params.username;
+        const categoryName = route.params.category;
 
-      if (!categoryName || categoryName === "starred") {
-        data.value.category.name = !categoryName ? "전체 북마크" : "즐겨찾기";
-        data.value.category.description = "";
-        data.value.isAll = true;
-      } else {
-        try {
-          const response = await getCategory(categoryId);
-          data.value.category = response.data.data;
-          data.value.isAll = false;
-        } catch (err) {
-          console.log(err);
+        if (!categoryName || categoryName === "starred") {
+          data.value.category.name = !categoryName ? "전체 북마크" : "즐겨찾기";
+          data.value.category.description = "";
+          data.value.isAll = true;
+          return;
         }
+        const response = await getCategory(username, categoryName);
+        data.value.category = response.data.data;
+        data.value.isAll = false;
+
+      } catch (error) {
+        console.log(error);
       }
-    };
-    //
-    // watch(() => data.value.category, (newValue) => {
-    //   data.value.category = newValue;
-    // })
+    }
 
     watch(() => route.params.category, () => {
       getCategoryList();
@@ -115,7 +118,7 @@ export default {
 
     onMounted(() => {
       getCategoryList();
-    })
+    });
 
     return {
       data,
@@ -135,16 +138,15 @@ export default {
       try {
         const categoryName = category.name;
         const categoryOriginName = this.data.category.name;
-
+        const userId = getUserIdFromCookie();
         this.data.category.name = category.name;
         this.data.category.description = category.description;
         this.data.category.public = category.isPublic;
-
         await updateCategory(getUsernameFromCookie(), categoryOriginName, category);
-
+        await updateAllBookmarksToPrivate(userId, this.data.category.name);
         await router.push(`/${getUsernameFromCookie()}/${categoryName}`);
         categoryStore.state.status = !categoryStore.state.status;
-
+        bookmarkStore.state.status = !bookmarkStore.state.status;
       } catch (error) {
         alert(error.response);
       }
