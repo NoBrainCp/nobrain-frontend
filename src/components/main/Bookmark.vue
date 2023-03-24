@@ -31,7 +31,7 @@
               <v-icon
                   size="27"
                   :color="bookmark.public ? 'indigo' : 'green-darken-3'"
-                  :class="bookmark.public ? 'mdi mdi-lock-open-variant' : 'mdi mdi-lock'"
+                  :icon="bookmark.public ? 'mdi mdi-lock-open-variant' : 'mdi mdi-lock'"
                   @click="clickLock(bookmark)"/>
               <v-icon
                   size="27"
@@ -134,8 +134,6 @@ export default {
       text: "정말 북마크를 삭제하시겠습니까?",
       dialog: false,
       buttonText: "삭제",
-
-      bookmarkId: '',
     },
 
     bookmarkDialogObj: {
@@ -184,6 +182,7 @@ export default {
   },
 
   methods: {
+
     async clickEditBookmarkBtn(bookmark, bookmarkId) {
       bookmarkStore.state.status = !bookmarkStore.state.status;
       const [categoryListResp, categoryResp, tagsResp, allTagsResp] = await Promise.all([
@@ -193,12 +192,8 @@ export default {
         getTags(getUsernameFromCookie())
       ]);
       this.bookmarkDialogObj.bookmark = bookmark;
-      // console.log(this.bookmarkDialogObj.bookmark);
       this.bookmarkDialogObj.dialog = true;
-      // this.bookmarkDialogObj.bookmark.id = bookmark.id;
-      // this.bookmarkDialogObj.bookmark.url = bookmark.url;
-      this.bookmarkDialogObj.bookmark.categoryName = categoryResp.data.data;
-      // this.bookmarkDialogObj.bookmark.description = bookmark.description;
+      this.bookmarkDialogObj.bookmark.categoryName = categoryResp.data.data.name;
       this.bookmarkDialogObj.bookmark.isPublic = bookmark.public;
 
       this.bookmarkDialogObj.categoryNames = categoryListResp.data.list.map(({name}) => name);
@@ -209,19 +204,18 @@ export default {
     },
 
     async updateBookmark(bookmark) {
-      const username = getUsernameFromCookie();
-      const bookmarkId = this.bookmarkDialogObj.bookmark.id;
-      console.log(bookmark);
-      await updateBookmark(bookmarkId, bookmark).then(()=>{
-        router.push(`/${username}/${bookmark.categoryName}`);
+      try {
+        const username = getUsernameFromCookie();
+        const bookmarkId = this.bookmarkDialogObj.bookmark.id;
+        await updateBookmark(bookmarkId, bookmark);
+        await router.push(`/${username}/${bookmark.categoryName}`);
         bookmarkStore.state.status = !bookmarkStore.state.status;
-      }).catch((error)=> {
-        alert(error);
-      });
+      } catch(error) {
+        console.log(error);
+      }
     },
 
-    clickDeleteBookmarkBtn(bookmarkId) {
-      this.confirmObj.bookmarkId = bookmarkId;
+    clickDeleteBookmarkBtn() {
       this.confirmObj.dialog = true;
     },
 
@@ -243,9 +237,18 @@ export default {
     },
 
     async clickLock(bookmark) {
-      bookmark.public = !bookmark.public;
-
-      await updatePublic(bookmark.id, bookmark.public);
+      try {
+        await getCategoryByBookmarkId(bookmark.id).then((response) => {
+          if (!response.data.data.public) {
+            alert("카테고리가 비공개로 설정되어 있습니다.");
+          } else {
+            bookmark.public = !bookmark.public;
+            updatePublic(bookmark.id, bookmark.public);
+          }
+        });
+      } catch (error) {
+        console.log(error.response.data);
+      }
     },
   }
 }
