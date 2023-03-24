@@ -1,7 +1,7 @@
 import {category} from "../index";
 
-export function getCategory(categoryId) {
-    return category.get(`/category/${categoryId}`);
+export function getCategory(username, categoryName) {
+    return category.get(`user/${username}/category/${categoryName}`);
 }
 
 export function getCategories(username) {
@@ -9,11 +9,11 @@ export function getCategories(username) {
 }
 
 export function getCategoryByBookmarkId(bookmarkId) {
-    return category.get(`/bookmark/${bookmarkId}/categoryName`);
+    return category.get(`/bookmark/${bookmarkId}/category`);
 }
 
 export function getCategoryIsPublic(userId, categoryName) {
-    return category.get(`/user/${userId}/category/${categoryName}`);
+    return category.get(`/user/${userId}/category/${categoryName}/public`);
 }
 
 export function addCategory(username, categoryData) {
