@@ -100,6 +100,18 @@
                 inline/>
           </template>
         </v-list-item>
+        <v-list-item @click="showPrivateBookmarks" v-if="user.username === this.myName">
+          <template v-slot:prepend>
+            <v-icon color="light-blue" icon="mdi mdi-eye-lock-outline"></v-icon>
+          </template>
+          <v-list-item-title>Private</v-list-item-title>
+          <template v-slot:append>
+            <v-badge
+                color="blue"
+                :content="privateCount"
+                inline/>
+          </template>
+        </v-list-item>
         <v-list-item
             v-for="(category, i) in categories"
             :key="i"
@@ -134,7 +146,7 @@ import {onMounted, reactive, toRefs, watch} from "vue";
 import {useRoute} from "vue-router";
 import {addCategory, getCategories} from "../../api/category/categoryApi";
 import {deleteCategoryIdFromCookie, getUsernameFromCookie, saveCategoryId} from "../../utils/cookies";
-import {addBookmark, getStarredBookmarksCount} from "../../api/bookmark/bookmarkApi";
+import {addBookmark, getPrivateBookmarksCount, getStarredBookmarksCount} from "../../api/bookmark/bookmarkApi";
 import {store} from "../../store/index"
 import {bookmarkStore} from "../../store/bookmark/bookmark";
 import {followStore} from "../../store/follow/follow"
@@ -142,6 +154,7 @@ import {getTags} from "../../api/tag/tagApi";
 import {followAndUnfollow, getFollowCount, isFollow} from "../../api/follow/followApi";
 import {userStore} from "../../store/user/user";
 import {favoritesStore} from "../../store/favorites/favorites";
+import {privatesStore} from "../../store/privates/privates";
 
 export default {
   name: 'SideBar',
@@ -152,6 +165,7 @@ export default {
     follow: false,
     drawer: true,
     rail: false,
+    myName: getUsernameFromCookie(),
     // activeIndex: null,
 
     categoryObj: {
@@ -177,7 +191,7 @@ export default {
     const data = reactive({
       isMe: username === getUsernameFromCookie(),
       starredCount: '',
-
+      privateCount: '',
       buttonWidth: '150px',
       buttonHeight: '75px',
 
@@ -236,7 +250,11 @@ export default {
     async function getStarredCount() {
       const starredCnt = await getStarredBookmarksCount(username);
       data.starredCount = starredCnt.data.data;
-      console.log(starredCnt.data);
+    }
+
+    async function getPrivateCount() {
+      const privateCnt = await getPrivateBookmarksCount(username);
+      data.privateCount = privateCnt.data.data;
     }
 
     watch(() => (categoryStore.state.status), updateCategories);
@@ -247,6 +265,7 @@ export default {
     });
 
     watch(() => favoritesStore.state.status, getStarredCount);
+    watch(() => privatesStore.state.status, getPrivateCount);
 
     watch(() => (userStore.state.profileImage), (newValue) => {
       data.user.profileImage = newValue;
@@ -296,8 +315,11 @@ export default {
         data.followObj.followerCount = followCount.data.data.followerCnt;
         data.followObj.followingCount = followCount.data.data.followingCnt;
 
-        const starredCnt = await getStarredBookmarksCount(username)
+        const starredCnt = await getStarredBookmarksCount(username);
         data.starredCount = starredCnt.data.data;
+
+        const privateCnt = await getPrivateCount(username);
+        data.privateCount = privateCnt.data.data;
 
       } catch (error) {
         alert(error.response.data.message);
@@ -342,6 +364,7 @@ export default {
         await router.push(`/${username}/${bookmark.categoryName}`);
         categoryStore.state.status = !categoryStore.state.status;
         bookmarkStore.state.status = !bookmarkStore.state.status;
+        privatesStore.state.status = !privatesStore.state.status;
       } catch (error) {
         alert(error.response.data.message);
       }
@@ -373,6 +396,11 @@ export default {
     async showStarredBookmarks() {
       const username = this.route.params.username;
       await router.push(`/${username}/starred`);
+    },
+
+    async showPrivateBookmarks() {
+      const username = this.route.params.username;
+      await router.push((`/${username}/private`));
     },
 
     async clickFollow() {

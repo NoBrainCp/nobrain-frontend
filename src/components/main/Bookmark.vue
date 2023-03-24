@@ -109,7 +109,7 @@ import BookmarkDialog from "../dialog/BookmarkDialog.vue";
 import {
   deleteBookmarkById,
   getAllBookmarks,
-  getBookmarks,
+  getBookmarks, getPrivateBookmarks,
   getStarredBookmarks,
   updateBookmark,
   updatePublic,
@@ -119,6 +119,7 @@ import {getCategories, getCategoryByBookmarkId} from "../../api/category/categor
 import {getTags, getTagsByBookmarkId} from "../../api/tag/tagApi";
 import {getUsernameFromCookie} from "../../utils/cookies";
 import {favoritesStore} from "../../store/favorites/favorites";
+import {privatesStore} from "../../store/privates/privates";
 
 export default {
   name: 'Bookmark',
@@ -171,6 +172,8 @@ export default {
         data.bookmarks = await getAllBookmarks(username).then((res) => res.data.list);
       } else if (categoryName === 'starred') {
         data.bookmarks = await getStarredBookmarks(username).then((res) => res.data.list);
+      } else if (categoryName === 'private') {
+        data.bookmarks = await getPrivateBookmarks(username).then((res) => res.data.list);
       } else {
         data.bookmarks = await getBookmarks(username, categoryName).then((res) => res.data.list);
       }
@@ -210,7 +213,8 @@ export default {
         await updateBookmark(bookmarkId, bookmark);
         await router.push(`/${username}/${bookmark.categoryName}`);
         bookmarkStore.state.status = !bookmarkStore.state.status;
-      } catch(error) {
+        privatesStore.state.status = !privatesStore.state.status;
+      } catch (error) {
         console.log(error);
       }
     },
@@ -226,6 +230,7 @@ export default {
       if (index !== -1) {
         this.data.bookmarks.splice(index, 1);
       }
+      privatesStore.state.status = !privatesStore.state.status;
       favoritesStore.state.status = !favoritesStore.state.status;
       bookmarkStore.state.status = !bookmarkStore.state.status;
     },
@@ -238,14 +243,14 @@ export default {
 
     async clickLock(bookmark) {
       try {
-        await getCategoryByBookmarkId(bookmark.id).then((response) => {
+        const response = await getCategoryByBookmarkId(bookmark.id);
           if (!response.data.data.public) {
             alert("카테고리가 비공개로 설정되어 있습니다.");
           } else {
             bookmark.public = !bookmark.public;
-            updatePublic(bookmark.id, bookmark.public);
+            await updatePublic(bookmark.id, bookmark.public);
+            privatesStore.state.status = !privatesStore.state.status;
           }
-        });
       } catch (error) {
         console.log(error.response.data);
       }

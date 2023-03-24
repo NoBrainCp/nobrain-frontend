@@ -16,6 +16,14 @@ export function getStarredBookmarksCount(username) {
     return bookmark.get(`/user/${username}/starred-bookmarks/count`);
 }
 
+export function getPrivateBookmarks(username) {
+    return bookmark.get(`/user/${username}/private-bookmarks`);
+}
+
+export function getPrivateBookmarksCount(username) {
+    return bookmark.get(`/user/${username}/private-bookmarks/count`);
+}
+
 export function searchBookmark(keyword, condition) {
     return bookmark.get(`/bookmark/search`, {
         params: {keyword: keyword, condition: condition}
