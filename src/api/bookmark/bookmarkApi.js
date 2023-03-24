@@ -38,7 +38,10 @@ export function updateStarred(bookmarkId, isStarred) {
     return bookmark.put(`/bookmark/${bookmarkId}/starred?isStarred=${isStarred}`);
 }
 
+export function updateAllBookmarksToPrivate(userId, categoryName) {
+    return bookmark.put(`/user/${userId}/category/${categoryName}/private`);
+}
+
 export function deleteBookmarkById(bookmarkId) {
     return bookmark.delete(`/bookmark/${bookmarkId}`);
 }
-// export function
