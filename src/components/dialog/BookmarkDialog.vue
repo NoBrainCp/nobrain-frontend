@@ -52,7 +52,6 @@
                 :items="bookmarkDialogObj.categoryNames"/>
           </div>
 
-
           <v-combobox
               v-model="bookmarkDialogObj.bookmark.tags"
               :items="bookmarkDialogObj.bookmark.tagList"
@@ -168,12 +167,10 @@ export default defineComponent ({
     watch(() => (props.bookmarkDialogObj.bookmark.categoryName), async (categoryName) => {
       if (!categoryName || categoryName === 'starred') {
         props.bookmarkDialogObj.bookmark.categoryName = '';
-        // props.bookmarkDialogObj.bookmark.isPublic = true;
         props.bookmarkDialogObj.categoryIsPublic = false;
         return;
       }
       await getCategoryIsPublic(userId, categoryName).then((response) => {
-        // console.log(response.data.data);
         props.bookmarkDialogObj.categoryIsPublic = !response.data.data;
         if (!response.data.data) {
           props.bookmarkDialogObj.bookmark.isPublic = false;
