@@ -55,6 +55,7 @@ import CategoryDialog from "../dialog/CategoryDialog.vue";
 import {favoritesStore} from "../../store/favorites/favorites";
 import {updateAllBookmarksToPrivate} from "../../api/bookmark/bookmarkApi";
 import {bookmarkStore} from "../../store/bookmark/bookmark";
+import {privatesStore} from "../../store/privates/privates";
 
 export default {
   name: 'CategoryBar',
@@ -97,8 +98,14 @@ export default {
         const username = route.params.username;
         const categoryName = route.params.category;
 
-        if (!categoryName || categoryName === "starred") {
-          data.value.category.name = !categoryName ? "전체 북마크" : "즐겨찾기";
+        if (!categoryName || categoryName === "starred" || categoryName === 'private') {
+          if (categoryName === 'starred') {
+            data.value.category.name = "즐겨찾기";
+          } else if(categoryName === 'private') {
+            data.value.category.name = '비공개';
+          } else {
+            data.value.category.name = '전체 북마크';
+          }
           data.value.category.description = "";
           data.value.isAll = true;
           return;
@@ -147,6 +154,7 @@ export default {
         await router.push(`/${getUsernameFromCookie()}/${categoryName}`);
         categoryStore.state.status = !categoryStore.state.status;
         bookmarkStore.state.status = !bookmarkStore.state.status;
+        privatesStore.state.status = !privatesStore.state.status;
       } catch (error) {
         alert(error.response);
       }
@@ -159,6 +167,7 @@ export default {
         await router.push(`/${getUsernameFromCookie()}`);
         categoryStore.state.status = !categoryStore.state.status;
         favoritesStore.state.status = !favoritesStore.state.status;
+        privatesStore.state.status = !privatesStore.state.status;
       } catch (error) {
         alert(error.response.data.message);
       }
