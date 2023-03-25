@@ -145,7 +145,7 @@ import {getUserInfo} from "../../api/user/userApi";
 import {onMounted, reactive, toRefs, watch} from "vue";
 import {useRoute} from "vue-router";
 import {addCategory, getCategories} from "../../api/category/categoryApi";
-import {deleteCategoryIdFromCookie, getUsernameFromCookie, saveCategoryId} from "../../utils/cookies";
+import {deleteCategoryIdFromCookie, getUsernameFromCookie} from "../../utils/cookies";
 import {addBookmark, getPrivateBookmarksCount, getStarredBookmarksCount} from "../../api/bookmark/bookmarkApi";
 import {store} from "../../store/index"
 import {bookmarkStore} from "../../store/bookmark/bookmark";
@@ -322,7 +322,7 @@ export default {
         data.privateCount = privateCnt.data.data;
 
       } catch (error) {
-        alert(error.response.data.message);
+        console.log(error);
       }
     });
 
@@ -352,7 +352,7 @@ export default {
         this.bookmarkDialogObj.bookmark.tagList = tagsResponse.data.list.map(t => t.tag.name);
 
       } catch (error) {
-        alert(error.response.data.message);
+        console.log(error);
       }
     },
 
@@ -366,7 +366,7 @@ export default {
         bookmarkStore.state.status = !bookmarkStore.state.status;
         privatesStore.state.status = !privatesStore.state.status;
       } catch (error) {
-        alert(error.response.data.message);
+        console.log(error);
       }
     },
 
@@ -382,13 +382,11 @@ export default {
 
     async showBookmark(category) {
       const username = this.route.params.username;
-      saveCategoryId(category.id);
       await router.push(`/${username}/${category.name}`);
     },
 
     async showAllBookmarks() {
       const username = this.route.params.username;
-      deleteCategoryIdFromCookie();
       await router.push(`/${username}`);
       bookmarkStore.state.status = !bookmarkStore.state.status;
     },

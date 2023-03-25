@@ -218,7 +218,6 @@ export default {
     home() {
       router.push("/" + getUsernameFromCookie()).then(() => {
         window.location.reload();
-        deleteCategoryIdFromCookie();
       });
     },
 

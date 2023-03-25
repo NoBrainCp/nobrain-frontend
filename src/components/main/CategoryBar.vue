@@ -43,7 +43,6 @@
 import {onMounted, ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import {
-  deleteCategoryIdFromCookie,
   getUserIdFromCookie,
   getUsernameFromCookie
 } from "../../utils/cookies";
@@ -163,7 +162,6 @@ export default {
     async deleteCategory() {
       try {
         await deleteCategory(getUsernameFromCookie(), this.data.category.name);
-        deleteCategoryIdFromCookie();
         await router.push(`/${getUsernameFromCookie()}`);
         categoryStore.state.status = !categoryStore.state.status;
         favoritesStore.state.status = !favoritesStore.state.status;
