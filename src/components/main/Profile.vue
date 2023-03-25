@@ -81,7 +81,7 @@
                           class="profile-img"
                           width="250"
                           height="250"
-                          :src="myInfo.profileImage"
+                          :src="myInfo.urlProfileImage"
                       >
                       </v-img>
                     </v-col>
@@ -338,7 +338,8 @@ export default {
     const myInfo = ref({
       username: getUsernameFromCookie(),
       email: getEmailFromCookie(),
-      profileImage: ""
+      profileImage: {},
+      urlProfileImage: '',
     });
 
     const imgFileObj = ref({
@@ -367,7 +368,7 @@ export default {
         const myProfile = await getMyProfile();
         myInfo.value.username = myProfile.data.data.username;
         myInfo.value.email = myProfile.data.data.email;
-        myInfo.value.profileImage = myProfile.data.data.profileImage;
+        myInfo.value.urlProfileImage = myProfile.data.data.profileImage;
         if (myInfo.value.profileImage === null) {
           myInfo.value.profileImage = "src/assets/images/nobrain-no-image.png";
         }
@@ -405,20 +406,23 @@ export default {
       }
     },
 
-    onFileChanged(file) {
+    async onFileChanged(file) {
       if (file.map(v => v.size) > 2000000) {
         alert("이미지의 크기가 적절하지 않습니다.");
         return;
       }
+
       console.log(file[0]);
-      this.myInfo.profileImage = URL.createObjectURL(file[0]);
-      console.log(this.myInfo.profileImage);
+      this.myInfo.profileImage = file[0];
+      this.myInfo.urlProfileImage = URL.createObjectURL(file[0]);
     },
 
     async updateProfileImg() {
       try {
+        console.log("UPDATE: " + this.myInfo.profileImage);
+        console.log(this.myInfo.profileImage);
         await changeProfileImage(this.myInfo.profileImage);
-        userStore.commit("setProfileImage", this.myInfo.profileImage);
+        userStore.commit("setProfileImage", this.myInfo.urlProfileImage);
       } catch (error) {
         alert(error);
       }
