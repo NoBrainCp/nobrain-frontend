@@ -90,11 +90,12 @@
         <v-divider v-if="!rail"/>
         <v-list-item @click="showStarredBookmarks">
           <template v-slot:prepend>
-            <v-icon color="light-blue" icon="mdi mdi-star"></v-icon>
+            <v-icon color="light-blue" icon="mdi mdi-star-box"></v-icon>
           </template>
           <v-list-item-title>Favorites</v-list-item-title>
           <template v-slot:append>
             <v-badge
+                v-if="starredCount !== 0"
                 color="blue"
                 :content="starredCount"
                 inline/>
@@ -107,6 +108,7 @@
           <v-list-item-title>Private</v-list-item-title>
           <template v-slot:append>
             <v-badge
+                v-if="privateCount !== 0"
                 color="blue"
                 :content="privateCount"
                 inline/>
@@ -116,7 +118,7 @@
             v-for="(category, i) in categories"
             :key="i"
             :value="category"
-            @click="showBookmark(category); toggleActive(i, category)">
+            @click="showBookmark(category)">
 
           <template v-slot:prepend>
             <v-icon :icon="category.public ? 'mdi mdi-folder' : 'mdi mdi-folder-lock'"></v-icon>
@@ -145,7 +147,7 @@ import {getUserInfo} from "../../api/user/userApi";
 import {onMounted, reactive, toRefs, watch} from "vue";
 import {useRoute} from "vue-router";
 import {addCategory, getCategories} from "../../api/category/categoryApi";
-import {deleteCategoryIdFromCookie, getUsernameFromCookie} from "../../utils/cookies";
+import {deleteAccessTokenFromCookie, deleteCategoryIdFromCookie, getUsernameFromCookie} from "../../utils/cookies";
 import {addBookmark, getPrivateBookmarksCount, getStarredBookmarksCount} from "../../api/bookmark/bookmarkApi";
 import {store} from "../../store/index"
 import {bookmarkStore} from "../../store/bookmark/bookmark";
