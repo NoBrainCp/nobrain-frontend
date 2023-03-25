@@ -26,9 +26,10 @@ export function changePassword(passwordData) {
 }
 
 export function changeProfileImage(profileImage) {
-    return user.put(`/profile-image`, {
-        profileImage: profileImage
-    });
+    return user.put(`/profile-image`,
+        {image: profileImage},
+        {headers: {'Content-Type': 'multipart/form-data'}}
+    );
 }
 
 export function deactivateAccount(userId) {
