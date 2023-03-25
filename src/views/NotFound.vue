@@ -1,10 +1,7 @@
 <template>
   <v-app>
-    <Header></Header>
-    <v-container>
-      <ErrorPage/>
-    </v-container>
-
+      <div class="main">
+      </div>
   </v-app>
 </template>
 
@@ -17,3 +14,21 @@ export default {
   components: {ErrorPage, Header}
 }
 </script>
+
+<style scoped>
+
+.container {
+  /*width: 100%;*/
+}
+
+.main {
+  background-size: cover;
+  margin: 100px;
+  width: 100%;
+  height: 100%;
+  background-position: center;
+  background-image: url("../assets/images/error-page.png");
+
+}
+
+</style>

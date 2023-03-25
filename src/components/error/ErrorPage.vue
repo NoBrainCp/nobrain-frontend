@@ -3,9 +3,7 @@
 <!--      <v-img class="text" src="../src/assets/images/error-text.png"/>-->
 <!--      <v-img class="logo" src="../src/assets/images/error-logo.png"/>-->
 <!--    </div>-->
-  <div class="main">
-    <v-img src="../src/assets/images/error-page.png"/>
-  </div>
+
 
 </template>
 
@@ -17,12 +15,7 @@ export default {
 
 <style scoped>
 
-.main {
-  background-size: cover;
-  margin-top: 50px;
-  width: 100%;
-  height: 800px;
-}
+
 
 #back {
   margin-top: 2%;

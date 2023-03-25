@@ -37,10 +37,19 @@ import Bookmark from "../components/main/Bookmark.vue";
 import Follow from "../components/main/Follow.vue";
 import {useRoute} from "vue-router";
 import router from "../router";
+import {existsUsername} from "../api/user/userApi";
 
 export default {
   name: 'main',
   components: {Follow, CategoryBar, Profile, TagBar,  Header, SideBar, Bookmark},
+
+  async created() {
+    const route = useRoute();
+    const exists = await existsUsername(route.params.username);
+    if (!exists.data.data) {
+      await router.push(`not-found`);
+    }
+  },
 
   setup() {
     const route = useRoute();
@@ -58,6 +67,8 @@ export default {
 
     return { window: windowValue };
   },
+
+
 }
 </script>
 

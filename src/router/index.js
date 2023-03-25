@@ -8,6 +8,7 @@ import ChangePassword from "../views/change/ChangePassword.vue";
 import MainView from "../views/MainView.vue";
 import NotFound from "../views/NotFound.vue";
 import {getAccessTokenFromCookie, getUsernameFromCookie} from "../utils/cookies";
+import {existsUsername} from "../api/user/userApi";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -53,9 +54,10 @@ const router = createRouter({
             props: true,
         },
         {
-            path:"/not",
+            path:"/:catchAll(.*)",
             name: "notFound",
-            component: NotFound
+            component: NotFound,
+            alias: "/not-found"
         }
     ],
 });
@@ -67,11 +69,13 @@ router.beforeEach(async (to, from, next) => {
      * next: to에서 지정한 url로 이동하기 위해 꼭 호출해야 하는 함수
      * next() 가 호출되기 전까지 화면 전환되지 않음
      */
-    if (!to.params.username) {
+    console.log(to);
+    if (!to.params.username && !to.fullPath.includes('not')) {
         if (getAccessTokenFromCookie()) {
-            router.replace(`${getUsernameFromCookie()}`);
+            await router.replace(`${getUsernameFromCookie()}`);
         }
     }
+
 
     return next();
 })
