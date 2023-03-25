@@ -39,7 +39,6 @@ export default {
       title: "",
       text: "",
       dialog: Boolean,
-      bookmarkId: Number,
       buttonText: String,
     }
   },
@@ -47,7 +46,7 @@ export default {
   methods: {
     submit() {
       this.confirmObj.dialog = false;
-      this.$emit('delete', this.confirmObj.bookmarkId);
+      this.$emit('delete');
     }
   }
 }

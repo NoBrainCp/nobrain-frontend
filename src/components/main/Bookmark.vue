@@ -126,6 +126,7 @@ export default {
   components: {BookmarkDialog, ConfirmDialog},
 
   data: () => ({
+    bookmarkId: "",
     imagePath: [
       {noImage: "../assets/images/nobrain-no-image.png"}
     ],
@@ -135,6 +136,7 @@ export default {
       text: "정말 북마크를 삭제하시겠습니까?",
       dialog: false,
       buttonText: "삭제",
+      bookmarkId: "",
     },
 
     bookmarkDialogObj: {
@@ -219,13 +221,15 @@ export default {
       }
     },
 
-    clickDeleteBookmarkBtn() {
+    clickDeleteBookmarkBtn(bookmarkId) {
+      this.bookmarkId = bookmarkId;
       this.confirmObj.dialog = true;
     },
 
-    async deleteBookmark(bookmarkId) {
-      await deleteBookmarkById(bookmarkId);
-      const index = this.data.bookmarks.findIndex(bookmark => bookmark.id === bookmarkId);
+    async deleteBookmark() {
+      console.log(this.bookmarkId);
+      await deleteBookmarkById(this.bookmarkId);
+      const index = this.data.bookmarks.findIndex(bookmark => bookmark.id === this.bookmarkId);
 
       if (index !== -1) {
         this.data.bookmarks.splice(index, 1);
