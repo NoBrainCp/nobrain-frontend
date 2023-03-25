@@ -221,7 +221,7 @@
 
 <script>
 import SignUpDialog from "../../components/dialog/SignUpDialog.vue";
-import {signUpUser} from "../../api";
+import {signUpUser} from "../../api/user/userApi";
 import {existsLoginId, existsUsername} from "../../api/user/userApi";
 
 export default {

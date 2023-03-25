@@ -19,7 +19,11 @@ function saveCategoryId(categoryId) {
 }
 
 function saveAccessTokenToCookie(accessToken) {
-    document.cookie = `accessToken=${accessToken}`;
+    let expirationSeconds = 1800; // 30 minutes
+    let d = new Date();
+    d.setTime(d.getTime() + (expirationSeconds * 1000));
+    let expires = "expires="+ d.toUTCString();
+    document.cookie = `accessToken=${accessToken};${expires}`;
 }
 
 function saveRefreshTokenToCookie(refreshToken) {

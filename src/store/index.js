@@ -7,7 +7,7 @@ import {
     saveAccessTokenToCookie, saveUserInfoToCookie,
     saveUsernameToCookie
 } from "../utils/cookies";
-import {signInUser} from "../api";
+import {signInUser} from "../api/user/userApi";
 
 export const store = createStore({
     state: {

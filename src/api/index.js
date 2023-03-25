@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {setInterceptors} from "./common/interceptors";
+import {setAuthInterceptors, setInterceptors} from "./common/interceptors";
 
 function createInstance(url) {
     const instance = axios.create({
@@ -9,19 +9,20 @@ function createInstance(url) {
     return setInterceptors(instance);
 }
 
-const instance = createInstance("/api");
+function createAuthInstance(url) {
+    const instance = axios.create({
+        baseURL: `${import.meta.env.VITE_APP_API_URL}${url}`,
+    });
 
-export function signUpUser(userData) {
-    return instance.post('/sign-up', userData);
+    return setAuthInterceptors(instance);
 }
 
-export function signInUser(userData) {
-    return instance.post("/sign-in", userData);
-}
+const authInstance = createAuthInstance("/api");
 
-export const user = createInstance('/api/user');
-export const category = instance;
-export const bookmark = instance;
-export const tag = instance;
-export const follow = instance;
-export const mail = createInstance('/api/mail');
+export const instance = createInstance('/api');
+export const user = createAuthInstance('/api/user');
+export const category = authInstance;
+export const bookmark = authInstance;
+export const tag = authInstance;
+export const follow = authInstance;
+export const mail = createAuthInstance('/api/mail');

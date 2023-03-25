@@ -1,12 +1,18 @@
-import {user} from "../index";
+import {instance, user} from "../index";
 
+export function signUpUser(userData) {
+    return instance.post('/sign-up', userData);
+}
 
-export function existsUsername(username) {
-    return user.get(`/username/${username}/exists`);
+export function signInUser(userData) {
+    return instance.post("/sign-in", userData);
+}
+export function existsUsername(username) {  //**
+    return instance.get(`/user/username/${username}/exists`);
 }
 
 export function existsLoginId(loginId) {
-    return user.get(`/login-id/${loginId}/exists`);
+    return instance.get(`/user/login-id/${loginId}/exists`);
 }
 
 export function getUserInfo(username) {
