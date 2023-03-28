@@ -182,7 +182,7 @@ export default {
     });
 
     watch(() => (userStore.state.username), (newValue) => {
-        myInfo.value.username = newValue;
+      myInfo.value.username = newValue;
     });
 
     onMounted(async () => {
@@ -203,16 +203,15 @@ export default {
     return {searchObj, myInfo}
   },
 
-
   methods: {
-    search() {
-      searchBookmark(this.searchObj.text, this.searchObj.condition).then((response) => {
-        if (this.searchObj.text === "") {
-          bookmarkStore.state.status = !bookmarkStore.state.status;
-        } else {
-          bookmarkStore.commit("setBookmarks", response.data.list);
-        }
-      })
+    async search() {
+      const response = await searchBookmark(this.searchObj.text, this.searchObj.condition);
+
+      if (response.data.list.length === 0 && store.state.window !== 'notResult') {
+        store.commit('setWindow', 'notResult');
+      } else {
+        bookmarkStore.commit("setBookmarks", response.data.list);
+      }
     },
 
     home() {

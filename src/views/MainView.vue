@@ -19,6 +19,10 @@
         <v-window-item class="follow-window" value="follow">
           <Follow class="follow-vue"/>
         </v-window-item>
+
+        <v-window-item class="not-search-window" value="notResult">
+          <NoSearch/>
+        </v-window-item>
       </v-main>
     </v-window>
 
@@ -38,10 +42,12 @@ import Follow from "../components/main/Follow.vue";
 import {useRoute} from "vue-router";
 import router from "../router";
 import {existsUsername} from "../api/user/userApi";
+import NotFound from "./NotFound.vue";
+import NoSearch from "../components/main/NoSearch.vue";
 
 export default {
   name: 'main',
-  components: {Follow, CategoryBar, Profile, TagBar,  Header, SideBar, Bookmark},
+  components: {NoSearch, NotFound, Follow, CategoryBar, Profile, TagBar,  Header, SideBar, Bookmark},
 
   async created() {
     const route = useRoute();

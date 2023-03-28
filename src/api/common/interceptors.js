@@ -10,6 +10,7 @@ export function setInterceptors(instance) {
             config.headers = {
                 'Content-Type': 'application/json;charset=utf-8',
             };
+
             return config;
         },
         function (error) {
@@ -43,7 +44,7 @@ export function setAuthInterceptors(axiosService) {
             config.headers.Authorization = store.state.accessToken;
             if (!getAccessTokenFromCookie()) {
                 alert("로그인 대기 유효시간이 만료되었습니다.\n다시 로그인을 시도해주시기 바랍니다.");
-                router.replace(`/sign-in`);
+                return router.replace(`/sign-in`);
             }
             return config;
         },
