@@ -166,6 +166,7 @@ export default {
         categoryStore.state.status = !categoryStore.state.status;
         favoritesStore.state.status = !favoritesStore.state.status;
         privatesStore.state.status = !privatesStore.state.status;
+        bookmarkStore.state.status = !bookmarkStore.state.status;
       } catch (error) {
         alert(error.response.data.message);
       }
