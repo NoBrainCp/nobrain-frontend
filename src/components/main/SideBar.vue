@@ -14,7 +14,6 @@
           :prepend-avatar=user.profileImage
           nav
           :title=user.username
-          :subtitle=user.email
           class="account-item"
       >
         <template v-slot:append>
@@ -425,12 +424,11 @@ export default {
   background: #03A9F4;
 }
 
-.side-bar-header {
-  /*background: white;*/
-  /*position: fixed;*/
-  /*left: 7px;*/
-  /*z-index: 1;*/
-}
+/*.side-bar-header {*/
+/*  background: white;*/
+/*  position: relative;*/
+/*  z-index: 1;*/
+/*}*/
 
 .side-bar-content {
 }
