@@ -19,6 +19,7 @@
                   label="카테고리 이름"
                   prepend-icon="mdi-rename"
                   :rules="[rules.name]"
+                  @keyup.space="handleCategoryName"
                   required></v-text-field>
             </v-col>
             <v-col cols="12">
@@ -97,6 +98,10 @@ export default {
       this.categoryDialog.name = "";
       this.categoryDialog.description = "";
       this.categoryDialog.isPublic = true;
+    },
+
+    handleCategoryName() {
+      this.categoryDialog.name = this.categoryDialog.name.replace(" ", "_");
     }
   }
 }
