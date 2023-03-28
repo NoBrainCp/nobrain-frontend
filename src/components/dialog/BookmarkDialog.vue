@@ -59,8 +59,10 @@
               clearable
               label="Tags"
               multiple
+              @keydown.enter="handleTagsChange(bookmarkDialogObj.bookmark.tags)"
               prepend-icon="mdi-tag-multiple"
               variant="solo"
+              color="blue"
           >
             <template v-slot:selection="{ attrs, item, select, selected }">
               <v-chip
@@ -87,7 +89,7 @@
           </div>
           <v-card-text class="ml-n4">
             <v-icon v-if="bookmarkDialogObj.categoryIsPublic" class="mdi mdi-alert mr-3" color="yellow"/>
-            {{bookmarkDialogObj.categoryIsPublic ? bookmarkDialogObj.publicText : ''}}
+            {{ bookmarkDialogObj.categoryIsPublic ? bookmarkDialogObj.publicText : '' }}
           </v-card-text>
 
         </v-container>
@@ -119,7 +121,7 @@ import {getUserIdFromCookie} from "../../utils/cookies";
 import {getCategoryIsPublic} from "../../api/category/categoryApi";
 import categoryDialog from "./CategoryDialog.vue";
 
-export default defineComponent ({
+export default defineComponent({
   name: 'BookmarkDialog',
   computed: {
     categoryDialog() {
@@ -188,7 +190,7 @@ export default defineComponent ({
       this.$emit('submit', this.bookmarkDialogObj.bookmark);
     },
 
-    remove (item) {
+    remove(item) {
       this.chips.splice(this.chips.indexOf(item), 1);
     },
 
@@ -196,6 +198,11 @@ export default defineComponent ({
       this.bookmarkDialogObj.dialog = false;
       this.bookmarkDialogObj.bookmark = {};
     },
+
+    handleTagsChange(tags) {
+      const filteredTags = tags.map(tag => tag.trim());
+      this.bookmarkDialogObj.bookmark.tags = Array.from(new Set(filteredTags));
+    }
   }
 })
 </script>
