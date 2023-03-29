@@ -25,17 +25,16 @@
                           id="account"
                           bg-color="white"
                           color="blue"
-                          @keydown.enter="checkDuplicationsId(loginId)"
+                          @keydown.enter="checkDuplicationId(loginId)"
                       />
                     </v-col>
                     <v-col col="12" sm="12">
                       <v-btn
-                          v-model="button"
                           id="next-btn"
                           block
                           height="50px"
                           color="blue"
-                          @click="checkDuplicationsId(loginId)"
+                          @click="checkDuplicationId(loginId)"
                           class="btn"
                       >
                         다음
@@ -61,28 +60,23 @@
   </v-container>
 </template>
 
-<script>
-import axios from "axios";
+<script setup>
 import router from "../../router";
-export default {
-  name: "ForgetPassword",
+import {ref} from "vue";
+import {existsLoginId} from "../../api/user/userApi";
 
-  data: () => ({
-    loginId: "",
-    isExistsId: false,
-    button: ""
-  }),
-  methods: {
-    async checkDuplicationsId(loginId) {
-      let result = await axios.get("/api/user/login-id/" + loginId + "/exists");
-      this.isExistsId = result.data.data;
-      if (this.isExistsId === false) {
-        alert("아이디를 확인해주세요.");
-      } else {
-         await router.push("/find-by-password/" + loginId);
-      }
-    },
-  },
+const loginId = ref("");
+const isExistsId = ref(false);
+
+const checkDuplicationId = async(loginId) => {
+  await existsLoginId(loginId).then((response) => {
+    isExistsId.value = response.data.data;
+    if (isExistsId.value) {
+      router.push(`/find-by-password/${loginId}`);
+    } else {
+      alert("아이디를 확인해주세요.");
+    }
+  })
 };
 </script>
 
