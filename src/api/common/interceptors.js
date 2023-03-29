@@ -1,6 +1,8 @@
 import {store} from "../../store";
-import {getAccessTokenFromCookie, getUsernameFromCookie} from "../../utils/cookies";
 import router from "../../router";
+import {getAccessTokenFromCookie} from "../../utils/cookies";
+import {handleError} from "./common";
+
 
 export function setInterceptors(instance) {
     // Add a request interceptor
@@ -29,7 +31,8 @@ export function setInterceptors(instance) {
         function (error) {
             // Any status codes that falls outside the range of 2xx cause this function to trigger
             // Do something with response error
-            router.go(-1);
+            handleError(error);
+            // router.go(-1);
             return Promise.reject(error);
         },
     );
@@ -39,12 +42,15 @@ export function setInterceptors(instance) {
 
 export function setAuthInterceptors(axiosService) {
     axiosService.interceptors.request.use(
-        function (config) {
+        async function (config) {
             // 요청 전
-            config.headers.Authorization = store.state.accessToken;
-            if (!getAccessTokenFromCookie()) {
-                alert("로그인 대기 유효시간이 만료되었습니다.\n다시 로그인을 시도해주시기 바랍니다.");
-                return router.replace(`/sign-in`);
+            const accessToken = getAccessTokenFromCookie();
+            // config.headers.Authorization = store.state.accessToken;
+            if (accessToken) {
+                config.headers.Authorization = accessToken;
+            } else {
+                // await router.replace(`/sign-in`);
+                // alert("로그인 대기 유효시간이 만료되었습니다.\n다시 로그인을 시도해주시기 바랍니다.");
             }
             return config;
         },
@@ -64,6 +70,7 @@ export function setAuthInterceptors(axiosService) {
             return response;
         },
         function (error) {
+            handleError(error);
             console.log("RESPONSE ERROR: " + error);
 
             return Promise.reject(error);

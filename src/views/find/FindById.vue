@@ -13,9 +13,7 @@
               <h1 class="text-center" id="main-text">No brain</h1>
               <h3 class="text-left" id="subtext">아이디 찾기</h3>
               <hr/>
-              <FindByCertifiedCard
-                  v-bind:findbyid="certifiedObj"
-              ></FindByCertifiedCard>
+              <FindByCertifiedCard/>
               <div style="padding: 20px 0"></div>
             </v-col>
           </v-row>
@@ -25,16 +23,9 @@
   </v-container>
 </template>
 
-<script>
+<script setup>
 import FindByCertifiedCard from "../../components/certifiedcard/FindByCertifiedCard.vue";
 
-export default {
-  name: "FindById",
-  components: {FindByCertifiedCard},
-  data: () => ({
-    certifiedObj: {},
-  }),
-};
 </script>
 
 <style scoped>

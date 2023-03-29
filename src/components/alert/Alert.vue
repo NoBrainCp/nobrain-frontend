@@ -8,15 +8,14 @@
   />
 </template>
 
-<script>
-export default {
-  name: "Alert",
-  props: {
-    alertObj: {
-      type: String,
-      title: String,
-      text: String,
-    }
-  },
-}
+<script setup>
+
+const props = defineProps({
+  alertObj: {
+    type: null,
+    title: String,
+    text: String,
+  }
+});
+
 </script>

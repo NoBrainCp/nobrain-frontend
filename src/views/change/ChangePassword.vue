@@ -21,12 +21,12 @@
                         prepend-inner-icon="mdi-account"
                         bg-color="white"
                         disabled
-                    > {{ this.route.params.loginId }}
+                    > {{ route.params.loginId }}
                     </v-text-field>
                   </v-col>
                   <v-col col="12" sm="10">
                     <v-text-field
-                        v-model="password"
+                        v-model="userData.password"
                         label="Password"
                         hint="숫자와 특수문자를 포함한 8글자 이상"
                         color="blue"
@@ -36,21 +36,20 @@
                   </v-col>
                   <v-col col="12" sm="10">
                     <v-text-field
-                        v-model="passwordCheck"
+                        v-model="userData.passwordCheck"
                         label="PasswordCheck"
                         bg-color="white"
                         color="blue"
                         type="password"
-                        @keydown.enter="checkPassword(password, passwordCheck)"
+                        @keydown.enter="checkPassword"
                     />
                   </v-col>
                   <v-col col="12" sm="10">
                     <v-btn
-                        v-model="button"
                         block
                         height="50px"
                         color="blue"
-                        @click="checkPassword(password, passwordCheck)"
+                        @click="checkPassword"
                         class="btn">
                       변경하기
                     </v-btn>
@@ -65,38 +64,29 @@
   </v-container>
 </template>
 
-<script>
-import axios from "axios";
-import {useRoute} from "vue-router";
+<script setup>
 import router from "../../router";
+import {useRoute} from "vue-router";
+import {ref} from "vue";
+import {changeForgotPassword} from "../../api/user/userApi";
 
-export default {
-  name: "ChangePassword",
+const route = useRoute();
+const userData = ref({
+  loginId: route.params.loginId,
+  password: "",
+  passwordCheck: "",
+});
 
-  data: () => ({
-    route: useRoute(),
-    password: "",
-    passwordCheck: "",
-    button: ""
-  }),
-
-  methods: {
-    async checkPassword(password, passwordCheck) {
-      try {
-        const result = await axios.put("/api/user/forgot-password", {
-          loginId: this.route.params.loginId,
-          password: password,
-          passwordCheck: passwordCheck
-        });
-        console.log(result);
-        alert("비밀번호 변경이 완료되었습니다.");
-        await router.push("/");
-      } catch (err) {
-        alert("비밀번호가 일치하지 않습니다.");
-      }
-    },
-  },
+const checkPassword = async() => {
+  await changeForgotPassword(userData.value).then(()=>{
+    alert("비밀번호 변경이 완료되었습니다.");
+    router.push("/");
+  }).catch((error) => {
+    console.log(error.response);
+    alert("비밀번호가 일치하지 않습니다.");
+  })
 };
+
 </script>
 
 <style scoped>
