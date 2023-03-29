@@ -1,4 +1,4 @@
-import {instance, user} from "../index";
+import {instance, mail, user} from "../index";
 
 export function signUpUser(userData) {
     return instance.post('/sign-up', userData);
@@ -29,6 +29,10 @@ export function changeName(userId, username) {
 
 export function changePassword(passwordData) {
     return user.put(`/password`,passwordData);
+}
+
+export function changeForgotPassword(userData) {
+    return instance.put(`/user/forgot-password`, userData);
 }
 
 export function changeProfileImage(profileImage) {
