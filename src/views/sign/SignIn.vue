@@ -3,7 +3,7 @@
     <v-row align-content="center"  id="all">
       <v-col cols="12" sm="12" id="col">
         <v-card id="back" class="elevation-6 mt-10">
-          <Alert v-if="isError" class="alert" v-bind:alertObj="errorObj"></Alert>
+          <Alert v-if="isError" class="alert" :alertObj="errorObj"></Alert>
           <div id="row">
             <v-col cols="12" sm="6">
               <v-card-text class="mt-15">
