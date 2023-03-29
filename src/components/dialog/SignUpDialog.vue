@@ -1,20 +1,20 @@
 <template>
   <v-dialog
-    v-model="dialog.isShow"
+    v-model="dialogObj.isShow"
     activator="parent"
     transition="dialog-top-transition"
   >
     <v-card
-      v-if="dialog.isExist"
+      v-if="dialogObj.isExist"
       class="mx-auto"
       max-width="500"
       style="width: 500px; height: 200px"
     >
       <v-card-title class="text-center" style="margin-top: 10%; color: red">
-        {{ dialog.title }}
+        {{ dialogObj.title }}
       </v-card-title>
       <v-card-actions style="margin-top: 10%">
-        <v-btn color="black" block @click="dialog.isShow = false">Close </v-btn>
+        <v-btn color="black" block @click="dialogObj.isShow = false">Close </v-btn>
       </v-card-actions>
     </v-card>
 
@@ -25,25 +25,22 @@
       style="width: 500px; height: 200px"
     >
       <v-card-title class="text-center" style="margin-top: 10%; color: #3333ff">
-        {{ dialog.title }}
+        {{ dialogObj.title }}
       </v-card-title>
       <v-card-actions style="margin-top: 10%">
-        <v-btn color="black" block @click="dialog.isShow = false">Close</v-btn>
+        <v-btn color="black" block @click="dialogObj.isShow = false">Close</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
-<script>
-export default {
-  name: "SignDialog",
-  props: {
-    title: "",
-    dialog: {
-      title: "",
-      isShow: false,
-      isExist: false,
-    },
-  },
-};
+<script setup>
+
+const props = defineProps({
+  dialogObj: {
+    title: String,
+    isShow: Boolean,
+    isExist: Boolean,
+  }
+});
 </script>
 <style></style>
