@@ -3,8 +3,9 @@
     <v-container class="text-center">
       <v-row>
         <v-img src="../src/assets/images/error-page.png"
-               class="error-img"
-               aspect-ratio="16/9"/>
+               class="justify-center error-img"
+               aspect-ratio="16/9"
+        />
       </v-row>
       <v-col class="justify-center">
         <p class="main-text">죄송합니다. 현재 찾을 수 없는 페이지를 요청 하셨습니다..</p>
@@ -34,37 +35,33 @@
   </v-app>
 </template>
 
-<script>
-import Header from "../components/main/Header.vue";
-import ErrorPage from "../components/error/ErrorPage.vue";
+<script setup>
 import router from "../router";
 import {getAccessTokenFromCookie, getUsernameFromCookie} from "../utils/cookies";
+import {ref} from "vue";
 
-export default {
-  name: "NotFound",
-  components: {ErrorPage, Header},
+const Position = ref({
+  xPosition: "",
+  yPosition: "",
+})
+const backPage = () => {
+  router.go(-2);
+}
 
-  methods: {
-    backPage() {
-      router.go(-2);
-    },
-
-    goMainPage() {
-      if (getAccessTokenFromCookie()) {
-        router.push(`/${getUsernameFromCookie()}`);
-      } else {
-        router.push(`/sign-in`);
-      }
-    }
+const goMainPage = () => {
+  if (getAccessTokenFromCookie()) {
+    router.push(`/${getUsernameFromCookie()}`);
+  } else {
+    router.push(`/sign-in`);
   }
 }
+
 </script>
 
 <style scoped>
 
 .error-img {
-  max-height: 500px;
-  max-width: 1200px;
+  background-size: cover;
 }
 
 .main-text {
