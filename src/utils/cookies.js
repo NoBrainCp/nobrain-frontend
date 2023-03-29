@@ -103,6 +103,12 @@ function deleteCookie(value) {
     document.cookie = `${value}=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
 }
 
+function clearCookie() {
+    const cookieToClear = [`userId`, `username`, `email`,`accessToken`];
+    cookieToClear.map(cookie => {
+        document.cookie = `${cookie}=;expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
+    })
+}
 
 export {
     saveUserIdToCookie,
@@ -126,4 +132,5 @@ export {
     deleteCategoryIdFromCookie,
     deleteAccessTokenFromCookie,
     deleteCookie,
+    clearCookie
 };
