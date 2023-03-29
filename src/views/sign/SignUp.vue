@@ -31,7 +31,7 @@
                         >
                           check
                           <!-- nameCheck dialog -->
-                          <SignUpDialog v-bind:dialog="dialogObj"/>
+                          <SignUpDialog :dialogObj="dialogObj"/>
                         </v-btn>
                       </v-col>
                     </v-row>
@@ -63,7 +63,7 @@
                         >
                           check
                           <!-- idCheck dialog -->
-                          <SignUpDialog v-bind:dialog="dialogObj"/>
+                          <SignUpDialog :dialogObj="dialogObj"/>
                         </v-btn>
                       </v-col>
                     </v-row>
@@ -219,100 +219,89 @@
   </v-container>
 </template>
 
-<script>
+<script setup>
 import SignUpDialog from "../../components/dialog/SignUpDialog.vue";
 import {signUpUser} from "../../api/user/userApi";
 import {existsLoginId, existsUsername} from "../../api/user/userApi";
+import {ref} from "vue";
 
-export default {
-  name: "SignUp",
-  components: {SignUpDialog},
-  data: () => ({
-    user: {
-      name: "",
-      email: "",
-      loginId: "",
-      password: "",
-      passwordCheck: "",
-      phoneNumber: "",
-      birthDate: "",
-    },
+const user = ref({
+  name: "",
+  email: "",
+  loginId: "",
+  password: "",
+  passwordCheck: "",
+  phoneNumber: "",
+  birthDate: "",
+});
 
-    rules: {
-      name: v => !!v || '닉네임은 필수 입력 항목입니다.',
-      email: v => !!v || '이메일은 필수 입력 항목입니다.',
-      loginId: v => !!v || '로그인 ID는 필수 입력 항목입니다',
-      password: v => !!v || '비밀번호는 필수 입력 항목입니다.',
-      phoneNumber: v => !!v || '핸드폰 번호는 필수 입력 항목입니다.'
-    },
+const dialogObj = ref({
+  title: "",
+  isShow: false,
+  isExist: false,
+});
 
-    dialogObj: {
-      title: "",
-      isShow: false,
-      isExist: false,
-    },
+const errorMessage = ref("");
+const isExistsName = ref("");
+const isExistsId = ref("");
+const isSubmit = ref("");
+const isError = ref("");
+const dialog = ref(false);
 
-    isExistsName: true,
-    isExistsId: true,
-    isExistsEmail: "",
-    isSubmit: "",
-    isError: "",
-    dialog: false,
-    dialogId: false,
-    dialogName: false,
-    errorMessage: "",
-  }),
+const rules= ref({
+  name: v => !!v || '닉네임은 필수 입력 항목입니다.',
+  email: v => !!v || '이메일은 필수 입력 항목입니다.',
+  loginId: v => !!v || '로그인 ID는 필수 입력 항목입니다',
+  password: v => !!v || '비밀번호는 필수 입력 항목입니다.',
+  phoneNumber: v => !!v || '핸드폰 번호는 필수 입력 항목입니다.'
+});
 
-  methods: {
-    async validateUsername(name) {
-      try {
-        const response = await existsUsername(name);
-        this.isExistsName = response.data.data;
-        this.dialogObj.isExist = response.data.data;
-
-        if (this.dialogObj.isExist) {
-          this.dialogObj.title = "이미 존재하는 닉네임 입니다.";
-        } else {
-          this.dialogObj.title = "사용 가능한 닉네임 입니다.";
-        }
-      } catch (err) {
-        this.dialogObj.isExist = true;
-        this.dialogObj.title = "가입할 수 없는 닉네임 입니다.";
-      }
-    },
-
-    async validateLoginId(loginId) {
-      try {
-        const response = await existsLoginId(loginId);
-        this.isExistsId = response.data.data;
-        this.dialogObj.isExist = response.data.data;
-
-        if (this.dialogObj.isExist) {
-          this.dialogObj.title = "이미 존재하는 아이디 입니다.";
-        } else {
-          this.dialogObj.title = "사용 가능한 아이디 입니다.";
-        }
-      } catch (err) {
-        this.dialogObj.isExist = true;
-        this.dialogObj.title = "가입할 수 없는 아이디 입니다.";
-      }
-    },
-
-    async signUp() {
-      try {
-        this.isError = 200;
-        if (this.isExistsId === false && this.isExistsName === false) {
-          this.user.birthDate = document.querySelector("#date").value;
-          const data = await signUpUser(this.user);
-          this.isSubmit = data.data.success;
-        }
-      } catch (err) {
-        this.isError = err.response.data.status;
-        this.errorMessage = err.response.data.message;
-      }
-    },
-  },
+const validateUsername = async (name) => {
+  await existsUsername(name).then((response) => {
+    isExistsName.value = response.data.data;
+    dialogObj.value.isExist = response.data.data;
+    if (dialogObj.value.isExist) {
+      dialogObj.value.title = "이미 존재하는 닉네임 입니다.";
+    } else {
+      dialogObj.value.title = "사용 가능한 닉네임 입니다.";
+    }
+  }).catch((error) => {
+    console.log(error);
+    dialogObj.value.isExist = true;
+    dialogObj.value.title = "가입할 수 없는 닉네임 입니다.";
+  });
 };
+
+const validateLoginId = async(loginId) => {
+  await existsLoginId(loginId).then((response) => {
+    isExistsId.value = response.data.data;
+    dialogObj.value.isExist = response.data.data;
+
+    if (dialogObj.value.isExist) {
+      dialogObj.value.title = "이미 존재하는 아이디 입니다.";
+    } else {
+      dialogObj.value.title = "사용 가능한 아이디 입니다.";
+    }
+  }).catch((error) => {
+    console.log(error);
+    dialogObj.value.isExist = true;
+    dialogObj.value.title = "가입할 수 없는 아이디 입니다.";
+  })
+};
+
+const signUp = async () => {
+    isError.value = 200;
+    if (!isExistsId.value && !isExistsName.value) {
+      user.value.birthDate = document.querySelector('#date').value;
+      await signUpUser(user.value).then((response) => {
+        isSubmit.value = response.data.success;
+      }).catch((error) => {
+        isError.value = error.response.data.status;
+        errorMessage.value = error.response.data.message;
+      });
+  }
+};
+
 </script>
 
 <style scoped>
