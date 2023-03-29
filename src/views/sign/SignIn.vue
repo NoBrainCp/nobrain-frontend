@@ -96,47 +96,35 @@
   </v-container>
 </template>
 
-<script>
+<script setup>
 import router from "../../router";
 import {store} from "../../store"
 import Alert from "../../components/alert/Alert.vue";
+import {ref} from "vue";
 
-export default {
-  name: "SignIn",
-  components: { Alert },
+const userData = ref({
+  loginId: "",
+  password: "",
+});
 
-  data: () => ({
-    userData: {
-      loginId: "",
-      password: "",
-    },
+const errorObj = ref({
+  type: "error",
+  title: "",
+  text: "",
+});
 
-    errorObj: {
-      type: "error",
-      title: "",
-      text: "",
-    },
+const isRememberId = ref(true);
+const isError = ref(false);
 
-    id: "",
-    password: "",
-    isRememberId: true,
-    isError: false
-  }),
-
-  methods: {
-    async signIn() {
-      try {
-        const data = await store.dispatch('signIn', this.userData);
-        //로그인 창에서 메인 화면으로 넘어갈때 히스토리 스택을 쌓지 않기위해 push -> replace 로 변경
-        await router.replace(`/${data.username}`);
-      } catch (error) {
-        this.errorObj.title="로그인 오류";
-        this.isError=true;
-      }
-    },
-  }
-}
-
+const signIn = async() => {
+  await store.dispatch('signIn', userData.value).then((response) => {
+    router.replace(`/${response.username}`);
+  }).catch((error) => {
+    console.log(error);
+    errorObj.value.title = "로그인 오류";
+    isError.value = true;
+  })
+};
 </script>
 
 <style scoped>
