@@ -29,53 +29,43 @@
   </v-app>
 </template>
 
-<script>
+<script setup>
 import SideBar from "../components/main/SideBar.vue";
 import Header from "../components/main/Header.vue";
 import CategoryBar from "../components/main/CategoryBar.vue";
 import TagBar from "../components/main/TagBar.vue";
 import Profile from "../components/main/Profile.vue";
-import {ref, watch} from "vue";
 import {store} from "../store";
 import Bookmark from "../components/main/Bookmark.vue";
 import Follow from "../components/main/Follow.vue";
-import {useRoute} from "vue-router";
 import router from "../router";
-import {existsUsername} from "../api/user/userApi";
-import NotFound from "./NotFound.vue";
 import NoSearch from "../components/main/NoSearch.vue";
+import {useRoute} from "vue-router";
+import {existsUsername} from "../api/user/userApi";
+import {onMounted, ref, watch} from "vue";
 
-export default {
-  name: 'main',
-  components: {NoSearch, NotFound, Follow, CategoryBar, Profile, TagBar,  Header, SideBar, Bookmark},
+onMounted(async () => {
+  const route = useRoute();
+  const exists = await existsUsername(route.params.username);
+  if (!exists.data.data) {
+    await router.push(`not-found`);
+  }
+})
 
-  async created() {
-    const route = useRoute();
-    const exists = await existsUsername(route.params.username);
-    if (!exists.data.data) {
-      await router.push(`not-found`);
-    }
-  },
+const route = useRoute();
+const window = ref("");
 
-  setup() {
-    const route = useRoute();
-    const windowValue = ref();
+watch(() => store.state.window, (newWindow) => {
+  window.value = newWindow;
+});
 
-    watch(() => store.state.window, (newWindow) => {
-      windowValue.value = newWindow;
-    });
-
-    watch(() => route.params.username, (newUsername) => {
-      router.push(`/${newUsername}`).then(() => {
-        window.location.reload();
-      });
-    });
-
-    return { window: windowValue };
-  },
+watch(() => route.params.username, (newUsername) => {
+  router.push(`/${newUsername}`).then(() => {
+    window.location.reload();
+  });
+});
 
 
-}
 </script>
 
 <style scoped>
