@@ -11,9 +11,9 @@
 
     <div class="side-bar-header">
       <v-list-item
-          :prepend-avatar=user.profileImage
+          :prepend-avatar=data.user.profileImage
           nav
-          :title=user.username
+          :title=data.user.username
           class="account-item"
       >
         <template v-slot:append>
@@ -44,7 +44,7 @@
 
       <div v-if="!rail" id="btn-container">
         <v-btn
-            :style="{width: buttonWidth, height: buttonHeight}"
+            :style="{width: buttonSize.buttonWidth, height: buttonSize.buttonHeight}"
             class="btn"
             color="#00BCD4"
             prepend-icon="mdi mdi-text-box-multiple"
@@ -53,7 +53,7 @@
         </v-btn>
 
         <v-btn
-            :style="{width: buttonWidth, height: buttonHeight}"
+            :style="{width: buttonSize.buttonWidth, height: buttonSize.buttonHeight}"
             v-if="isMe"
             class="btn"
             color="#009688"
@@ -63,7 +63,7 @@
         </v-btn>
         <BookmarkDialog
             :bookmarkDialogObj="bookmarkDialogObj"
-            @submit="addBookmark"/>
+            @submit="addBookmarkData"/>
       </div>
 
       <v-divider v-if="rail" class="account-divider"></v-divider>
@@ -82,7 +82,7 @@
               elevation="4"
               @click="categoryObj.dialog=true"/>
           <CategoryDialog
-              v-bind:categoryDialog="categoryObj"
+              :categoryDialog="categoryObj"
               @submit="addCategoryByUser"/>
         </div>
 
@@ -94,27 +94,28 @@
           <v-list-item-title>Favorites</v-list-item-title>
           <template v-slot:append>
             <v-badge
-                v-if="starredCount !== 0"
+                v-if="countData.starredCount !== 0"
                 color="blue"
-                :content="starredCount"
+                :content="countData.starredCount"
                 inline/>
           </template>
         </v-list-item>
-        <v-list-item @click="showPrivateBookmarks" v-if="user.username === this.myName">
+        <v-list-item @click="showPrivateBookmarks" v-if="data.user.username === myName">
           <template v-slot:prepend>
             <v-icon color="light-blue" icon="mdi mdi-eye-lock-outline"></v-icon>
           </template>
           <v-list-item-title>Private</v-list-item-title>
           <template v-slot:append>
             <v-badge
-                v-if="privateCount !== 0"
+                v-if="countData.privateCount !== 0"
                 color="blue"
-                :content="privateCount"
+                :content="countData.privateCount"
                 inline/>
           </template>
         </v-list-item>
         <v-list-item
-            v-for="(category, i) in categories"
+            v-model="categoryList"
+            v-for="(category, i) in data.categories"
             :key="i"
             :value="category"
             @click="showBookmark(category)">
@@ -137,16 +138,16 @@
   </v-navigation-drawer>
 </template>
 
-<script>
+<script setup>
 import {categoryStore} from "../../store/category/category";
 import router from "../../router";
 import CategoryDialog from "../dialog/CategoryDialog.vue";
 import BookmarkDialog from "../dialog/BookmarkDialog.vue";
 import {getUserInfo} from "../../api/user/userApi";
-import {onMounted, reactive, toRefs, watch} from "vue";
+import {onMounted, reactive, ref, toRefs, watch} from "vue";
 import {useRoute} from "vue-router";
 import {addCategory, getCategories} from "../../api/category/categoryApi";
-import {deleteAccessTokenFromCookie, deleteCategoryIdFromCookie, getUsernameFromCookie} from "../../utils/cookies";
+import {getUsernameFromCookie} from "../../utils/cookies";
 import {addBookmark, getPrivateBookmarksCount, getStarredBookmarksCount} from "../../api/bookmark/bookmarkApi";
 import {store} from "../../store/index"
 import {bookmarkStore} from "../../store/bookmark/bookmark";
@@ -156,274 +157,254 @@ import {followAndUnfollow, getFollowCount, isFollow} from "../../api/follow/foll
 import {userStore} from "../../store/user/user";
 import {favoritesStore} from "../../store/favorites/favorites";
 import {privatesStore} from "../../store/privates/privates";
+import bookmarkDialog from "../dialog/BookmarkDialog.vue";
 
-export default {
-  name: 'SideBar',
-  components: {BookmarkDialog, CategoryDialog},
+const route = useRoute();
+const myName = ref(getUsernameFromCookie());
+const username = ref(route.params.username);
+const drawer = ref(true);
+const rail = ref(false);
 
-  data: () => ({
-    route: useRoute(),
-    follow: false,
-    drawer: true,
-    rail: false,
-    myName: getUsernameFromCookie(),
-    // activeIndex: null,
+// activeIndex: null,
+const categoryObj = ref({
+  dialog: false,
+  title: "카테고리 추가",
+  btnName: "추가",
+  isPublic: true
+});
+const categoryList = ref("");
 
-    categoryObj: {
-      title: "카테고리 추가",
-      btnName: "추가",
-      dialog: false,
-      isPublic: true
-    },
+const bookmarkDialogObj = ref({
+  dialog: false,
+  dialogTitle: "북마크 추가",
+  btnName: "추가",
+  categoryNames: [],
 
-    bookmarkDialogObj: {
-      dialogTitle: "북마크 추가",
-      btnName: "추가",
-      dialog: false,
-      categoryNames: [],
-
-      bookmark: {},
-    },
-  }),
-
-  setup() {
-    const route = useRoute();
-    const username = route.params.username;
-    const data = reactive({
-      isMe: username === getUsernameFromCookie(),
-      starredCount: '',
-      privateCount: '',
-      buttonWidth: '150px',
-      buttonHeight: '75px',
-
-      user: {},
-      profileNoImage: "src/assets/images/nobrain-no-image.png",
-      categories: [],
-
-      followObj: {
-        followerCount: 0,
-        followingCount: 0,
-        follow: Boolean,
-
-        followButton: {
-          text: '',
-          color: String,
-          icon: String,
-        }
-      },
-    });
-
-    const updateCategories = async () => {
-      try {
-        const response = await getCategories(username);
-        data.categories = response.data.list;
-      } catch (error) {
-        alert(error.response.data.message);
-      }
-    };
-
-    const showFollowCount = async () => {
-      try {
-        const followCount = await getFollowCount(username);
-        data.followObj.followerCount = followCount.data.data.followerCnt;
-        data.followObj.followingCount = followCount.data.data.followingCnt;
-      } catch (error) {
-        alert(error.response.data.message);
-      }
-    };
-
-    const addCategoryByUser = (category) => {
-      addCategory(getUsernameFromCookie(), category).then(() => {
-        categoryStore.state.status = !categoryStore.state.status;
-      }).catch(() => {
-        alert("빈 문자열 혹은 동일한 카테고리 이름을 생성 할 수 없습니다.")
-      });
-    };
-
-    const clickFollowButton = (isFollow) => {
-      const followButton = data.followObj.followButton;
-      followButton.text = isFollow ? "팔로우 취소" : "팔로우";
-      followButton.color = isFollow ? "#E53935" : "#03A9F4";
-      followButton.icon = isFollow ? "mdi mdi-account-multiple-minus" : "mdi mdi-account-multiple-plus";
-      showFollowCount();
-    };
-
-    async function getStarredCount() {
-      const starredCnt = await getStarredBookmarksCount(username);
-      data.starredCount = starredCnt.data.data;
-    }
-
-    async function getPrivateCount() {
-      const privateCnt = await getPrivateBookmarksCount(username);
-      data.privateCount = privateCnt.data.data;
-    }
-
-    watch(() => (categoryStore.state.status), updateCategories);
-    watch(() => (bookmarkStore.state.status), updateCategories);
-
-    watch(() => (userStore.state.username), (newValue) => {
-      data.user.username = newValue;
-    });
-
-    watch(() => favoritesStore.state.status, getStarredCount);
-    watch(() => privatesStore.state.status, getPrivateCount);
-
-    watch(() => (userStore.state.profileImage), (newValue) => {
-      data.user.profileImage = newValue;
-    });
-
-    watch(() => data.followObj.follow, (newValue) => {
-      clickFollowButton(newValue);
-    });
-
-    watch(() => followStore.state.status, (newValue) => {
-      showFollowCount();
-    })
-
-    onMounted(() => {
-      if (!data.isMe) {
-        data.buttonWidth = '305px';
-        data.buttonHeight = '55px';
-      }
-
-    });
-
-    onMounted(async () => {
-      try {
-        const noProfileImage = "src/assets/images/user-no-image.png";
-        const userInfo = await getUserInfo(username);
-        data.user = userInfo.data.data;
-
-        if (data.user.profileImage === null) {
-          data.user.profileImage = noProfileImage;
-        }
-
-        const follow = await isFollow(data.user.userId);
-        data.followObj.follow = follow.data.data;
-
-        const categories = await getCategories(username);
-        data.categories = categories.data.list;
-
-        if (!data.isMe) {
-          data.buttonWidth = '305px';
-          data.buttonHeight = '55px';
-        }
-        // const category = route.params.category;
-        // data.activeIndex = data.categories.findIndex(c => c.name === category);
-        // console.log(data.activeIndex);
-
-        const followCount = await getFollowCount(username);
-        data.followObj.followerCount = followCount.data.data.followerCnt;
-        data.followObj.followingCount = followCount.data.data.followingCnt;
-
-        const starredCnt = await getStarredBookmarksCount(username);
-        data.starredCount = starredCnt.data.data;
-
-        const privateCnt = await getPrivateCount(username);
-        data.privateCount = privateCnt.data.data;
-
-      } catch (error) {
-        console.log(error);
-      }
-    });
-
-    return {
-      addCategoryByUser,
-      ...toRefs(data)
-    };
+  bookmark: {
+    url: "",
+    title: "",
+    description: "",
+    categoryName: "",
+    tags: [],
+    tagList: [],
+    isPublic: false,
+    isStarred: false,
   },
+});
 
-  methods: {
-    async clickAddBookmarkBtn() {
-      try {
-        if (this.categories.length === 0) {
-          alert("카테고리를 먼저 추가해주세요.");
-          return;
-        }
-        const categoryName = this.route.params.category;
-        this.bookmarkDialogObj.dialog = true;
-        this.bookmarkDialogObj.bookmark.categoryName = categoryName;
-        this.bookmarkDialogObj.bookmark.isPublic = true;
+const isMe = ref(username.value === getUsernameFromCookie());
+const countData = ref({
+  starredCount: '',
+  privateCount: '',
+});
 
-        const [categoriesResponse, tagsResponse] = await Promise.all([
-          getCategories(getUsernameFromCookie()),
-          getTags(getUsernameFromCookie())
-        ]);
-        this.bookmarkDialogObj.categoryNames = categoriesResponse.data.list.map(c => c.name);
-        this.bookmarkDialogObj.bookmark.tagList = tagsResponse.data.list.map(t => t.tag.name);
+const buttonSize = ref({
+  buttonWidth: '150px',
+  buttonHeight: '75px',
+});
 
-      } catch (error) {
-        console.log(error);
-      }
-    },
+const data = reactive({
+  user: {},
+  categories: [],
+});
 
-    async addBookmark(bookmark) {
-      const username = getUsernameFromCookie();
-      try {
-        await addBookmark(username, bookmark);
-        this.bookmarkDialogInit();
-        await router.push(`/${username}/${bookmark.categoryName}`);
-        categoryStore.state.status = !categoryStore.state.status;
-        bookmarkStore.state.status = !bookmarkStore.state.status;
-        privatesStore.state.status = !privatesStore.state.status;
-      } catch (error) {
-        alert(error.response.data.message);
-        console.log(error);
-      }
-    },
+const followObj = ref({
+  followerCount: 0,
+  followingCount: 0,
+  follow: Boolean,
 
-    clickFollower() {
-      followStore.commit('setFollowWindow', 'follower');
-      store.commit('setWindow', 'follow');
-    },
-
-    clickFollowing() {
-      followStore.commit('setFollowWindow', 'following');
-      store.commit('setWindow', 'follow');
-    },
-
-    async showBookmark(category) {
-      const username = this.route.params.username;
-      await router.push(`/${username}/${category.name}`);
-    },
-
-    async showAllBookmarks() {
-      const username = this.route.params.username;
-      await router.push(`/${username}`);
-      bookmarkStore.state.status = !bookmarkStore.state.status;
-    },
-
-    async showStarredBookmarks() {
-      const username = this.route.params.username;
-      await router.push(`/${username}/starred`);
-    },
-
-    async showPrivateBookmarks() {
-      const username = this.route.params.username;
-      await router.push((`/${username}/private`));
-    },
-
-    async clickFollow() {
-      await followAndUnfollow(this.user.userId);
-      this.followObj.follow = !this.followObj.follow;
-    },
-
-    bookmarkDialogInit() {
-      this.bookmarkDialogObj.bookmark = {
-        url: "",
-        title: "",
-        description: "",
-        tags: []
-      };
-    }
+  followButton: {
+    text: '',
+    color: String,
+    icon: String,
   }
-}
+});
+
+const updateCategories = async () => {
+  await getCategories(username.value).then((response) => {
+    data.categories = response.data.list;
+  }).catch((error) => {
+    console.log(error);
+    alert("카테고리에 대한 정보를 가져올 수 없습니다.");
+  })
+};
+
+const showFollowCount = async () => {
+  await getFollowCount(username.value).then((followCount) => {
+    followObj.value.followerCount = followCount.data.data.followerCnt;
+    followObj.value.followingCount = followCount.data.data.followingCnt;
+  }).catch((error) => {
+    console.log(error);
+    alert("팔로우/팔로잉 인원 수에 대한 정보를 가져올 수 없습니다.");
+  })
+};
+
+const addCategoryByUser = async (category) => {
+  await addCategory(getUsernameFromCookie(), category).then(() => {
+    categoryStore.state.status = !categoryStore.state.status;
+  }).catch(() => {
+    alert("빈 문자열 혹은 동일한 카테고리 이름을 생성 할 수 없습니다.")
+  });
+};
+
+const clickFollowButton = async (isFollow) => {
+  const followButton = followObj.value.followButton;
+  followButton.text = isFollow ? "팔로우 취소" : "팔로우";
+  followButton.color = isFollow ? "#E53935" : "#03A9F4";
+  followButton.icon = isFollow ? "mdi mdi-account-multiple-minus" : "mdi mdi-account-multiple-plus";
+  await showFollowCount();
+};
+
+const getStarredCount = async () => {
+  await getStarredBookmarksCount(username.value).then((starredCnt) => {
+    countData.value.starredCount = starredCnt.data.data;
+  }).catch((error) => {
+    console.log(error);
+    alert("즐겨찾기 북마크 개수에 대한 정보를 가져올 수 없습니다.");
+  })
+};
+
+const getPrivateCount = async () => {
+  await getPrivateBookmarksCount(username.value).then((privateCnt) => {
+    countData.value.privateCount = privateCnt.data.data;
+  }).catch((error) => {
+    console.log(error);
+    alert("비공개 북마크 개수에 대한 정보를 가져올 수 없습니다.");
+  })
+};
+
+watch(() => categoryStore.state.status, updateCategories);
+watch(() => bookmarkStore.state.status, updateCategories);
+watch(() => favoritesStore.state.status, getStarredCount);
+watch(() => privatesStore.state.status, getPrivateCount);
+watch(() => followStore.state.status, showFollowCount);
+watch(() => (userStore.state.username), (newValue) => {
+  data.user.username = newValue;
+});
+
+watch(() => (userStore.state.profileImage), (newValue) => {
+  data.user.profileImage = newValue;
+});
+
+//t
+watch(() => followObj.value.follow, (newValue) => {
+  console.log(newValue);
+  clickFollowButton(newValue);
+});
+
+onMounted(async () => {
+  if (!isMe.value) {
+    buttonSize.value.buttonWidth = '305px';
+    buttonSize.value.buttonHeight = '55px';
+  }
+  const noProfileImage = "src/assets/images/user-no-image.png";
+  await getUserInfo(username.value).then((userInfo) => {
+    data.user = userInfo.data.data;
+
+    if (data.user.profileImage === null) {
+      data.user.profileImage = noProfileImage;
+    }
+  }).catch((error) => {
+    console.log(error);
+    alert("유저 정보를 가져올 수 없습니다.");
+  });
+  await isFollow(data.user.userId).then((follow) => {
+    followObj.value.follow = follow.data.data;
+  }).catch((error) => {
+    console.log(error);
+    alert("팔로우 정보를 가져올 수 없습니다.");
+  });
+  await updateCategories();
+  await showFollowCount();
+  await getStarredCount();
+  await getPrivateCount();
+
+  // const category = route.params.category;
+  // data.activeIndex = data.categories.findIndex(c => c.name === category);
+  // console.log(data.activeIndex);
+});
+
+const clickAddBookmarkBtn = async () => {
+  if (data.categories.length === 0) {
+    alert("카테고리를 먼저 추가해주세요.");
+    return;
+  }
+  const categoryName = route.params.category;
+  bookmarkDialogObj.value.dialog = true;
+  bookmarkDialogObj.value.bookmark.categoryName = categoryName;
+  bookmarkDialogObj.value.bookmark.isPublic = true;
+
+  const [categoriesResponse, tagsResponse] = await Promise.all([
+    getCategories(username.value),
+    getTags(username.value),
+  ]);
+  bookmarkDialogObj.value.categoryNames = categoriesResponse.data.list.map(c => c.name);
+  bookmarkDialogObj.value.bookmark.tagList = tagsResponse.data.list.map(t => t.tag.name);
+};
+
+const addBookmarkData = async (bookmark) => {
+  await addBookmark(username.value, bookmark).then(() => {
+    bookmarkDialogInit();
+    router.push(`/${username.value}/${bookmark.categoryName}`);
+    categoryStore.state.status = !categoryStore.state.status;
+    bookmarkStore.state.status = !bookmarkStore.state.status;
+    privatesStore.state.status = !privatesStore.state.status;
+  }).catch((error) => {
+    console.log(error);
+    alert("북마크를 추가할 수 없습니다.");
+  })
+};
+
+const clickFollower = () => {
+  followStore.commit('setFollowWindow', 'follower');
+  store.commit('setWindow', 'follow');
+};
+
+const clickFollowing = () => {
+  followStore.commit('setFollowWindow', 'following');
+  store.commit('setWindow', 'follow');
+};
+
+const showBookmark = (category) => {
+  router.push(`/${username.value}/${category.name}`);
+};
+
+const showAllBookmarks = () => {
+  router.push(`/${username.value}`);
+  bookmarkStore.state.status = !bookmarkStore.state.status;
+};
+
+const showStarredBookmarks = () => {
+  router.push(`/${username.value}/starred`);
+};
+
+const showPrivateBookmarks = () => {
+  router.push((`/${username.value}/private`));
+};
+
+const clickFollow = async () => {
+  await followAndUnfollow(data.user.userId).then(() => {
+    followObj.value.follow = !followObj.value.follow;
+  }).catch((error) => {
+    console.log(error);
+    alert("팔로우 버튼에 문제가 발생하였습니다.");
+  })
+};
+
+const bookmarkDialogInit = () => {
+  bookmarkDialogObj.value.bookmark = {
+    url: "",
+    title: "",
+    description: "",
+    tags: []
+  }
+};
 </script>
 
 <style scoped>
-.category-active {
-  background: #03A9F4;
-}
+/*.category-active {*/
+/*  background: #03A9F4;*/
+/*}*/
 
 /*.side-bar-header {*/
 /*  background: white;*/
