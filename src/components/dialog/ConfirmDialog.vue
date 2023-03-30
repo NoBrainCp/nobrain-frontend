@@ -16,7 +16,7 @@
         <v-btn
             color="blue"
             variant="text"
-            @click="confirmObj.dialog=false">
+            @click="cancel">
           취소
         </v-btn>
         <v-btn
@@ -30,28 +30,26 @@
   </v-dialog>
 </template>
 
-<script>
-export default {
-  name: 'ConfirmDialog',
+<script setup>
 
-  props: {
-    confirmObj: {
-      title: "",
-      text: "",
-      dialog: Boolean,
-      buttonText: String,
-    }
-  },
-
-  methods: {
-    submit() {
-      this.confirmObj.dialog = false;
-      this.$emit('delete');
-    }
+const props = defineProps({
+  confirmObj: {
+    dialog: Boolean,
+    title: String,
+    text: String,
+    buttonText: String,
   }
-}
+});
+
+const emit = defineEmits(['delete']);
+
+const cancel = () => {
+  props.dialog=false;
+};
+
+const submit = () => {
+  props.dialog = false;
+  emit('delete');
+};
+
 </script>
-
-<style scoped>
-
-</style>
