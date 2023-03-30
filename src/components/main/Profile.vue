@@ -288,6 +288,8 @@
 import router from "../../router";
 import {userStore} from "../../store/user/user";
 import ImageFileDialog from "../dialog/ImageFileDialog.vue";
+import AuthDialog from "../dialog/AuthDialog.vue";
+import ConfirmDialog from "../dialog/ConfirmDialog.vue";
 import {
   changeName,
   changePassword,
@@ -295,7 +297,7 @@ import {
   getMyProfile
 } from "../../api/user/userApi";
 import {
-  deleteAccessTokenFromCookie,
+  clearCookie,
   getEmailFromCookie,
   getUserIdFromCookie,
   getUsernameFromCookie,
@@ -303,8 +305,6 @@ import {
 } from "../../utils/cookies";
 import {onMounted, ref, watch} from "vue";
 import {sendAuthenticationMail, sendEmailAndCode} from "../../api/mail/mailApi";
-import AuthDialog from "../dialog/AuthDialog.vue";
-import ConfirmDialog from "../dialog/ConfirmDialog.vue";
 
 const panel = ref(['name']);
 const buttonState = ref('Open All');
@@ -407,6 +407,7 @@ const updateProfileImg = async () => {
 };
 
 //이미지 삭제 로직 추가해야함
+//watchEffect로 delete 메서드 감지?
 const deleteProfileImg = () => {
   myInfo.value.urlProfileImage = "src/assets/images/nobrain-no-image.png";
 }
@@ -449,7 +450,7 @@ const validateUsername = () => {
 const deleteAccount = async () => {
   await deactivateAccount(getUserIdFromCookie()).then(() => {
     alert("회원 탈퇴가 완료되었습니다.");
-    deleteAccessTokenFromCookie();
+    clearCookie();
     router.replace('/sign-in');
   }).catch((error) => {
     console.log(error);
