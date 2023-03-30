@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-col v-for="bookmark in data.bookmarks"
+    <v-col v-for="bookmark in bookmarks"
            :key="bookmark.id"
            cols="auto">
       <v-hover v-slot="{ isHovering, props }">
@@ -27,7 +27,7 @@
           </v-img>
           <div class="card-header">
             <v-card-subtitle class="mt-3">{{ bookmark.createdAt }}</v-card-subtitle>
-            <v-col v-if="data.isMe" class="icon-container">
+            <v-col v-if="isMe" class="icon-container">
               <v-icon
                   size="27"
                   :color="bookmark.public ? 'indigo' : 'green-darken-3'"
@@ -96,16 +96,18 @@
       @delete="deleteBookmark"/>
   <BookmarkDialog
       :bookmarkDialogObj="bookmarkDialogObj"
-      @submit="updateBookmark"/>
+      @submit="updateBookmarkData"/>
 </template>
 
-<script>
+<script setup>
 import router from "../../router";
-import {useRoute} from "vue-router";
-import {onMounted, reactive, watch} from "vue";
 import {bookmarkStore} from "../../store/bookmark/bookmark";
+import {favoritesStore} from "../../store/favorites/favorites";
+import {privatesStore} from "../../store/privates/privates";
 import ConfirmDialog from "../dialog/ConfirmDialog.vue";
 import BookmarkDialog from "../dialog/BookmarkDialog.vue";
+import {useRoute} from "vue-router";
+import {onMounted, ref, watch} from "vue";
 import {
   deleteBookmarkById,
   getAllBookmarks,
@@ -118,149 +120,163 @@ import {
 import {getCategories, getCategoryByBookmarkId} from "../../api/category/categoryApi";
 import {getTags, getTagsByBookmarkId} from "../../api/tag/tagApi";
 import {getUsernameFromCookie} from "../../utils/cookies";
-import {favoritesStore} from "../../store/favorites/favorites";
-import {privatesStore} from "../../store/privates/privates";
 
-export default {
-  name: 'Bookmark',
-  components: {BookmarkDialog, ConfirmDialog},
 
-  data: () => ({
-    bookmarkId: "",
-    imagePath: [
-      {noImage: "../assets/images/nobrain-no-image.png"}
-    ],
+const bookmarkId = ref("");
 
-    confirmObj: {
-      title: "북마크 삭제",
-      text: "정말 북마크를 삭제하시겠습니까?",
-      dialog: false,
-      buttonText: "삭제",
-      bookmarkId: "",
-    },
+const confirmObj = ref({
+  dialog: false,
+  title: "북마크 삭제",
+  text: "정말 북마크를 삭제하시겠습니까?",
+  buttonText: "삭제",
+});
 
-    bookmarkDialogObj: {
-      dialogTitle: "북마크 수정",
-      btnName: "수정",
-      dialog: false,
-      categoryNames: [],
+const bookmarkDialogObj = ref({
+  dialog: false,
+  dialogTitle: "북마크 수정",
+  btnName: "수정",
+  categoryNames: [],
 
-      bookmark: {},
-    }
-  }),
-
-  setup() {
-    const route = useRoute();
-    const username = route.params.username;
-    const data = reactive({
-      bookmarks: [],
-      isMe: username === getUsernameFromCookie(),
-    });
-
-    watch([() => route.params, () => bookmarkStore.state.status], loadData);
-    watch(() => bookmarkStore.state.bookmarks, () => {
-      if (Object.keys(bookmarkStore.state.bookmarks).length === 0) {
-        loadData();
-      } else {
-        data.bookmarks = bookmarkStore.state.bookmarks;
-      }
-    });
-
-    async function loadData() {
-      const username = route.params.username;
-      const categoryName = route.params.category;
-
-      if (categoryName === undefined) {
-        data.bookmarks = await getAllBookmarks(username).then((res) => res.data.list);
-      } else if (categoryName === 'starred') {
-        data.bookmarks = await getStarredBookmarks(username).then((res) => res.data.list);
-      } else if (categoryName === 'private') {
-        data.bookmarks = await getPrivateBookmarks(username).then((res) => res.data.list);
-      } else {
-        data.bookmarks = await getBookmarks(username, categoryName).then((res) => res.data.list);
-      }
-    }
-
-    onMounted(loadData);
-
-    return {data};
+  bookmark: {
+    url: "",
+    title: "",
+    description: "",
+    categoryName: "",
+    tags: [],
+    tagList: [],
+    isPublic: false,
+    isStarred: false,
   },
+});
 
-  methods: {
+const route = useRoute();
+const username = ref(route.params.username);
+const isMe = ref(username.value === getUsernameFromCookie());
+const bookmarks = ref([]);
 
-    async clickEditBookmarkBtn(bookmark, bookmarkId) {
-      bookmarkStore.state.status = !bookmarkStore.state.status;
-      const [categoryListResp, categoryResp, tagsResp, allTagsResp] = await Promise.all([
-        getCategories(getUsernameFromCookie()),
-        getCategoryByBookmarkId(bookmarkId),
-        getTagsByBookmarkId(getUsernameFromCookie(), bookmarkId),
-        getTags(getUsernameFromCookie())
-      ]);
-      this.bookmarkDialogObj.bookmark = bookmark;
-      this.bookmarkDialogObj.dialog = true;
-      this.bookmarkDialogObj.bookmark.categoryName = categoryResp.data.data.name;
-      this.bookmarkDialogObj.bookmark.isPublic = bookmark.public;
 
-      this.bookmarkDialogObj.categoryNames = categoryListResp.data.list.map(({name}) => name);
-      this.bookmarkDialogObj.originCategoryName = categoryResp.data.data;
-      this.bookmarkDialogObj.bookmark.tags = tagsResp.data.list.map(({tagName}) => tagName);
-      this.bookmarkDialogObj.bookmark.tagList = allTagsResp.data.list.map(({tag}) => tag.name);
-
-    },
-
-    async updateBookmark(bookmark) {
-      try {
-        const username = getUsernameFromCookie();
-        const bookmarkId = this.bookmarkDialogObj.bookmark.id;
-        await updateBookmark(bookmarkId, bookmark);
-        await router.push(`/${username}/${bookmark.categoryName}`);
-        bookmarkStore.state.status = !bookmarkStore.state.status;
-        privatesStore.state.status = !privatesStore.state.status;
-      } catch (error) {
-        console.log(error);
-      }
-    },
-
-    clickDeleteBookmarkBtn(bookmarkId) {
-      this.bookmarkId = bookmarkId;
-      this.confirmObj.dialog = true;
-    },
-
-    async deleteBookmark() {
-      console.log(this.bookmarkId);
-      await deleteBookmarkById(this.bookmarkId);
-      const index = this.data.bookmarks.findIndex(bookmark => bookmark.id === this.bookmarkId);
-
-      if (index !== -1) {
-        this.data.bookmarks.splice(index, 1);
-      }
-      privatesStore.state.status = !privatesStore.state.status;
-      favoritesStore.state.status = !favoritesStore.state.status;
-      bookmarkStore.state.status = !bookmarkStore.state.status;
-    },
-
-    async clickStar(bookmark) {
-      bookmark.starred = !bookmark.starred;
-      await updateStarred(bookmark.id, bookmark.starred);
-      favoritesStore.state.status = !favoritesStore.state.status;
-    },
-
-    async clickLock(bookmark) {
-      try {
-        const response = await getCategoryByBookmarkId(bookmark.id);
-          if (!response.data.data.public) {
-            alert("카테고리가 비공개로 설정되어 있습니다.");
-          } else {
-            bookmark.public = !bookmark.public;
-            await updatePublic(bookmark.id, bookmark.public);
-            privatesStore.state.status = !privatesStore.state.status;
-          }
-      } catch (error) {
-        console.log(error.response.data);
-      }
-    },
+const loadData = async () => {
+  const username = route.params.username;
+  const categoryName = route.params.category;
+  if (!categoryName) {
+    await getAllBookmarks(username).then((response) => {
+      bookmarks.value = response.data.list;
+    }).catch((error) => {
+      console.log(error);
+      alert("모든 북마크 조회 데이터를 가져올 수 없습니다.");
+    });
+  } else if (categoryName === 'starred') {
+    await getStarredBookmarks(username).then((response) => {
+      bookmarks.value = response.data.list;
+    }).catch((error) => {
+      console.log(error);
+      alert("즐겨찾기 북마크 조회 데이터를 가져올 수 없습니다.");
+    });
+  } else if (categoryName === 'private') {
+    await getPrivateBookmarks(username).then((response) => {
+      bookmarks.value = response.data.list;
+    }).catch((error) => {
+      console.log(error);
+      alert("비공개 북마크 조회 데이터를 가져올 수 없습니다.");
+    });
+  } else {
+    await getBookmarks(username, categoryName).then((response) => {
+      bookmarks.value = response.data.list;
+    }).catch((error) => {
+      console.log(error);
+      alert("카테고리 북마크 조회 데이터를 가져올 수 없습니다.");
+    });
   }
-}
+};
+watch([() => route.params, () => bookmarkStore.state.status], loadData);
+watch(() => bookmarkStore.state.bookmarks, () => {
+  if (Object.keys(bookmarkStore.state.bookmarks).length === 0) {
+    loadData();
+  } else {
+    bookmarks.value = bookmarkStore.state.bookmarks;
+  }
+});
+
+onMounted(() => {
+  loadData();
+});
+
+const clickEditBookmarkBtn = async (bookmark, bookmarkId) => {
+  bookmarkStore.state.status = !bookmarkStore.state.status;
+  const [categoryListResp, categoryResp, tagsResp, allTagsResp] = await Promise.all([
+    getCategories(getUsernameFromCookie()),
+    getCategoryByBookmarkId(bookmarkId),
+    getTagsByBookmarkId(getUsernameFromCookie(), bookmarkId),
+    getTags(getUsernameFromCookie())
+  ]);
+  bookmarkDialogObj.value.bookmark = bookmark;
+  bookmarkDialogObj.value.dialog = true;
+  bookmarkDialogObj.value.bookmark.categoryName = categoryResp.data.data.name;
+  bookmarkDialogObj.value.bookmark.isPublic = bookmark.public;
+
+  bookmarkDialogObj.value.categoryNames = categoryListResp.data.list.map(({name}) => name);
+  bookmarkDialogObj.value.bookmark.tags = tagsResp.data.list.map(({tagName}) => tagName);
+  bookmarkDialogObj.value.bookmark.tagList = allTagsResp.data.list.map(({tag}) => tag.name);
+};
+
+const updateBookmarkData = async (bookmark) => {
+  const bookmarkId = bookmarkDialogObj.value.bookmark.id;
+  await updateBookmark(bookmarkId, bookmark).then(() => {
+    router.push(`/${username.value}/${bookmark.categoryName}`);
+    bookmarkStore.state.status = !bookmarkStore.state.status;
+    privatesStore.state.status = !privatesStore.state.status;
+  }).catch((error) => {
+    console.log(error);
+    alert("북마크 업데이트에 문제가 발생하였습니다.");
+  })
+};
+
+const clickDeleteBookmarkBtn = (bookmarkId) => {
+  bookmarkId.value = bookmarkId;
+  confirmObj.value.dialog = true;
+};
+
+const deleteBookmark = async () => {
+  await deleteBookmarkById(bookmarkId.value);
+  const index = bookmarks.value.findIndex(bookmark => bookmark.id === bookmarkId.value);
+
+  if (index !== -1) {
+    bookmarks.value.splice(index, 1);
+  }
+  privatesStore.state.status = !privatesStore.state.status;
+  favoritesStore.state.status = !favoritesStore.state.status;
+  bookmarkStore.state.status = !bookmarkStore.state.status;
+};
+
+const clickStar = async (bookmark) => {
+  bookmark.starred = !bookmark.starred;
+  await updateStarred(bookmark.id, bookmark.starred).then(() => {
+    favoritesStore.state.status = !favoritesStore.state.status;
+  }).catch((error) => {
+    console.log(error);
+    alert("즐겨찾기 등록에 문제가 발생하였습니다.");
+  })
+};
+
+const clickLock = async (bookmark) => {
+  await getCategoryByBookmarkId(bookmark.id).then((response) => {
+    if (!response.data.data.public) {
+      alert("카테고리가 비공개로 설정되어 있습니다.");
+    } else {
+      bookmark.public = !bookmark.public;
+      updatePublic(bookmark.id, bookmark.public).then(() => {
+        privatesStore.state.status = !privatesStore.state.status;
+      }).catch((error) => {
+        console.log(error);
+        alert("북마크 비공개 등록에 문제가 발생했습니다.");
+      })
+    }
+  }).catch((error) => {
+    console.log(error);
+    alert("해당 북마크의 카테고리 정보 조회에 문제가 발생했습니다.");
+  })
+};
+
 </script>
 
 <style scoped>
