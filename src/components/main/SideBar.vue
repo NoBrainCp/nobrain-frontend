@@ -367,6 +367,7 @@ export default {
         bookmarkStore.state.status = !bookmarkStore.state.status;
         privatesStore.state.status = !privatesStore.state.status;
       } catch (error) {
+        alert(error.response.data.message);
         console.log(error);
       }
     },

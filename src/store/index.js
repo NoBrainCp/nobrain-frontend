@@ -58,10 +58,14 @@ export const store = createStore({
 
     actions: {
         async signIn({commit} , userData) {
-            const { data } = await signInUser(userData);
-            commit('setUserInfo', data.data);
-            saveUserInfoToCookie(data.data);
-            return data.data;
+            try {
+                const { data } = await signInUser(userData);
+                commit('setUserInfo', data.data);
+                saveUserInfoToCookie(data.data);
+                return data.data;
+            } catch (error) {
+                throw error;
+            }
         }
     }
 })

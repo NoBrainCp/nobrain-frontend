@@ -47,6 +47,17 @@
                     >
                       Login
                     </v-btn>
+                    <div class="btn-line"></div>
+                    <v-btn color="blue"
+                           class="google-login"
+                           outlined
+                           href="http://localhost:8089/oauth2/authorization/google">
+                      <v-icon size="20"
+                              class="mr-3">
+                        mdi-google
+                      </v-icon>
+                      Sign in with Google
+                    </v-btn>
                     <v-col cols="12" sm="10">
                       <a
                           class="caption text"
@@ -101,6 +112,7 @@ import router from "../../router";
 import {store} from "../../store"
 import Alert from "../../components/alert/Alert.vue";
 import {ref} from "vue";
+import {SignInWithGoogle} from "../../api/oauth/OAuthApi";
 
 const userData = ref({
   loginId: "",
@@ -123,6 +135,14 @@ const signIn = async() => {
     console.log(error);
     errorObj.value.title = "로그인 오류";
     isError.value = true;
+  })
+};
+
+const loginWithGoogle = async () => {
+  await SignInWithGoogle().then((response) => {
+    console.log(response);
+  }).catch((error) => {
+    console.log(error);
   })
 };
 </script>
@@ -158,6 +178,26 @@ const signIn = async() => {
   left: 0;
   z-index: -1;
   opacity: 0.5;
+}
+
+.btn-line {
+  margin: 17px 0 10px 0;
+  background-image: repeating-linear-gradient(to right, transparent, transparent 10px, black 10px, black 20px);
+  height: 1px;
+  border-spacing: 10px;
+  text-align: center;
+}
+
+.google-login {
+  width: 100%;
+  height: 40px;
+  border-color: #db4437; /* Google red */
+  color: #db4437; /* Google red */
+}
+
+.google-login:hover {
+  color: white;
+  background-color: #db4437; /* Google red */
 }
 
 .v-text-field label {

@@ -69,7 +69,6 @@ router.beforeEach(async (to, from, next) => {
      * next: to에서 지정한 url로 이동하기 위해 꼭 호출해야 하는 함수
      * next() 가 호출되기 전까지 화면 전환되지 않음
      */
-    console.log(to);
     if (!to.params.username && !to.fullPath.includes('not')) {
         if (getAccessTokenFromCookie()) {
             await router.replace(`${getUsernameFromCookie()}`);
