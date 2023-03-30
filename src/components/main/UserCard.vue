@@ -21,16 +21,16 @@
           <div>
             <div class="bookmark-text-container">
               <div class="bookmark-icon">Bookmark</div>
-              <span class="bookmark-text">{{followUser.bookmarkCount}}개</span>
+              <span class="bookmark-text">{{ followUser.bookmarkCount }}개</span>
             </div>
             <div class="follow-container">
               <div class="follow-text">
                 팔로워
-                <span class="follow-count">{{followUser.followerCount}}</span>
+                <span class="follow-count">{{ followUser.followerCount }}</span>
               </div>
               <div class="follow-text">
                 팔로잉
-                <span class="follow-count">{{followUser.followingCount}}</span>
+                <span class="follow-count">{{ followUser.followingCount }}</span>
               </div>
             </div>
             <v-btn
@@ -38,8 +38,10 @@
                 :color="followUser.isFollow ? '#E53935' : '#03A9F4'"
                 class="follow-btn"
                 @click="clickFollow(followUser.userId)">
-              <v-icon class="follow-icon">{{followUser.isFollow ? 'mdi-account-multiple-minus' : 'mdi-account-multiple-plus'}}</v-icon>
-              {{followUser.isFollow ? '팔로우 취소' : '팔로우'}}
+              <v-icon class="follow-icon">
+                {{ followUser.isFollow ? 'mdi-account-multiple-minus' : 'mdi-account-multiple-plus' }}
+              </v-icon>
+              {{ followUser.isFollow ? '팔로우 취소' : '팔로우' }}
             </v-btn>
           </div>
         </div>
@@ -48,8 +50,8 @@
   </v-row>
 </template>
 
-<script>
-import {onMounted, ref, toRefs, watch, watchEffect} from "vue";
+<script setup>
+import {onMounted, ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import {followStore} from "../../store/follow/follow";
 import router from "../../router";
@@ -60,74 +62,60 @@ import {
 } from "../../api/follow/followApi";
 import {getUsernameFromCookie} from "../../utils/cookies";
 
-export default {
-  name: 'UserCard',
+const route = useRoute();
+const username = ref(route.params.username);
+const myName = ref(getUsernameFromCookie());
+const followUsers = ref([]);
 
-  setup() {
-    const route = useRoute();
-    const username = route.params.username;
-    const myName = getUsernameFromCookie();
-    const followUsers = ref([]);
+const getUserFollowers = async (username) => {
+  await getFollowerList(username).then((response) => {
+    followUsers.value = response.data.list;
+  }).catch((error) => {
+    console.log(error);
+  })
+};
 
-    onMounted(async () => {
-      try {
-        const value = followStore.state.followWindow;
-        setFollowUsers(value, username);
-      } catch (error) {
-        console.log(error);
-      }
-    });
+const getUserFollowings = async (username) => {
+  await getFollowingList(username).then((response) => {
+    followUsers.value = response.data.list;
+  }).catch((error) => {
+    console.log(error);
+  })
+};
 
-    watch(() => followStore.state.followWindow, (newValue) => {
-      setFollowUsers(newValue, username);
-    })
-
-    const setFollowUsers = (value, username) => {
-      if (value === 'follower') {
-        getUserFollowers(username);
-      } else if (value === 'following') {
-        getUserFollowings(username);
-      }
-    };
-
-    const getUserFollowers = async (username) => {
-      try {
-        const response = await getFollowerList(username);
-        followUsers.value = response.data.list;
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    const getUserFollowings = async (username) => {
-      try {
-        const response = await getFollowingList(username);
-        followUsers.value = response.data.list;
-        console.log(response.data.list);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    return {
-      myName,
-      followUsers,
-    }
-  },
-
-  methods: {
-    moveToUser(username) {
-      router.push(`/${username}`);
-    },
-
-    async clickFollow(userId) {
-      await followAndUnfollow(userId);
-      const followUser = this.followUsers.find(follow => follow.userId === userId);
-      followUser.isFollow = !followUser.isFollow;
-      followStore.state.status = !followStore.state.status;
-    },
+const setFollowUsers = async (value, username) => {
+  if (value === 'follower') {
+    await getUserFollowers(username.value);
+  } else if (value === 'following') {
+    await getUserFollowings(username.value);
   }
-}
+};
+
+onMounted(async () => {
+  try {
+    const value = followStore.state.followWindow;
+    await setFollowUsers(value, username);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+watch(() => followStore.state.followWindow, (newValue) => {
+  setFollowUsers(newValue, username);
+});
+
+const moveToUser = (username) => {
+  router.push(`/${username}`);
+};
+
+const clickFollow = async (userId) => {
+  await followAndUnfollow(userId.value).then(() => {
+    const followUser = followUsers.value.find(follow => follow.userId === userId);
+    followUser.isFollow = !followUser.isFollow;
+    followStore.state.status = !followStore.state.status;
+  })
+};
+
 </script>
 
 <style scoped>
