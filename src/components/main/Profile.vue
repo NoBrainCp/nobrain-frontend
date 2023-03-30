@@ -13,7 +13,7 @@
               color="blue"
               elevation="3"
               @click="information">
-            {{ this.btnState }}
+            {{ buttonState }}
           </v-btn>
         </div>
         <v-divider class="border-opacity-100 ml-5 mr-5"></v-divider>
@@ -50,7 +50,7 @@
                           variant="outlined"
                           class="btn-change-name"
                           elevation="3"
-                          @click="changeName(name)"
+                          @click="changeUsername(name)"
                       >
                         변경하기
                       </v-btn>
@@ -224,7 +224,7 @@
                           width="100"
                           height="52"
                           variant="outlined"
-                          @click="changePassword"
+                          @click="changeUserPassword"
                       >
                         변경하기
                       </v-btn>
@@ -243,7 +243,7 @@
                   <v-row class="ml-1 mt-2">
                     <v-col cols="12" sm="8">
                       <v-text-field
-                          v-model="userName"
+                          v-model="username"
                           variant="outlined"
                           prepend-inner-icon="mdi-account"
                           bg-color="white"
@@ -269,8 +269,8 @@
                         탈퇴하기
                       </v-btn>
                       <ConfirmDialog
-                        v-bind:confirmObj="confirmObj"
-                        @delete="deleteAccount"
+                          :confirmObj="confirmObj"
+                          @delete="deleteAccount"
                       />
                     </v-col>
                   </v-row>
@@ -284,214 +284,182 @@
   </v-container>
 </template>
 
-<script>
+<script setup>
+import router from "../../router";
+import {userStore} from "../../store/user/user";
+import ImageFileDialog from "../dialog/ImageFileDialog.vue";
 import {
   changeName,
   changePassword,
   changeProfileImage, deactivateAccount,
-  existsLoginId,
-  existsUsername,
   getMyProfile
 } from "../../api/user/userApi";
 import {
   deleteAccessTokenFromCookie,
-  deleteUsernameFromCookie,
   getEmailFromCookie,
   getUserIdFromCookie,
   getUsernameFromCookie,
   saveUsernameToCookie
 } from "../../utils/cookies";
-import router from "../../router";
-import {userStore} from "../../store/user/user";
 import {onMounted, ref, watch} from "vue";
-import ImageFileDialog from "../dialog/ImageFileDialog.vue";
-import AuthDialog from "../dialog/AuthDialog.vue";
 import {sendAuthenticationMail, sendEmailAndCode} from "../../api/mail/mailApi";
+import AuthDialog from "../dialog/AuthDialog.vue";
 import ConfirmDialog from "../dialog/ConfirmDialog.vue";
 
-export default {
-  name: 'profile',
-  components: {ConfirmDialog, AuthDialog, ImageFileDialog},
+const panel = ref(['name']);
+const buttonState = ref('Open All');
+const name = ref("");
+const username = ref("");
+const passwordData = ref({
+  prePassword: "",
+  newPassword: "",
+  passwordCheck: "",
+});
 
-  data: () => ({
-    panel: ['name'],
-    btnState: "Open All",
-    name: "",
-    userName: "",
+const confirmObj = ref({
+  dialog: false,
+  title: "회원 탈퇴",
+  text: "정말 No brain 을 탈퇴 하시겠습니까?",
+  buttonText: "탈퇴"
+});
 
-    passwordData: {
-      prePassword: "",
-      newPassword: "",
-      passwordCheck: "",
-    },
+const myInfo = ref({
+  username: getUsernameFromCookie(),
+  email: getEmailFromCookie(),
+  profileImage: {},
+  urlProfileImage: '',
+});
 
-    confirmObj: {
-      title: "회원 탈퇴",
-      text: "정말 No brain 을 탈퇴 하시겠습니까?",
-      dialog: false,
-      buttonText: "탈퇴"
-    },
+const imgFileObj = ref({
+  dialog: false,
+  title: "프로필 이미지 변경",
+  files: [],
+  imgUrl: ""
+})
 
-  }),
+const authObj = ref({
+  dialog: false,
+})
 
-  setup() {
-    const myInfo = ref({
-      username: getUsernameFromCookie(),
-      email: getEmailFromCookie(),
-      profileImage: {},
-      urlProfileImage: '',
-    });
+watch(() => (myInfo.value.profileImage), (newValue) => {
+  myInfo.value.profileImage = newValue;
+})
 
-    const imgFileObj = ref({
-      dialog: false,
-      title: "프로필 이미지 변경",
-      files: [],
-      // imgFile: null,
-      imgUrl: ""
-    })
+watch(() => (userStore.state.status), async () => {
+  const myProfile = await getMyProfile();
+  myInfo.value.username = myProfile.data.data.username;
+})
 
-    const authObj = ref({
-      dialog: false,
-    })
+onMounted(async () => {
+  try {
+    const myProfile = await getMyProfile();
+    myInfo.value.username = myProfile.data.data.username;
+    myInfo.value.email = myProfile.data.data.email;
+    myInfo.value.urlProfileImage = myProfile.data.data.profileImage;
+    if (myInfo.value.profileImage === null) {
+      myInfo.value.profileImage = "src/assets/images/nobrain-no-image.png";
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
 
-    watch(() => (myInfo.value.profileImage), (newValue) => {
-      myInfo.value.profileImage = newValue;
-    })
+const information = () => {
+  if (buttonState.value === 'Close All') {
+    panel.value = [];
+    buttonState.value = 'Open All';
+  } else {
+    panel.value = ['name', 'profile', 'email', 'password', 'deactivate'];
+    buttonState.value = 'Close All';
+  }
+};
 
-    watch(() => (userStore.state.status), async () => {
-      const myProfile = await getMyProfile();
-      myInfo.value.username = myProfile.data.data.username;
-    })
+const changeUsername = async () => {
+  await changeName(getUserIdFromCookie(), name.value).then(() => {
+    saveUsernameToCookie(name);
+    userStore.state.status = !userStore.state.status;
+    userStore.commit('setUsername', name.value);
+    name.value = "";
+    alert("변경이 완료되었습니다.");
+  }).catch((error) => {
+    alert("동일한 닉네임이 존재합니다.");
+    console.log(error);
+  })
+};
 
-    onMounted(async () => {
-      try {
-        const myProfile = await getMyProfile();
-        myInfo.value.username = myProfile.data.data.username;
-        myInfo.value.email = myProfile.data.data.email;
-        myInfo.value.urlProfileImage = myProfile.data.data.profileImage;
-        if (myInfo.value.profileImage === null) {
-          myInfo.value.profileImage = "src/assets/images/nobrain-no-image.png";
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    });
+const onFileChanged = (file) => {
+  if (file.map(file => file.size) > 2000000) {
+    alert("이미지의 크기가 적절하지 않습니다.");
+    return;
+  }
+  myInfo.value.profileImage = file[0];
+  myInfo.value.urlProfileImage = URL.createObjectURL(file[0]);
+};
 
-    return {myInfo, imgFileObj, authObj};
-  },
+const updateProfileImg = async () => {
+  await changeProfileImage(myInfo.value.profileImage).then(() => {
+    userStore.commit("setProfileImage", myInfo.value.urlProfileImage);
+    alert("변경이 완료되었습니다.");
+  }).catch((error) => {
+    alert("이미지를 선택해주세요");
+    console.log(error);
+  })
+};
 
-  methods: {
-    information() {
-      if (this.btnState === "Close All") {
-        this.panel = [];
-        this.btnState = "Open All"
-      } else {
-        this.panel = ['name', 'profile', 'email', 'password', 'deactivate'];
-        this.btnState = "Close All"
-      }
-    },
-
-    async changeName(name) {
-      try {
-        await changeName(getUserIdFromCookie(), name);
-        deleteUsernameFromCookie();
-        saveUsernameToCookie(name);
-        userStore.state.status = !userStore.state.status;
-        userStore.commit('setUsername', name);
-        alert("변경이 완료되었습니다.");
-        this.name = "";
-        await router.replace(`/${name}`);
-      } catch (error) {
-        alert("동일한 닉네임이 존재합니다.");
-      }
-    },
-
-    async onFileChanged(file) {
-      if (file.map(v => v.size) > 2000000) {
-        alert("이미지의 크기가 적절하지 않습니다.");
-        return;
-      }
-
-      console.log(file[0]);
-      this.myInfo.profileImage = file[0];
-      this.myInfo.urlProfileImage = URL.createObjectURL(file[0]);
-    },
-
-    async updateProfileImg() {
-      try {
-        console.log("UPDATE: " + this.myInfo.profileImage);
-        console.log(this.myInfo.profileImage);
-        await changeProfileImage(this.myInfo.profileImage);
-        userStore.commit("setProfileImage", this.myInfo.urlProfileImage);
-      } catch (error) {
-        alert(error);
-      }
-    },
-
-    deleteProfileImg() {
-      this.imgFileObj.imgUrl = "src/assets/images/nobrain-no-image.png";
-    },
-
-    sendAuthentication() {
-      try {
-        this.authObj.dialog = true;
-        const email = getEmailFromCookie();
-        sendAuthenticationMail(email);
-      } catch (error) {
-        console.log(error);
-      }
-    },
-
-    async checkAuthCode(authCode) {
-      try {
-        const email = getEmailFromCookie();
-        console.log(authCode);
-        await sendEmailAndCode(email, authCode);
-        alert("인증이 성공 하였습니다.");
-      } catch {
-        console.log(authCode);
-        alert("인증번호가 일치하지 않습니다.");
-      }
-
-    },
-
-    async changePassword() {
-      try {
-        await changePassword(this.passwordData);
-        alert("비밀번호가 변경되었습니다.");
-        console.log(this.passwordData.prePassword);
-      } catch (error) {
-        alert(error.data);
-      }
-    },
-
-    async validateUsername() {
-      try {
-        if (this.userName === this.myInfo.username) {
-          this.confirmObj.dialog = true;
-        } else {
-          alert("사용자의 닉네임이 일치하지 않습니다.");
-        }
-      } catch (error) {
-        alert(error.data);
-      }
-    },
-
-    async deleteAccount() {
-      await deactivateAccount(getUserIdFromCookie());
-      deleteAccessTokenFromCookie();
-      alert("회원 탈퇴가 완료되었습니다.");
-      await router.replace('/sign-in');
-    },
-
-    clickPanels(pan) {
-      this.panel = [pan];
-      this.btnState = "Open All";
-    },
-
-
-  },
+//이미지 삭제 로직 추가해야함
+const deleteProfileImg = () => {
+  myInfo.value.urlProfileImage = "src/assets/images/nobrain-no-image.png";
 }
+
+const sendAuthentication = async() => {
+  authObj.value.dialog = true;
+  await sendAuthenticationMail(myInfo.value.email).then(() => {
+  }).catch((error) => {
+    console.log(error);
+  })
+};
+
+const checkAuthCode = async(authCode) => {
+  await sendEmailAndCode(myInfo.value.email, authCode).then(() => {
+    alert("인증이 성공 하였습니다.");
+  }).catch((error) => {
+    alert("인증번호가 일치하지 않습니다.");
+    console.log(error);
+  })
+};
+
+const changeUserPassword = async() => {
+  await changePassword(passwordData.value).then(() => {
+    alert("비밀번호가 변경되었습니다.");
+    passwordData.value = {};
+  }).catch((error) => {
+    console.log(error);
+    alert("비밀번호가 변경되지 않았습니다.");
+  })
+};
+
+const validateUsername = () => {
+  if (username.value === myInfo.value.username) {
+    confirmObj.value.dialog = true;
+  } else {
+    alert("사용자의 닉네임이 일치하지 않습니다.");
+  }
+};
+
+const deleteAccount = async () => {
+  await deactivateAccount(getUserIdFromCookie()).then(() => {
+    alert("회원 탈퇴가 완료되었습니다.");
+    deleteAccessTokenFromCookie();
+    router.replace('/sign-in');
+  }).catch((error) => {
+    console.log(error);
+  })
+};
+
+const clickPanels = (value) => {
+  panel.value = [value];
+  buttonState.value = "Open All";
+};
 </script>
 
 <style scoped>
