@@ -105,7 +105,7 @@ function deleteCookie(value) {
 
 function clearCookie() {
     const cookieToClear = [`userId`, `username`, `email`,`accessToken`];
-    cookieToClear.map(cookie => {
+    cookieToClear.find(cookie => {
         document.cookie = `${cookie}=;expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
     })
 }
