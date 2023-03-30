@@ -1,15 +1,7 @@
 <template>
   <v-container class="not-found">
   </v-container>
-
 </template>
-
-<script>
-export default {
-  name: 'NoSearch'
-}
-
-</script>
 
 <style scoped>
 .not-found {
