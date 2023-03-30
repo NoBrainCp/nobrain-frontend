@@ -52,24 +52,20 @@
   </v-dialog>
 </template>
 
-<script>
-export default {
-  name: 'ImageFileDialog',
-
-  props: {
-    imgFileObj: {
-      dialog: Boolean,
-      title: String,
-      file: null,
-
-    }
-  },
-
-  methods: {
-    submit() {
-      this.imgFileObj.dialog = false;
-      this.$emit('submit', this.imgFileObj.file);
-    }
+<script setup>
+const props = defineProps({
+  imgFileObj: {
+    dialog: Boolean,
+    title: String,
+    file: null,
   }
-}
+});
+
+const emit = defineEmits('submit');
+
+const submit = () => {
+  props.imgFileObj.dialog = false;
+  emit('submit', props.imgFileObj.file);
+};
+
 </script>
