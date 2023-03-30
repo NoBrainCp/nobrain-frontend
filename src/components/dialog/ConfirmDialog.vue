@@ -44,11 +44,11 @@ const props = defineProps({
 const emit = defineEmits(['delete']);
 
 const cancel = () => {
-  props.dialog=false;
+  props.confirmObj.dialog=false;
 };
 
 const submit = () => {
-  props.dialog = false;
+  props.confirmObj.dialog=false;
   emit('delete');
 };
 
