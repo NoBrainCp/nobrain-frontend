@@ -113,98 +113,80 @@
     </v-card>
   </v-dialog>
 </template>
-<script>
+<script setup>
 
-import {defineComponent, watch} from "vue";
-import {useRoute} from "vue-router";
+import {ref, watch} from "vue";
 import {getUserIdFromCookie} from "../../utils/cookies";
 import {getCategoryIsPublic} from "../../api/category/categoryApi";
-import categoryDialog from "./CategoryDialog.vue";
 
-export default defineComponent({
-  name: 'BookmarkDialog',
-  computed: {
-    categoryDialog() {
-      return categoryDialog
-    }
-  },
+const props = defineProps({
+  bookmarkDialogObj: {
+    dialogTitle: String,
+    btnName: String,
+    dialog: false,
+    categoryNames: [],
+    categoryIsPublic: Boolean,
+    publicText: "카테고리가 비공개로 설정되어 있습니다.",
 
-  props: {
-    bookmarkDialogObj: {
-      dialogTitle: String,
-      btnName: String,
-      dialog: false,
-      categoryNames: [],
-      originCategoryName: String,
-      categoryIsPublic: Boolean,
-      publicText: "카테고리가 비공개로 설정되어 있습니다.",
-
-      bookmark: {
-        url: String,
-        title: String,
-        description: String,
-        categoryName: String,
-        tags: [], //수정시 기존 보여지는 태그들
-        tagList: [],  //자신의 북마크 전체 태그 리스트
-        isPublic: Boolean,
-        isStarred: false,
-      },
+    bookmark: {
+      url: String,
+      title: String,
+      description: String,
+      categoryName: String,
+      tags: [], //수정시 기존 보여지는 태그들
+      tagList: [],  //자신의 북마크 전체 태그 리스트
+      isPublic: Boolean,
+      isStarred: false,
     },
-  },
-
-  data: () => ({
-    route: useRoute(),
-    dialog: true,
-    chips: [],
-
-    rules: {
-      url: v => !!v || 'URL은 필수 입력 항목입니다.',
-      title: v => !!v || '이름은 필수 입력 항목입니다.'
-    }
-  }),
-
-  setup(props) {
-    const userId = getUserIdFromCookie();
-
-    watch(() => (props.bookmarkDialogObj.bookmark.categoryName), async (categoryName) => {
-      if (!categoryName || categoryName === 'starred') {
-        props.bookmarkDialogObj.bookmark.categoryName = '';
-        props.bookmarkDialogObj.categoryIsPublic = false;
-        return;
-      }
-      await getCategoryIsPublic(userId, categoryName).then((response) => {
-        props.bookmarkDialogObj.categoryIsPublic = !response.data.data;
-        if (!response.data.data) {
-          props.bookmarkDialogObj.bookmark.isPublic = false;
-          props.bookmarkDialogObj.publicText = "카테고리가 비공개로 설정되어 있습니다.";
-        }
-      }).catch((error) => {
-        console.log(error.response.data);
-      });
-    })
-  },
-
-  methods: {
-    submitBookmark() {
-      this.bookmarkDialogObj.dialog = false;
-      this.$emit('submit', this.bookmarkDialogObj.bookmark);
-    },
-
-    remove(item) {
-      this.chips.splice(this.chips.indexOf(item), 1);
-    },
-
-    closeDialog() {
-      this.bookmarkDialogObj.dialog = false;
-      this.bookmarkDialogObj.bookmark = {};
-    },
-
-    handleTagsChange(tags) {
-      const filteredTags = tags.map(tag => tag.trim());
-      this.bookmarkDialogObj.bookmark.tags = Array.from(new Set(filteredTags));
-    }
   }
-})
+});
+
+const chips = ref([]);
+const rules = ref({
+  url: v => !!v || 'URL은 필수 입력 항목입니다.',
+  title: v => !!v || '이름은 필수 입력 항목입니다.',
+});
+
+const userId = ref(getUserIdFromCookie());
+
+watch(() => (props.bookmarkDialogObj.bookmark.categoryName), async (categoryName) => {
+  if (!categoryName || categoryName === 'starred') {
+    props.bookmarkDialogObj.bookmark.categoryName = '';
+    props.bookmarkDialogObj.categoryIsPublic = false;
+    return;
+  }
+  await getCategoryIsPublic(userId.value, categoryName).then((response) => {
+    props.bookmarkDialogObj.categoryIsPublic = !response.data.data;
+    if (!response.data.data) {
+      props.bookmarkDialogObj.bookmark.isPublic = false;
+      props.bookmarkDialogObj.publicText = "카테고리가 비공개로 설정되어 있습니다.";
+    }
+  }).catch((error) => {
+    console.log(error.response.data);
+    alert("카테고리 비공개 설정 여부를 가져올 수 없습니다.");
+  })
+});
+
+const emit = defineEmits('submit');
+const submitBookmark = () => {
+  props.bookmarkDialogObj.dialog = false;
+  emit('submit', props.bookmarkDialogObj.bookmark);
+};
+
+const remove = (item) => {
+  chips.value.splice(chips.value.indexOf(item), 1);
+};
+
+const closeDialog = () => {
+  props.bookmarkDialogObj.dialog = false;
+  props.bookmarkDialogObj.bookmark = {};
+};
+
+const handleTagsChange = (tags) => {
+  const filteredTags = tags.map(tag => tag.trim());
+  props.bookmarkDialogObj.bookmark.tags = Array.from(new Set(filteredTags));
+};
+
 </script>
 
 <style scoped>
