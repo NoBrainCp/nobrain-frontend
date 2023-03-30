@@ -101,7 +101,7 @@
               </div>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item @click="this.confirmObj.dialog = true">
+          <v-list-item @click="confirmObj.dialog = true">
             <v-list-item-content>
               <div class="account-container">
                 <v-icon class="mdi mdi-logout"></v-icon>
@@ -114,127 +114,102 @@
     </v-menu>
   </v-app-bar>
   <ConfirmDialog
-      v-bind:confirmObj="confirmObj"
+      :confirmObj="confirmObj"
       @delete="logout"
   ></ConfirmDialog>
 </template>
 
 
-<script>
-import {deleteAccessTokenFromCookie, deleteCategoryIdFromCookie, getUsernameFromCookie} from "../../utils/cookies";
-import {store} from "../../store";
+<script setup>
 import router from "../../router";
+import {store} from "../../store";
+import {userStore} from "../../store/user/user";
+import {bookmarkStore} from "../../store/bookmark/bookmark";
+import ConfirmDialog from "../dialog/ConfirmDialog.vue";
+import {getMyProfile} from "../../api/user/userApi";
 import {onMounted, ref, watch} from "vue";
 import {searchBookmark} from "../../api/bookmark/bookmarkApi";
-import {bookmarkStore} from "../../store/bookmark/bookmark";
-import {userStore} from "../../store/user/user";
-import {getMyProfile} from "../../api/user/userApi";
-import ConfirmDialog from "../dialog/ConfirmDialog.vue";
+import {deleteAccessTokenFromCookie, getUsernameFromCookie} from "../../utils/cookies";
 
-export default {
-  name: 'Header',
-  components: {ConfirmDialog},
-  computed: {
-    store() {
-      return store
+const searchConditions = ref([
+  {title: "MY"},
+  {title: "FOLLOW"},
+  {title: "ALL"}
+]);
+
+const confirmObj = ref({
+  dialog: false,
+  title: "로그아웃",
+  text: "정말 로그아웃 하시겠습니까?",
+  buttonText: "로그아웃"
+});
+
+const menu = ref(false);
+
+const searchObj = ref({
+  condition: "My",
+  text: "",
+});
+
+const myInfo = ref({
+  username: "",
+  email: "",
+  profileImage: "",
+});
+
+onMounted(async () => {
+  await getMyProfile().then((myProfile) => {
+    myInfo.value.username = myProfile.data.data.username;
+    myInfo.value.email = myProfile.data.data.email;
+    myInfo.value.profileImage = myProfile.data.data.profileImage;
+
+    if (!myInfo.value.profileImage) {
+      myInfo.value.profileImage = "src/assets/images/user-no-image.png";
     }
-  },
+  }).catch((error) => {
+    console.log(error);
+  })
+});
 
-  data() {
-    return {
-      menus: [
-        {title: "Setting", icon: "mdi-cog"},
-        {title: "Logout", icon: "mdi-logout"},
-      ],
+watch(() => (userStore.state.profileImage), (newValue) => {
+  myInfo.value.profileImage = newValue;
+});
 
-      searchConditions: [
-        {title: "MY"},
-        {title: "FOLLOW"},
-        {title: "ALL"}
-      ],
+watch(() => (userStore.state.username), (newValue) => {
+  myInfo.value.username = newValue;
+});
 
-      confirmObj: {
-        title: "로그아웃",
-        text: "정말 로그아웃 하시겠습니까?",
-        dialog: false,
-        buttonText: "로그아웃"
-      },
-
-      menu: false,
-      gridView: false,
+const search = async () => {
+  await searchBookmark(searchObj.value.text, searchObj.value.condition).then((response) => {
+    const searchResult = response.data.list;
+    if (searchResult.length === 0 && store.state.window !== 'notResult') {
+      store.commit('setWindow', 'notResult');
+    } else {
+      bookmarkStore.commit("setBookmarks", response.data.list);
     }
-  },
+  })
+};
 
-  setup() {
-    const searchObj = ref({
-      condition: "My",
-      text: "",
-    });
+const home = () => {
+  router.push("/" + getUsernameFromCookie()).then(() => {
+    window.location.reload();
+  })
+};
 
-    const myInfo = ref({
-      username: "",
-      email: "",
-      profileImage: "",
-    });
+const selectSearchCondition = (title) => {
+  searchObj.value.condition = title;
+};
 
-    watch(() => (userStore.state.profileImage), (newValue) => {
-      myInfo.value.profileImage = newValue;
-    });
+const clickProfile = () => {
+  store.commit('setWindow', 'profile');
+};
 
-    watch(() => (userStore.state.username), (newValue) => {
-      myInfo.value.username = newValue;
-    });
+const logout = () => {
+  deleteAccessTokenFromCookie();
+  alert("로그아웃이 완료되었습니다.");
+  router.push('/sign-in');
+};
 
-    onMounted(async () => {
-      try {
-        const myProfile = await getMyProfile();
-        myInfo.value.username = myProfile.data.data.username;
-        myInfo.value.email = myProfile.data.data.email;
-        myInfo.value.profileImage = myProfile.data.data.profileImage;
-        if (myInfo.value.profileImage === null) {
-          myInfo.value.profileImage = "src/assets/images/user-no-image.png";
-        }
-
-      } catch (error) {
-        console.log(error);
-      }
-    });
-
-    return {searchObj, myInfo}
-  },
-
-  methods: {
-    async search() {
-      const response = await searchBookmark(this.searchObj.text, this.searchObj.condition);
-
-      if (response.data.list.length === 0 && store.state.window !== 'notResult') {
-        store.commit('setWindow', 'notResult');
-      } else {
-        bookmarkStore.commit("setBookmarks", response.data.list);
-      }
-    },
-
-    home() {
-      router.push("/" + getUsernameFromCookie()).then(() => {
-        window.location.reload();
-      });
-    },
-
-    selectSearchCondition(title) {
-      this.searchObj.condition = title;
-    },
-
-    clickProfile() {
-      store.commit('setWindow', 'profile');
-    },
-
-    async logout() {
-      deleteAccessTokenFromCookie();
-      alert("로그아웃이 완료되었습니다.");
-      await router.push('/sign-in');
-    }
-  }
-}
 </script>
 
 <style scoped>

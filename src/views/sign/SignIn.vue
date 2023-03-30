@@ -134,6 +134,7 @@ const signIn = async() => {
   }).catch((error) => {
     console.log(error);
     errorObj.value.title = "로그인 오류";
+    errorObj.value.text = error.response.data.message;
     isError.value = true;
   })
 };

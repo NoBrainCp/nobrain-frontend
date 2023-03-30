@@ -11,42 +11,26 @@
   </v-card>
 </template>
 
-<script>
+<script setup>
 import {ref, watch} from "vue";
 import {followStore} from "../../store/follow/follow";
 import UserCard from "./UserCard.vue";
 
-export default {
-  name: 'Follow',
-  components: {UserCard},
 
-  setup() {
-    const tab = ref(followStore.state.followWindow);
+const tab = ref(followStore.state.followWindow);
 
-    watch(() => (followStore.state.followWindow), (newValue) => {
-      console.log("FOLLOW WINDOW WATCH");
-      tab.value = newValue;
-    });
+watch(() => (followStore.state.followWindow), (newValue) => {
+  tab.value = newValue;
+});
 
-    // watch(() => (tab.value), (newValue) => {
-    //   console.log("TAB VALUE WATCH");
-    //   followStore.commit('setUserCardWindow', newValue);
-    // });
+const followerClick = ()=> {
+  followStore.commit('setFollowWindow', tab.value);
+};
 
-    return {tab};
-  },
+const followingClick = () => {
+  followStore.commit('setFollowWindow', tab.value);
+};
 
-  methods: {
-    followerClick() {
-      followStore.commit('setFollowWindow', this.tab);
-    },
-
-    followingClick() {
-      followStore.commit('setFollowWindow', this.tab);
-    }
-
-  }
-}
 </script>
 
 <style scoped>

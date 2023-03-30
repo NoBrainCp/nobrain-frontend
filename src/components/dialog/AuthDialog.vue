@@ -29,72 +29,62 @@
         </v-col>
       </v-row>
       <v-row class="field">
-        <v-col col="12" sm="12"> 남은시간 : {{ timeStr }}</v-col>
+        <v-col col="12" sm="12"> 남은시간 : {{ timeCount.timeStr }}</v-col>
       </v-row>
     </v-card>
   </v-dialog>
 </template>
 
-<script>
+<script setup>
 import {ref, watch} from "vue";
 
-export default {
-  name: "AuthDialog",
-
-  props: {
-    authObj: {
-      dialog: Boolean,
-      isCheck: Boolean,
-      userMedia: String,
-      authCode: ""
-    }
-  },
-
-  data: () => ({
-    timeStr: "",
-    restSec: 180,
-    restTimeData: "",
-  }),
-
-  setup(props) {
-    let restSec = ref(180);
-    let timeStr = ref("0");
-    watch(() => props.authObj.dialog, (newVal) => {
-      if (newVal) {
-        const timerObject = setInterval(() => {
-          timeStr.value = prettyTime(restSec.value);
-          restSec.value--;
-          if (restSec.value === 0) {
-            timerStop(timerObject);
-          }
-        }, 1000);
-
-      }
-    });
-    const prettyTime = (restSec) => {
-      let minutes = parseInt(restSec / 60);
-      let seconds = (restSec % 60);
-      return (
-          minutes.toString().padStart(2, "0") +
-          " : " +
-          seconds.toString().padStart(2, "0")
-      );
-    };
-
-    const timerStop = (timerObject) => {
-      clearInterval(timerObject);
-      props.authObj.dialog = false;
-    };
-
-    return { timeStr };
-  },
-
-  methods: {
-    submitAuth() {
-      this.authObj.dialog = false;
-      this.$emit('submit', this.authObj.authCode);
-    },
+const props = defineProps({
+  authObj: {
+    dialog: Boolean,
+    authCode: String,
   }
+});
+
+const timeCount = ref({
+  restSec: 180,
+  timeStr: "",
+  restTimeData: "",
+});
+
+watch(() => props.authObj.dialog, (newVal) => {
+  if (newVal) {
+   startTimer();
+  }
+});
+
+const startTimer = () => {
+  timeCount.value.restSec = 180;
+  const timerObj = setInterval(() => {
+    timeCount.value.timeStr = prettyTimer(timeCount.value.restSec);
+    timeCount.value.restSec--;
+
+    if (timeCount.value.restSec == 0) {
+      timerStop(timerObj);
+    }
+  }, 1000);
+};
+const prettyTimer = (restSec) => {
+  let minutes = parseInt(restSec / 60);
+  let seconds = (restSec % 60);
+  return (
+      minutes.toString().padStart(2, "0") + " : " + seconds.toString().padStart(2, "0")
+  )
+};
+const timerStop = (timerObj) => {
+  clearInterval(timerObj);
+  timeCount.value.timeStr = "";
+  props.authObj.dialog = false;
+};
+
+const emit = defineEmits(['submit']);
+const submitAuth = () => {
+  props.authObj.dialog = false;
+  emit('submit', props.authCode);
 }
 
 </script>

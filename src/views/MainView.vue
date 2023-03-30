@@ -44,16 +44,15 @@ import {useRoute} from "vue-router";
 import {existsUsername} from "../api/user/userApi";
 import {onMounted, ref, watch} from "vue";
 
+const route = useRoute();
+const window = ref("");
+
 onMounted(async () => {
-  const route = useRoute();
   const exists = await existsUsername(route.params.username);
   if (!exists.data.data) {
     await router.push(`not-found`);
   }
 })
-
-const route = useRoute();
-const window = ref("");
 
 watch(() => store.state.window, (newWindow) => {
   window.value = newWindow;
@@ -64,7 +63,6 @@ watch(() => route.params.username, (newUsername) => {
     window.location.reload();
   });
 });
-
 
 </script>
 

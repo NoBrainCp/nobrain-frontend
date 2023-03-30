@@ -58,52 +58,45 @@
   </v-dialog>
 </template>
 
-<script>
-import {useRoute} from "vue-router";
+<script setup>
+import {ref} from "vue";
 
-export default {
-  name: 'CategoryDialog',
-  props: {
-    categoryDialog: {
-      title: String,
-      btnName: String,
-      dialog: false,
-      originName: String,
-      name: String,
-      description: String,
-      isPublic: Boolean,
-    }
-  },
-  data: () => ({
-    route: useRoute(),
-    dialog: true,
-
-    rules: {
-      name: v => !!v || '이름은 필수 입력 항목입니다.'
-    }
-  }),
-
-  methods: {
-    submit() {
-      this.$emit('submit', this.categoryDialog);
-      this.initDialog();
-    },
-
-    closeDialog() {
-      this.initDialog();
-    },
-
-    initDialog() {
-      this.categoryDialog.dialog = false;
-      this.categoryDialog.name = "";
-      this.categoryDialog.description = "";
-      this.categoryDialog.isPublic = true;
-    },
-
-    handleCategoryName() {
-      this.categoryDialog.name = this.categoryDialog.name.replace(" ", "_");
-    }
+const props = defineProps({
+  categoryDialog: {
+    title: String,
+    btnName: String,
+    dialog: false,
+    originName: String,
+    name: String,
+    description: String,
+    isPublic: Boolean,
   }
+});
+
+const rules = ref({
+  name: v => !!v || '이름은 필수 입력 항목입니다.'
+})
+
+const emit = defineEmits(['submit']);
+
+const submit = () => {
+  emit('submit', props.categoryDialog);
+  initDialog();
+};
+
+const initDialog = () => {
+  props.categoryDialog.dialog = false;
+  props.categoryDialog.name = "";
+  props.categoryDialog.description = "";
+  props.categoryDialog.isPublic = true;
+};
+
+const closeDialog = () => {
+  initDialog();
+};
+
+const handleCategoryName = () => {
+  props.categoryDialog.name = props.categoryDialog.name.replace(" ", "_");
 }
 </script>
 
