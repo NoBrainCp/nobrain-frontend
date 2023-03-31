@@ -37,7 +37,9 @@
     </v-btn>
     <ConfirmDialog
         :confirmObj="confirmObj"
-        @delete="deleteCategoryData"/>
+        @delete="deleteCategoryData"
+        @close="closeConfirmDialog"
+    />
   </v-app-bar>
 </template>
 
@@ -133,6 +135,7 @@ const updateCategoryData = async(categoryObj) => {
   category.value.public = categoryObj.isPublic;
   await updateCategory(username, categoryOriginName, categoryObj).then(() => {
     updateAllBookmarksToPrivate(userId.value, categoryOriginName);
+    categoryDialogObj.value.dialog = false;
     router.push(`/${username}/${category.value.name}`);
     categoryStore.state.status = !categoryStore.state.status;
     bookmarkStore.state.status = !bookmarkStore.state.status;
@@ -151,11 +154,15 @@ const deleteCategoryData = async() => {
     categoryStore.state.status = !categoryStore.state.status;
     favoritesStore.state.status = !favoritesStore.state.status;
     privatesStore.state.status = !privatesStore.state.status;
-    bookmarkStore.state.status = !bookmarkStore.state.status;
+    confirmObj.value.dialog = false;
   }).catch((error) => {
     alert(error.response.data.message);
   })
 };
+
+const closeConfirmDialog = () => {
+  confirmObj.value.dialog = false;
+}
 </script>
 
 <style scoped>

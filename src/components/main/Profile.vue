@@ -271,6 +271,7 @@
                       <ConfirmDialog
                           :confirmObj="confirmObj"
                           @delete="deleteAccount"
+                          @close="closeConfirmDialog"
                       />
                     </v-col>
                   </v-row>
@@ -449,12 +450,17 @@ const validateUsername = () => {
 
 const deleteAccount = async () => {
   await deactivateAccount(getUserIdFromCookie()).then(() => {
+    confirmObj.value.dialog = false;
     alert("회원 탈퇴가 완료되었습니다.");
     clearCookie();
     router.replace('/sign-in');
   }).catch((error) => {
     console.log(error);
   })
+};
+
+const closeConfirmDialog = () => {
+  confirmObj.value.dialog = false;
 };
 
 const clickPanels = (value) => {
