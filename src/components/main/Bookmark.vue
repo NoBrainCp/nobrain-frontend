@@ -13,6 +13,7 @@
               class="bookmark-img"
               cover>
             <v-overlay
+                v-model="overlay"
                 :model-value="isHovering"
                 contained
                 scrim="#424242"
@@ -82,7 +83,7 @@
             <v-divider/>
             <v-card-subtitle class="text-subtitle-2">
               <a :href="bookmark.url" class="bookmark-link-tag" target="_blank">
-                <v-icon v-b-hover class="icon-link" size="17">mdi mdi-link-variant</v-icon>
+                <v-icon class="icon-link" size="17">mdi mdi-link-variant</v-icon>
                 {{ bookmark.url }}
               </a>
             </v-card-subtitle>
@@ -109,7 +110,7 @@ import {privatesStore} from "../../store/privates/privates";
 import ConfirmDialog from "../dialog/ConfirmDialog.vue";
 import BookmarkDialog from "../dialog/BookmarkDialog.vue";
 import {useRoute} from "vue-router";
-import {onMounted, ref, watch} from "vue";
+import {onMounted, ref, watch, watchEffect} from "vue";
 import {
   deleteBookmarkById,
   getAllBookmarks,
@@ -155,8 +156,7 @@ const route = useRoute();
 const username = ref(route.params.username);
 const isMe = ref(username.value === getUsernameFromCookie());
 const bookmarks = ref([]);
-
-
+const overlay = ref(false);
 const loadData = async () => {
   const username = route.params.username;
   const categoryName = route.params.category;
@@ -224,6 +224,7 @@ const clickEditBookmarkBtn = async (bookmark, bookmarkId) => {
 const updateBookmarkData = async (bookmark) => {
   const bookmarkId = bookmarkDialogObj.value.bookmark.id;
   await updateBookmark(bookmarkId, bookmark).then(() => {
+    bookmarkDialogObj.value.dialog = false;
     router.push(`/${username.value}/${bookmark.categoryName}`);
     bookmarkStore.state.status = !bookmarkStore.state.status;
     privatesStore.state.status = !privatesStore.state.status;
@@ -238,21 +239,24 @@ const closeBookmarkDialog = () => {
   bookmarkDialogObj.value.bookmark = {};
 };
 
-const clickDeleteBookmarkBtn = (bookmarkId) => {
-  bookmarkId.value = bookmarkId;
+const clickDeleteBookmarkBtn = (bookmarkIdValue) => {
+  bookmarkId.value = bookmarkIdValue;
   confirmObj.value.dialog = true;
 };
 
 const deleteBookmark = async () => {
-  await deleteBookmarkById(bookmarkId.value);
-  const index = bookmarks.value.findIndex(bookmark => bookmark.id === bookmarkId.value);
+  await deleteBookmarkById(bookmarkId.value).then(() => {
 
-  if (index !== -1) {
-    bookmarks.value.splice(index, 1);
-  }
-  privatesStore.state.status = !privatesStore.state.status;
-  favoritesStore.state.status = !favoritesStore.state.status;
-  bookmarkStore.state.status = !bookmarkStore.state.status;
+    const index = bookmarks.value.findIndex(bookmark => bookmark.id === bookmarkId.value);
+    confirmObj.value.dialog = false;
+    if (index !== -1) {
+      bookmarks.value.splice(index, 1);
+    }
+    privatesStore.state.status = !privatesStore.state.status;
+    favoritesStore.state.status = !favoritesStore.state.status;
+    bookmarkStore.state.status = !bookmarkStore.state.status;
+  });
+
 };
 
 const clickStar = async (bookmark) => {
