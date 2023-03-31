@@ -94,20 +94,20 @@
 
         <v-list>
           <v-list-item @click="clickProfile">
-            <v-list-item-content>
+            <v-list-item-action>
               <div class="account-container">
                 <v-icon class="mdi mdi-cog"></v-icon>
                 <v-list-item-title class="account-title">Setting</v-list-item-title>
               </div>
-            </v-list-item-content>
+            </v-list-item-action>
           </v-list-item>
           <v-list-item @click="confirmObj.dialog = true">
-            <v-list-item-content>
+            <v-list-item-action>
               <div class="account-container">
                 <v-icon class="mdi mdi-logout"></v-icon>
                 <v-list-item-title class="account-title">Logout</v-list-item-title>
               </div>
-            </v-list-item-content>
+            </v-list-item-action>
           </v-list-item>
         </v-list>
       </v-card>
@@ -116,6 +116,7 @@
   <ConfirmDialog
       :confirmObj="confirmObj"
       @delete="logout"
+      @close="closeConfirmDialog"
   ></ConfirmDialog>
 </template>
 
@@ -206,9 +207,14 @@ const clickProfile = () => {
 
 const logout = () => {
   deleteAccessTokenFromCookie();
+  confirmObj.value.dialog = false;
   alert("로그아웃이 완료되었습니다.");
   router.push('/sign-in');
 };
+
+const closeConfirmDialog = () => {
+  confirmObj.value.dialog = false;
+;}
 
 </script>
 
