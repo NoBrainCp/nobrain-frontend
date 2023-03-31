@@ -63,7 +63,9 @@
         </v-btn>
         <BookmarkDialog
             :bookmarkDialogObj="bookmarkDialogObj"
-            @submit="addBookmarkData"/>
+            @submit="addBookmarkData"
+            @close="closeBookmarkDialog"
+        />
       </div>
 
       <v-divider v-if="rail" class="account-divider"></v-divider>
@@ -80,10 +82,12 @@
               icon="mdi-plus"
               color="grey-lighten-3"
               elevation="4"
-              @click="categoryObj.dialog=true"/>
+              @click="categoryDialogObj.dialog=true"/>
           <CategoryDialog
-              :categoryDialog="categoryObj"
-              @submit="addCategoryByUser"/>
+              :categoryDialogObj="categoryDialogObj"
+              @submit="addCategoryByUser"
+              @close="closeCategoryDialog"
+          />
         </div>
 
         <v-divider v-if="!rail"/>
@@ -166,7 +170,7 @@ const drawer = ref(true);
 const rail = ref(false);
 
 // activeIndex: null,
-const categoryObj = ref({
+const categoryDialogObj = ref({
   dialog: false,
   title: "카테고리 추가",
   btnName: "추가",
@@ -245,6 +249,13 @@ const addCategoryByUser = async (category) => {
   }).catch(() => {
     alert("빈 문자열 혹은 동일한 카테고리 이름을 생성 할 수 없습니다.")
   });
+};
+
+const closeCategoryDialog = () => {
+  categoryDialogObj.value.dialog = false;
+  categoryDialogObj.value.name = "";
+  categoryDialogObj.value.description = "";
+  categoryDialogObj.value.isPublic = true;
 };
 
 const clickFollowButton = async (isFollow) => {
@@ -345,6 +356,7 @@ const clickAddBookmarkBtn = async () => {
 const addBookmarkData = async (bookmark) => {
   await addBookmark(username.value, bookmark).then(() => {
     bookmarkDialogInit();
+    bookmarkDialogObj.value.dialog = false;
     router.push(`/${username.value}/${bookmark.categoryName}`);
     categoryStore.state.status = !categoryStore.state.status;
     bookmarkStore.state.status = !bookmarkStore.state.status;
@@ -354,6 +366,12 @@ const addBookmarkData = async (bookmark) => {
     alert("북마크를 추가할 수 없습니다.");
   })
 };
+
+const closeBookmarkDialog = () => {
+  bookmarkDialogObj.value.dialog = false;
+  bookmarkDialogObj.value.bookmark = {};
+};
+
 
 const clickFollower = () => {
   followStore.commit('setFollowWindow', 'follower');

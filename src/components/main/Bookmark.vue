@@ -96,7 +96,9 @@
       @delete="deleteBookmark"/>
   <BookmarkDialog
       :bookmarkDialogObj="bookmarkDialogObj"
-      @submit="updateBookmarkData"/>
+      @submit="updateBookmarkData"
+      @close="closeBookmarkDialog"
+  />
 </template>
 
 <script setup>
@@ -229,6 +231,11 @@ const updateBookmarkData = async (bookmark) => {
     console.log(error);
     alert("북마크 업데이트에 문제가 발생하였습니다.");
   })
+};
+
+const closeBookmarkDialog = () => {
+  bookmarkDialogObj.value.dialog = false;
+  bookmarkDialogObj.value.bookmark = {};
 };
 
 const clickDeleteBookmarkBtn = (bookmarkId) => {
