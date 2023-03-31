@@ -167,9 +167,8 @@ watch(() => (props.bookmarkDialogObj.bookmark.categoryName), async (categoryName
   })
 });
 
-const emit = defineEmits('submit');
+const emit = defineEmits(['submit', 'close']);
 const submitBookmark = () => {
-  props.bookmarkDialogObj.dialog = false;
   emit('submit', props.bookmarkDialogObj.bookmark);
 };
 
@@ -178,8 +177,7 @@ const remove = (item) => {
 };
 
 const closeDialog = () => {
-  props.bookmarkDialogObj.dialog = false;
-  props.bookmarkDialogObj.bookmark = {};
+  emit('close');
 };
 
 const handleTagsChange = (tags) => {

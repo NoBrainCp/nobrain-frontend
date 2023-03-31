@@ -32,7 +32,7 @@
 
 <script setup>
 
-const props = defineProps({
+defineProps({
   confirmObj: {
     dialog: Boolean,
     title: String,
@@ -40,15 +40,13 @@ const props = defineProps({
     buttonText: String,
   }
 });
-
-const emit = defineEmits(['delete']);
+const emit = defineEmits(['delete', 'close']);
 
 const cancel = () => {
-  props.confirmObj.dialog=false;
+  emit('close');
 };
 
 const submit = () => {
-  props.confirmObj.dialog=false;
   emit('delete');
 };
 

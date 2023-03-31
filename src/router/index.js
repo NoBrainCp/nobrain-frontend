@@ -8,7 +8,6 @@ import ChangePassword from "../views/change/ChangePassword.vue";
 import MainView from "../views/MainView.vue";
 import NotFound from "../views/NotFound.vue";
 import {getAccessTokenFromCookie, getUsernameFromCookie} from "../utils/cookies";
-import {existsUsername} from "../api/user/userApi";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,7 +26,7 @@ const router = createRouter({
         {
             path: "/:username",
             name: "main",
-            alias: "/:username/:category",
+            alias: "/:username/:category?",
             component: MainView,
             props: true,
         },
@@ -53,12 +52,12 @@ const router = createRouter({
             component: ChangePassword,
             props: true,
         },
-        {
-            path:"/:catchAll(.*)",
-            name: "notFound",
-            component: NotFound,
-            alias: "/not-found"
-        }
+        // {
+        //     path:"/:catchAll(.*)",
+        //     name: "notFound",
+        //     component: NotFound,
+        //     alias: "/not-found"
+        // }
     ],
 });
 
