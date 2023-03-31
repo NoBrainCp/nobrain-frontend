@@ -85,23 +85,28 @@ const getUserFollowings = async (username) => {
 
 const setFollowUsers = async (value, username) => {
   if (value === 'follower') {
-    await getUserFollowers(username.value);
+    await getUserFollowers(username);
   } else if (value === 'following') {
-    await getUserFollowings(username.value);
+    await getUserFollowings(username);
   }
 };
 
 onMounted(async () => {
   try {
     const value = followStore.state.followWindow;
-    await setFollowUsers(value, username);
+    await setFollowUsers(value, username.value);
   } catch (error) {
     console.log(error);
   }
 });
 
 watch(() => followStore.state.followWindow, (newValue) => {
-  setFollowUsers(newValue, username);
+  setFollowUsers(newValue, username.value);
+});
+
+watch(() => route.params.username, (newUsername) => {
+    router.push(`/${newUsername}`);
+    window.location.reload();
 });
 
 const moveToUser = (username) => {
