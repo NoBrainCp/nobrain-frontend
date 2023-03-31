@@ -21,8 +21,10 @@
       수정
     </v-btn>
     <CategoryDialog
-        :categoryDialog="categoryDialog"
-        @submit="updateCategoryData"/>
+        :categoryDialogObj="categoryDialogObj"
+        @submit="updateCategoryData"
+        @close="closeCategoryDialog"
+    />
     <v-btn
         v-if="isMe && !isAll"
         class="btn"
@@ -65,7 +67,7 @@ const confirmObj = ref({
   buttonText: "삭제"
 });
 
-const categoryDialog = ref({
+const categoryDialogObj = ref({
   dialog: false,
   title: "카테고리 수정",
   btnName: "수정",
@@ -117,10 +119,10 @@ onMounted(() => {
 
 
 const updateClick = () => {
-  categoryDialog.value.dialog = true;
-  categoryDialog.value.name = category.value.name;
-  categoryDialog.value.description = category.value.description;
-  categoryDialog.value.isPublic = category.value.public;
+  categoryDialogObj.value.dialog = true;
+  categoryDialogObj.value.name = category.value.name;
+  categoryDialogObj.value.description = category.value.description;
+  categoryDialogObj.value.isPublic = category.value.public;
 };
 
 const updateCategoryData = async(categoryObj) => {
@@ -138,6 +140,9 @@ const updateCategoryData = async(categoryObj) => {
   }).catch((error) => {
     alert(error.response);
   })
+};
+const closeCategoryDialog = () => {
+  categoryDialogObj.value.dialog = false;
 };
 
 const deleteCategoryData = async() => {

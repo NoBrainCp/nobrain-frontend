@@ -1,13 +1,13 @@
 <template>
   <v-dialog
-      v-model="categoryDialog.dialog"
+      v-model="categoryDialogObj.dialog"
       persistent
       width="40%">
     <v-card>
       <v-card-title id="card-title">
         <span class="text-h5 mt-4 mr-4" id="card-title-text">
           <v-icon class="mb-2 mr-3">mdi-bookshelf</v-icon>
-          {{ categoryDialog.title }}
+          {{ categoryDialogObj.title }}
         </span>
       </v-card-title>
       <v-card-text>
@@ -15,7 +15,7 @@
           <v-row>
             <v-col cols="12">
               <v-text-field
-                  v-model="categoryDialog.name"
+                  v-model="categoryDialogObj.name"
                   label="카테고리 이름"
                   prepend-icon="mdi-rename"
                   :rules="[rules.name]"
@@ -24,16 +24,16 @@
             </v-col>
             <v-col cols="12">
               <v-text-field
-                  v-model="categoryDialog.description"
+                  v-model="categoryDialogObj.description"
                   label="설명"
                   type="text"
                   prepend-icon="mdi-tooltip-text"
                   required/>
               <v-checkbox
-                  v-model="categoryDialog.isPublic"
-                  :label="categoryDialog.isPublic ? '공개' : '비공개'"
+                  v-model="categoryDialogObj.isPublic"
+                  :label="categoryDialogObj.isPublic ? '공개' : '비공개'"
                   color="info"
-                  :prepend-icon="categoryDialog.isPublic ? 'mdi mdi-lock-open-variant' : 'mdi mdi-lock'"
+                  :prepend-icon="categoryDialogObj.isPublic ? 'mdi mdi-lock-open-variant' : 'mdi mdi-lock'"
                   hide-details/>
             </v-col>
           </v-row>
@@ -51,7 +51,7 @@
             color="blue-darken-1"
             variant="text"
             @click="submit">
-          {{ categoryDialog.btnName }}
+          {{ categoryDialogObj.btnName }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -62,7 +62,7 @@
 import {ref} from "vue";
 
 const props = defineProps({
-  categoryDialog: {
+  categoryDialogObj: {
     title: String,
     btnName: String,
     dialog: false,
@@ -77,26 +77,18 @@ const rules = ref({
   name: v => !!v || '이름은 필수 입력 항목입니다.'
 })
 
-const emit = defineEmits(['submit']);
+const emit = defineEmits(['submit', 'close']);
 
 const submit = () => {
-  emit('submit', props.categoryDialog);
-  initDialog();
-};
-
-const initDialog = () => {
-  props.categoryDialog.dialog = false;
-  props.categoryDialog.name = "";
-  props.categoryDialog.description = "";
-  props.categoryDialog.isPublic = true;
+  emit('submit', props.categoryDialogObj);
 };
 
 const closeDialog = () => {
-  initDialog();
+  emit('close')
 };
 
 const handleCategoryName = () => {
-  props.categoryDialog.name = props.categoryDialog.name.replace(" ", "_");
+  props.categoryDialogObj.name = props.categoryDialogObj.name.replace(" ", "_");
 }
 </script>
 
