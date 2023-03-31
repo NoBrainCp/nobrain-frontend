@@ -58,11 +58,6 @@ watch(() => store.state.window, (newWindow) => {
   window.value = newWindow;
 });
 
-watch(() => route.params.username, (newUsername) => {
-  router.push(`/${newUsername}`).then(() => {
-    window.location.reload();
-  });
-});
 
 </script>
 
