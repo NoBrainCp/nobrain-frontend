@@ -148,7 +148,7 @@ import router from "../../router";
 import CategoryDialog from "../dialog/CategoryDialog.vue";
 import BookmarkDialog from "../dialog/BookmarkDialog.vue";
 import {getUserInfo} from "../../api/user/userApi";
-import {onMounted, reactive, ref, toRefs, watch} from "vue";
+import {onMounted, reactive, ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import {addCategory, getCategories} from "../../api/category/categoryApi";
 import {getUsernameFromCookie} from "../../utils/cookies";
@@ -161,7 +161,6 @@ import {followAndUnfollow, getFollowCount, isFollow} from "../../api/follow/foll
 import {userStore} from "../../store/user/user";
 import {favoritesStore} from "../../store/favorites/favorites";
 import {privatesStore} from "../../store/privates/privates";
-import bookmarkDialog from "../dialog/BookmarkDialog.vue";
 
 const route = useRoute();
 const myName = ref(getUsernameFromCookie());
@@ -246,6 +245,7 @@ const showFollowCount = async () => {
 const addCategoryByUser = async (category) => {
   await addCategory(getUsernameFromCookie(), category).then(() => {
     categoryStore.state.status = !categoryStore.state.status;
+    categoryDialogObj.value.dialog = false;
   }).catch(() => {
     alert("빈 문자열 혹은 동일한 카테고리 이름을 생성 할 수 없습니다.")
   });
