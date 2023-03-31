@@ -145,6 +145,12 @@
 <script setup>
 import {categoryStore} from "../../store/category/category";
 import router from "../../router";
+import {store} from "../../store/index"
+import {bookmarkStore} from "../../store/bookmark/bookmark";
+import {followStore} from "../../store/follow/follow"
+import {userStore} from "../../store/user/user";
+import {favoritesStore} from "../../store/favorites/favorites";
+import {privatesStore} from "../../store/privates/privates";
 import CategoryDialog from "../dialog/CategoryDialog.vue";
 import BookmarkDialog from "../dialog/BookmarkDialog.vue";
 import {getUserInfo} from "../../api/user/userApi";
@@ -153,14 +159,9 @@ import {useRoute} from "vue-router";
 import {addCategory, getCategories} from "../../api/category/categoryApi";
 import {getUsernameFromCookie} from "../../utils/cookies";
 import {addBookmark, getPrivateBookmarksCount, getStarredBookmarksCount} from "../../api/bookmark/bookmarkApi";
-import {store} from "../../store/index"
-import {bookmarkStore} from "../../store/bookmark/bookmark";
-import {followStore} from "../../store/follow/follow"
 import {getTags} from "../../api/tag/tagApi";
 import {followAndUnfollow, getFollowCount, isFollow} from "../../api/follow/followApi";
-import {userStore} from "../../store/user/user";
-import {favoritesStore} from "../../store/favorites/favorites";
-import {privatesStore} from "../../store/privates/privates";
+
 
 const route = useRoute();
 const myName = ref(getUsernameFromCookie());
@@ -218,8 +219,8 @@ const followObj = ref({
 
   followButton: {
     text: '',
-    color: String,
-    icon: String,
+    color: "",
+    icon: "",
   }
 });
 
@@ -299,7 +300,6 @@ watch(() => (userStore.state.profileImage), (newValue) => {
 
 //t
 watch(() => followObj.value.follow, (newValue) => {
-  console.log(newValue);
   clickFollowButton(newValue);
 });
 
@@ -354,9 +354,9 @@ const clickAddBookmarkBtn = async () => {
 };
 
 const addBookmarkData = async (bookmark) => {
+  bookmarkDialogObj.value.dialog = false;
   await addBookmark(username.value, bookmark).then(() => {
     bookmarkDialogInit();
-    bookmarkDialogObj.value.dialog = false;
     router.push(`/${username.value}/${bookmark.categoryName}`);
     categoryStore.state.status = !categoryStore.state.status;
     bookmarkStore.state.status = !bookmarkStore.state.status;

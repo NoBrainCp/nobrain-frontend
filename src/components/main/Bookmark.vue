@@ -11,7 +11,7 @@
           <v-img
               :src="bookmark.image === null ? '../src/assets/images/nobrain-no-image.png' : bookmark.image"
               class="bookmark-img"
-              cover>
+              >
             <v-overlay
                 v-model="overlay"
                 :model-value="isHovering"
@@ -190,6 +190,7 @@ const loadData = async () => {
     });
   }
 };
+
 watch([() => route.params, () => bookmarkStore.state.status], loadData);
 watch(() => bookmarkStore.state.bookmarks, () => {
   if (Object.keys(bookmarkStore.state.bookmarks).length === 0) {
