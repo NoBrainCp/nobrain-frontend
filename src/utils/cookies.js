@@ -18,23 +18,23 @@ function saveCategoryId(categoryId) {
     document.cookie = `categoryId=${categoryId}`;
 }
 
-function saveAccessTokenToCookie(accessToken) {
+function saveAccessTokenToCookie(tokenType, accessToken) {
     let expirationSeconds = 1800; // 30 minutes
     let d = new Date();
     d.setTime(d.getTime() + (expirationSeconds * 1000));
     let expires = "expires="+ d.toUTCString();
-    document.cookie = `accessToken=${accessToken};${expires}`;
+    document.cookie = `accessToken=${tokenType} ${accessToken};${expires}`;
 }
 
-function saveRefreshTokenToCookie(refreshToken) {
-    document.cookie = `refreshToken=${refreshToken}`;
+function saveRefreshTokenToCookie(tokenType, refreshToken) {
+    document.cookie = `refreshToken=${tokenType} ${refreshToken}`;
 }
 
 function saveUserInfoToCookie(userInfo) {
     saveUserIdToCookie(userInfo.userId);
     saveEmailToCookie(userInfo.email);
     saveUsernameToCookie(userInfo.username);
-    saveAccessTokenToCookie(userInfo.accessToken);
+    saveAccessTokenToCookie(userInfo.tokenType, userInfo.accessToken);
 }
 
 
