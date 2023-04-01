@@ -51,7 +51,7 @@
                     <v-btn color="blue"
                            class="google-login"
                            outlined
-                           href="http://localhost:8089/oauth2/authorization/google">
+                           :href="googleSignUrl">
                       <v-icon size="20"
                               class="mr-3">
                         mdi-google
@@ -111,8 +111,17 @@
 import router from "../../router";
 import {store} from "../../store"
 import Alert from "../../components/alert/Alert.vue";
-import {ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import {SignInWithGoogle} from "../../api/oauth/OAuthApi";
+import {bookmarkStore} from "../../store/bookmark/bookmark";
+import {useRoute} from "vue-router";
+
+const googleSignUrl = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=' +
+    `${import.meta.env.VITE_APP_GOOGLE_CLIENT_ID}` +
+    '&redirect_uri=' +
+    `${import.meta.env.VITE_APP_GOOGLE_REDIRECT_URL}` +
+    '&response_type=code' +
+    '&scope=email profile';
 
 const userData = ref({
   loginId: "",
@@ -125,8 +134,10 @@ const errorObj = ref({
   text: "",
 });
 
+const route = useRoute();
 const isRememberId = ref(true);
 const isError = ref(false);
+const oauthUserInfo = ref({});
 
 const signIn = async() => {
   await store.dispatch('signIn', userData.value).then((response) => {
@@ -139,13 +150,20 @@ const signIn = async() => {
   })
 };
 
-const loginWithGoogle = async () => {
-  await SignInWithGoogle().then((response) => {
-    console.log(response);
+onMounted(async () => {
+  const code = route.query.code;
+  if (code) {
+    await sigInInWithGoogle(code);
+    // router.push(`/${oauthUserInfo.value.name}`);
+  }
+})
+const sigInInWithGoogle = async (code) => {
+  await SignInWithGoogle('google', code).then((response) => {
+    oauthUserInfo.value = response.data.data;
   }).catch((error) => {
-    console.log(error);
+
   })
-};
+}
 </script>
 
 <style scoped>

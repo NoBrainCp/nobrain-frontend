@@ -32,4 +32,4 @@ export const bookmark = authInstance;
 export const tag = authInstance;
 export const follow = authInstance;
 export const mail = createAuthInstance('/api/mail');
-export const oauth = temp('/oauth2');
+export const oauth = createInstance('/app');
