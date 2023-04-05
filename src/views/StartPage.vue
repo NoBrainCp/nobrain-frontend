@@ -3,6 +3,7 @@
     <Header/>
     <Body/>
     <Function/>
+    <Footer/>
   </div>
 
 </template>
@@ -10,10 +11,5 @@
 import Header from "../components/start/Header.vue";
 import Body from "../components/start/Body.vue";
 import Function from "../components/start/Function.vue";
-
+import Footer from "../components/start/Footer.vue";
 </script>
-
-<style scoped>
-
-
-</style>
