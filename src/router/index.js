@@ -8,6 +8,7 @@ import ChangePassword from "../views/change/ChangePassword.vue";
 import MainView from "../views/MainView.vue";
 import NotFound from "../views/NotFound.vue";
 import {getAccessTokenFromCookie, getUsernameFromCookie} from "../utils/cookies";
+import StartPage from "../views/StartPage.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -51,6 +52,11 @@ const router = createRouter({
             name: "changepassword",
             component: ChangePassword,
             props: true,
+        },
+        {
+            path: "/start",
+            name: "StartPage",
+            component: StartPage,
         },
         // {
         //     path:"/:catchAll(.*)",
