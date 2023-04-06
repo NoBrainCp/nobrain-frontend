@@ -1,14 +1,15 @@
 import {createRouter, createWebHistory} from "vue-router";
 import SignUp from "../views/sign/SignUp.vue";
 import SignIn from "../views/sign/SignIn.vue";
-import ForgetPassword from "../views/find/ForgetPassword.vue";
-import FindById from "../views/find/FindById.vue";
+import ForgetPassword from "../components/find/ForgetPassword.vue";
+import FindById from "../components/find/FindByInfo.vue";
 import FindByPassword from "../views/find/FindByPassword.vue";
-import ChangePassword from "../views/change/ChangePassword.vue";
+import ChangePassword from "../components/find/ChangePassword.vue";
 import MainView from "../views/MainView.vue";
 import NotFound from "../views/NotFound.vue";
 import {getAccessTokenFromCookie, getUsernameFromCookie} from "../utils/cookies";
 import StartPage from "../views/StartPage.vue";
+import Find from "../views/Find.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,31 +33,14 @@ const router = createRouter({
             props: true,
         },
         {
-            path: "/forget-password",
-            name: "forgetPassword",
-            component: ForgetPassword,
-        },
-        {
-            path: "/find-by-id",
-            name: "findbyid",
-            component: FindById,
-        },
-        {
-            path: "/find-by-password/:loginId",
-            name: "findbypassword",
-            component: FindByPassword,
-            props: true,
-        },
-        {
-            path: "/change-password/:loginId",
-            name: "changepassword",
-            component: ChangePassword,
-            props: true,
-        },
-        {
             path: "/start",
             name: "StartPage",
             component: StartPage,
+        },
+        {
+            path: "/find",
+            name: "Find",
+            component: Find,
         },
         // {
         //     path:"/:catchAll(.*)",
