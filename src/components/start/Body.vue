@@ -56,7 +56,6 @@
                 로그인
               </v-btn>
               <!--            :href="googleSignUrl"-->
-
               <a
                 class="caption text"
                 href="/find"
@@ -148,8 +147,7 @@ onMounted(() => {
 
 <style scoped>
 .parallax {
-  weight: 1800px;
-  height: 800px;
+  height: 100vh;
   position: relative;
   transition: all 3s;
 }
@@ -165,7 +163,6 @@ onMounted(() => {
   width: 38%;
   border-radius: 1rem;
   border-color: #181818;
-
   outline: #181818;
   position: absolute;
 }
@@ -186,7 +183,7 @@ onMounted(() => {
 }
 
 .login-button {
-  height: 45px;
+  height: 60px;
 }
 
 .body-card-oauth-button {

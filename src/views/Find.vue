@@ -34,13 +34,13 @@ const windowValue = ref("");
 
 watch(() => store.state.window, (newValue) => {
   windowValue.value = newValue;
-  console.log(1);
 });
 
 </script>
 
 <style scoped>
 .parallax {
+  height: 100vh;
   position: relative;
 }
 
@@ -54,7 +54,7 @@ watch(() => store.state.window, (newValue) => {
 
 .card {
   width: 40%;
-  height: 60%;
+  height: 80%;
   border-radius: 1em;
   border: 1px solid #181818;
   position: absolute;
