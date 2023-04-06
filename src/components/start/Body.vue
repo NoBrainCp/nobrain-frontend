@@ -90,8 +90,7 @@
       </v-col>
     </v-row>
   </v-parallax>
-  <div class="space"/>
-
+  <div class="space" />
 </template>
 
 <script setup>
@@ -99,7 +98,6 @@ import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import { store } from "../../store";
 import router from "../../router";
-
 
 const userData = ref({
   loginId: "",
