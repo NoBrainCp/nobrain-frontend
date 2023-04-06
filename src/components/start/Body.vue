@@ -58,8 +58,8 @@
 
             <a
                 class="caption text"
-                id="forgetPassword"
-                href="/forget-password"
+                href="/find"
+                @click="setWindow"
             >
               아이디 찾기 / 비밀번호 찾기
             </a>
@@ -122,6 +122,10 @@ const signIn = async() => {
   })
 };
 
+const setWindow = () => {
+  store.state.window = "forgetPassword";
+};
+
 const googleSignUrl = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=' +
     `${import.meta.env.VITE_APP_GOOGLE_CLIENT_ID}` +
     '&redirect_uri=' +
@@ -179,9 +183,7 @@ const oauthUserInfo = ref({});
 }
 
 .body-card-oauth-button {
-
   left: 20%;
-
 }
 
 .google-logo {
