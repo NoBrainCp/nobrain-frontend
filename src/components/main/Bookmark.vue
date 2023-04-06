@@ -1,87 +1,73 @@
 <template>
   <v-row>
-    <v-col v-for="bookmark in bookmarks" :key="bookmark.id" cols="auto">
+    <v-col v-for="bookmark in bookmarks"
+           :key="bookmark.id"
+           cols="auto">
       <v-hover v-slot="{ isHovering, props }">
         <v-card
-          class="mx-auto bookmark-card"
-          v-bind="props"
-          :elevation="isHovering ? 15 : 3"
-        >
+            class="mx-auto bookmark-card"
+            v-bind="props"
+            :elevation="isHovering ? 15 : 3">
           <v-img
-            :src="
-              bookmark.image === null
-                ? '../src/assets/images/nobrain-no-image.png'
-                : bookmark.image
-            "
-            class="bookmark-img"
-          >
+              :src="bookmark.image === null ? '../src/assets/images/nobrain-no-image.png' : bookmark.image"
+              class="bookmark-img"
+              >
             <v-overlay
-              v-model="overlay"
-              :model-value="isHovering"
-              contained
-              scrim="#424242"
-              class="align-center justify-center"
-            >
+                v-model="overlay"
+                :model-value="isHovering"
+                contained
+                scrim="#424242"
+                class="align-center justify-center">
               <v-btn
-                :href="bookmark.url"
-                target="_blank"
-                color="light-blue"
-                variant="flat"
-                >Move
+                  :href="bookmark.url"
+                  target="_blank"
+                  color="light-blue"
+                  variant="flat">Move
               </v-btn>
             </v-overlay>
           </v-img>
           <div class="card-header">
-            <v-card-subtitle class="mt-3">{{
-              bookmark.createdAt
-            }}</v-card-subtitle>
+            <v-card-subtitle class="mt-3">{{ bookmark.createdAt }}</v-card-subtitle>
             <v-col v-if="isMe" class="icon-container">
               <v-icon
-                size="27"
-                :color="bookmark.public ? 'indigo' : 'green-darken-3'"
-                :icon="
-                  bookmark.public ? 'mdi mdi-lock-open-variant' : 'mdi mdi-lock'
-                "
-                @click="clickLock(bookmark)"
-              />
+                  size="27"
+                  :color="bookmark.public ? 'indigo' : 'green-darken-3'"
+                  :icon="bookmark.public ? 'mdi mdi-lock-open-variant' : 'mdi mdi-lock'"
+                  @click="clickLock(bookmark)"/>
               <v-icon
-                size="27"
-                :color="bookmark.starred ? 'light-blue' : 'grey-lighten-1'"
-                class="mdi mdi-star icon-star"
-                @click="clickStar(bookmark)"
-              />
+                  size="27"
+                  :color="bookmark.starred ? 'light-blue' : 'grey-lighten-1'"
+                  class="mdi mdi-star icon-star"
+                  @click="clickStar(bookmark)"/>
               <v-menu
-                location="bottom"
-                transition="scale-transition"
-                open-on-hover
-              >
+                  location="bottom"
+                  transition="scale-transition"
+                  open-on-hover>
                 <template v-slot:activator="{ props }">
                   <v-chip
-                    class="bookmark-chip mt-1 mdi mdi-dots-horizontal"
-                    elevation="1"
-                    @click=""
-                    append-icon="mdi-chevron-down"
-                    v-bind="props"
-                  />
+                      class="bookmark-chip mt-1 mdi mdi-dots-horizontal"
+                      elevation="1"
+                      @click=""
+                      append-icon="mdi-chevron-down"
+                      v-bind="props"/>
                 </template>
                 <v-list class="bookmark-sub-btn-list">
                   <v-list-item
-                    class="text-blue-accent-4"
-                    prepend-icon="mdi mdi-pencil-outline"
-                    @click="clickEditBookmarkBtn(bookmark, bookmark.id)"
-                  >
+                      class="text-blue-accent-4"
+                      prepend-icon="mdi mdi-pencil-outline"
+                      @click="clickEditBookmarkBtn(bookmark, bookmark.id)">
                     <v-list-item-title>수정</v-list-item-title>
                   </v-list-item>
-                  <v-divider />
+                  <v-divider/>
                   <v-list-item
-                    class="text-red-accent-4"
-                    prepend-icon="mdi mdi-delete"
-                    @click="clickDeleteBookmarkBtn(bookmark.id)"
-                  >
+                      class="text-red-accent-4"
+                      prepend-icon="mdi mdi-delete"
+                      @click="clickDeleteBookmarkBtn(bookmark.id)">
                     <v-list-item-title>삭제</v-list-item-title>
                   </v-list-item>
                 </v-list>
               </v-menu>
+
             </v-col>
           </div>
 
@@ -94,12 +80,10 @@
             </div>
           </v-card-text>
           <div class="url-container">
-            <v-divider />
+            <v-divider/>
             <v-card-subtitle class="text-subtitle-2">
               <a :href="bookmark.url" class="bookmark-link-tag" target="_blank">
-                <v-icon class="icon-link" size="17"
-                  >mdi mdi-link-variant</v-icon
-                >
+                <v-icon class="icon-link" size="17">mdi mdi-link-variant</v-icon>
                 {{ bookmark.url }}
               </a>
             </v-card-subtitle>
@@ -108,39 +92,38 @@
       </v-hover>
     </v-col>
   </v-row>
-  <ConfirmDialog :confirmObj="confirmObj" @delete="deleteBookmark" />
+  <ConfirmDialog
+      :confirmObj="confirmObj"
+      @delete="deleteBookmark"/>
   <BookmarkDialog
-    :bookmarkDialogObj="bookmarkDialogObj"
-    @submit="updateBookmarkData"
-    @close="closeBookmarkDialog"
+      :bookmarkDialogObj="bookmarkDialogObj"
+      @submit="updateBookmarkData"
+      @close="closeBookmarkDialog"
   />
 </template>
 
 <script setup>
 import router from "../../router";
-import { bookmarkStore } from "../../store/bookmark/bookmark";
-import { favoritesStore } from "../../store/favorites/favorites";
-import { privatesStore } from "../../store/privates/privates";
+import {bookmarkStore} from "../../store/bookmark/bookmark";
+import {favoritesStore} from "../../store/favorites/favorites";
+import {privatesStore} from "../../store/privates/privates";
 import ConfirmDialog from "../dialog/ConfirmDialog.vue";
 import BookmarkDialog from "../dialog/BookmarkDialog.vue";
-import { useRoute } from "vue-router";
-import { onMounted, ref, watch, watchEffect } from "vue";
+import {useRoute} from "vue-router";
+import {onMounted, ref, watch, watchEffect} from "vue";
 import {
   deleteBookmarkById,
   getAllBookmarks,
-  getBookmarks,
-  getPrivateBookmarks,
+  getBookmarks, getPrivateBookmarks,
   getStarredBookmarks,
   updateBookmark,
   updatePublic,
-  updateStarred,
+  updateStarred
 } from "../../api/bookmark/bookmarkApi";
-import {
-  getCategories,
-  getCategoryByBookmarkId,
-} from "../../api/category/categoryApi";
-import { getTags, getTagsByBookmarkId } from "../../api/tag/tagApi";
-import { getUsernameFromCookie } from "../../utils/cookies";
+import {getCategories, getCategoryByBookmarkId} from "../../api/category/categoryApi";
+import {getTags, getTagsByBookmarkId} from "../../api/tag/tagApi";
+import {getUsernameFromCookie} from "../../utils/cookies";
+
 
 const bookmarkId = ref("");
 
@@ -178,55 +161,44 @@ const loadData = async () => {
   const username = route.params.username;
   const categoryName = route.params.category;
   if (!categoryName) {
-    await getAllBookmarks(username)
-      .then((response) => {
-        bookmarks.value = response.data.list;
-      })
-      .catch((error) => {
-        console.log(error);
-        alert("모든 북마크 조회 데이터를 가져올 수 없습니다.");
-      });
-  } else if (categoryName === "starred") {
-    await getStarredBookmarks(username)
-      .then((response) => {
-        bookmarks.value = response.data.list;
-      })
-      .catch((error) => {
-        console.log(error);
-        alert("즐겨찾기 북마크 조회 데이터를 가져올 수 없습니다.");
-      });
-  } else if (categoryName === "private") {
-    await getPrivateBookmarks(username)
-      .then((response) => {
-        bookmarks.value = response.data.list;
-      })
-      .catch((error) => {
-        console.log(error);
-        alert("비공개 북마크 조회 데이터를 가져올 수 없습니다.");
-      });
+    await getAllBookmarks(username).then((response) => {
+      bookmarks.value = response.data.list;
+    }).catch((error) => {
+      console.log(error);
+      alert("모든 북마크 조회 데이터를 가져올 수 없습니다.");
+    });
+  } else if (categoryName === 'starred') {
+    await getStarredBookmarks(username).then((response) => {
+      bookmarks.value = response.data.list;
+    }).catch((error) => {
+      console.log(error);
+      alert("즐겨찾기 북마크 조회 데이터를 가져올 수 없습니다.");
+    });
+  } else if (categoryName === 'private') {
+    await getPrivateBookmarks(username).then((response) => {
+      bookmarks.value = response.data.list;
+    }).catch((error) => {
+      console.log(error);
+      alert("비공개 북마크 조회 데이터를 가져올 수 없습니다.");
+    });
   } else {
-    await getBookmarks(username, categoryName)
-      .then((response) => {
-        bookmarks.value = response.data.list;
-      })
-      .catch((error) => {
-        console.log(error);
-        alert("카테고리 북마크 조회 데이터를 가져올 수 없습니다.");
-      });
+    await getBookmarks(username, categoryName).then((response) => {
+      bookmarks.value = response.data.list;
+    }).catch((error) => {
+      console.log(error);
+      alert("카테고리 북마크 조회 데이터를 가져올 수 없습니다.");
+    });
   }
 };
 
 watch([() => route.params, () => bookmarkStore.state.status], loadData);
-watch(
-  () => bookmarkStore.state.bookmarks,
-  () => {
-    if (Object.keys(bookmarkStore.state.bookmarks).length === 0) {
-      loadData();
-    } else {
-      bookmarks.value = bookmarkStore.state.bookmarks;
-    }
+watch(() => bookmarkStore.state.bookmarks, () => {
+  if (Object.keys(bookmarkStore.state.bookmarks).length === 0) {
+    loadData();
+  } else {
+    bookmarks.value = bookmarkStore.state.bookmarks;
   }
-);
+});
 
 onMounted(() => {
   loadData();
@@ -234,42 +206,33 @@ onMounted(() => {
 
 const clickEditBookmarkBtn = async (bookmark, bookmarkId) => {
   bookmarkStore.state.status = !bookmarkStore.state.status;
-  const [categoryListResp, categoryResp, tagsResp, allTagsResp] =
-    await Promise.all([
-      getCategories(getUsernameFromCookie()),
-      getCategoryByBookmarkId(bookmarkId),
-      getTagsByBookmarkId(getUsernameFromCookie(), bookmarkId),
-      getTags(getUsernameFromCookie()),
-    ]);
+  const [categoryListResp, categoryResp, tagsResp, allTagsResp] = await Promise.all([
+    getCategories(getUsernameFromCookie()),
+    getCategoryByBookmarkId(bookmarkId),
+    getTagsByBookmarkId(getUsernameFromCookie(), bookmarkId),
+    getTags(getUsernameFromCookie())
+  ]);
   bookmarkDialogObj.value.bookmark = bookmark;
   bookmarkDialogObj.value.dialog = true;
   bookmarkDialogObj.value.bookmark.categoryName = categoryResp.data.data.name;
   bookmarkDialogObj.value.bookmark.isPublic = bookmark.public;
 
-  bookmarkDialogObj.value.categoryNames = categoryListResp.data.list.map(
-    ({ name }) => name
-  );
-  bookmarkDialogObj.value.bookmark.tags = tagsResp.data.list.map(
-    ({ tagName }) => tagName
-  );
-  bookmarkDialogObj.value.bookmark.tagList = allTagsResp.data.list.map(
-    ({ tag }) => tag.name
-  );
+  bookmarkDialogObj.value.categoryNames = categoryListResp.data.list.map(({name}) => name);
+  bookmarkDialogObj.value.bookmark.tags = tagsResp.data.list.map(({tagName}) => tagName);
+  bookmarkDialogObj.value.bookmark.tagList = allTagsResp.data.list.map(({tag}) => tag.name);
 };
 
 const updateBookmarkData = async (bookmark) => {
   const bookmarkId = bookmarkDialogObj.value.bookmark.id;
-  await updateBookmark(bookmarkId, bookmark)
-    .then(() => {
-      bookmarkDialogObj.value.dialog = false;
-      router.push(`/${username.value}/${bookmark.categoryName}`);
-      bookmarkStore.state.status = !bookmarkStore.state.status;
-      privatesStore.state.status = !privatesStore.state.status;
-    })
-    .catch((error) => {
-      console.log(error);
-      alert("북마크 업데이트에 문제가 발생하였습니다.");
-    });
+  await updateBookmark(bookmarkId, bookmark).then(() => {
+    bookmarkDialogObj.value.dialog = false;
+    router.push(`/${username.value}/${bookmark.categoryName}`);
+    bookmarkStore.state.status = !bookmarkStore.state.status;
+    privatesStore.state.status = !privatesStore.state.status;
+  }).catch((error) => {
+    console.log(error);
+    alert("북마크 업데이트에 문제가 발생하였습니다.");
+  })
 };
 
 const closeBookmarkDialog = () => {
@@ -284,9 +247,8 @@ const clickDeleteBookmarkBtn = (bookmarkIdValue) => {
 
 const deleteBookmark = async () => {
   await deleteBookmarkById(bookmarkId.value).then(() => {
-    const index = bookmarks.value.findIndex(
-      (bookmark) => bookmark.id === bookmarkId.value
-    );
+
+    const index = bookmarks.value.findIndex(bookmark => bookmark.id === bookmarkId.value);
     confirmObj.value.dialog = false;
     if (index !== -1) {
       bookmarks.value.splice(index, 1);
@@ -295,45 +257,42 @@ const deleteBookmark = async () => {
     favoritesStore.state.status = !favoritesStore.state.status;
     bookmarkStore.state.status = !bookmarkStore.state.status;
   });
+
 };
 
 const clickStar = async (bookmark) => {
   bookmark.starred = !bookmark.starred;
-  await updateStarred(bookmark.id, bookmark.starred)
-    .then(() => {
-      favoritesStore.state.status = !favoritesStore.state.status;
-    })
-    .catch((error) => {
-      console.log(error);
-      alert("즐겨찾기 등록에 문제가 발생하였습니다.");
-    });
+  await updateStarred(bookmark.id, bookmark.starred).then(() => {
+    favoritesStore.state.status = !favoritesStore.state.status;
+  }).catch((error) => {
+    console.log(error);
+    alert("즐겨찾기 등록에 문제가 발생하였습니다.");
+  })
 };
 
 const clickLock = async (bookmark) => {
-  await getCategoryByBookmarkId(bookmark.id)
-    .then((response) => {
-      if (!response.data.data.public) {
-        alert("카테고리가 비공개로 설정되어 있습니다.");
-      } else {
-        bookmark.public = !bookmark.public;
-        updatePublic(bookmark.id, bookmark.public)
-          .then(() => {
-            privatesStore.state.status = !privatesStore.state.status;
-          })
-          .catch((error) => {
-            console.log(error);
-            alert("북마크 비공개 등록에 문제가 발생했습니다.");
-          });
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-      alert("해당 북마크의 카테고리 정보 조회에 문제가 발생했습니다.");
-    });
+  await getCategoryByBookmarkId(bookmark.id).then((response) => {
+    if (!response.data.data.public) {
+      alert("카테고리가 비공개로 설정되어 있습니다.");
+    } else {
+      bookmark.public = !bookmark.public;
+      updatePublic(bookmark.id, bookmark.public).then(() => {
+        privatesStore.state.status = !privatesStore.state.status;
+      }).catch((error) => {
+        console.log(error);
+        alert("북마크 비공개 등록에 문제가 발생했습니다.");
+      })
+    }
+  }).catch((error) => {
+    console.log(error);
+    alert("해당 북마크의 카테고리 정보 조회에 문제가 발생했습니다.");
+  })
 };
+
 </script>
 
 <style scoped>
+
 .bookmark-card {
   width: 270px;
   height: 350px;
