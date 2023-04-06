@@ -82,6 +82,7 @@ const setWindow = () => {
   top: 40%;
   left: 15%;
   width: 70%;
+  height: 15%;
   position: absolute;
 }
 
