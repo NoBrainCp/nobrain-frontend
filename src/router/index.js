@@ -1,10 +1,6 @@
 import {createRouter, createWebHistory} from "vue-router";
 import SignUp from "../views/sign/SignUp.vue";
 import SignIn from "../views/sign/SignIn.vue";
-import ForgetPassword from "../components/find/ForgetPassword.vue";
-import FindById from "../components/find/FindByInfo.vue";
-import FindByPassword from "../views/find/FindByPassword.vue";
-import ChangePassword from "../components/find/ChangePassword.vue";
 import MainView from "../views/MainView.vue";
 import NotFound from "../views/NotFound.vue";
 import {getAccessTokenFromCookie, getUsernameFromCookie} from "../utils/cookies";
