@@ -1,6 +1,6 @@
 <template>
   <v-container id="container">
-    <v-row align-content="center"  id="all">
+    <v-row align-content="center" id="all">
       <v-col cols="12" sm="12" id="col">
         <v-card id="back" class="elevation-6 mt-10">
           <Alert v-if="isError" class="alert" :alertObj="errorObj"></Alert>
@@ -14,55 +14,57 @@
                 <v-row align-center justify="center">
                   <v-col cols="12" sm="8" class="mt-8">
                     <v-text-field
-                        label="Id"
-                        bg-color="white"
-                        color="blue"
-                        v-model="userData.loginId"
+                      label="Id"
+                      bg-color="white"
+                      color="blue"
+                      v-model="userData.loginId"
                     />
                     <v-text-field
-                        label="Password"
-                        bg-color="white"
-                        color="blue"
-                        type="password"
-                        v-model="userData.password"
-                        @keydown.enter="signIn"
+                      label="Password"
+                      bg-color="white"
+                      color="blue"
+                      type="password"
+                      v-model="userData.password"
+                      @keydown.enter="signIn"
                     />
                     <v-row>
                       <v-col cols="12" sm="7">
                         <v-checkbox
-                            label="Remember Me"
-                            class="mt-n5"
-                            color="blue"
-                            v-model="isRememberId"
+                          label="Remember Me"
+                          class="mt-n5"
+                          color="blue"
+                          v-model="isRememberId"
                         />
                       </v-col>
                     </v-row>
                     <v-btn
-                        color="blue"
-                        class="mt-n7"
-                        dark
-                        block
-                        tile
-                        @click="signIn"
+                      color="blue"
+                      class="mt-n7"
+                      dark
+                      block
+                      tile
+                      @click="signIn"
                     >
                       Login
                     </v-btn>
                     <div class="btn-line"></div>
-                    <v-btn color="blue"
-                           class="google-login"
-                           outlined
-                           :href="googleSignUrl">
-                      <v-icon size="20"
-                              class="mr-3">
-                        mdi-google
-                      </v-icon>
+                    <v-btn
+                      color="blue"
+                      class="google-login"
+                      outlined
+                      :href="googleSignUrl"
+                    >
+                      <v-icon size="20" class="mr-3"> mdi-google </v-icon>
                       Sign in with Google
                     </v-btn>
+
+                    <button @click="openPopup">Open Popup</button>
+
                     <v-col cols="12" sm="10">
                       <a
-                          class="caption text"
-                          id="forgetPassword"
-                          href="/forget-password"
+                        class="caption text"
+                        id="forgetPassword"
+                        href="/forget-password"
                       >
                         Did you forget your password?
                       </a>
@@ -75,10 +77,10 @@
               <h3 class="text-center">Welcome!</h3>
               <div class="text-center">
                 <img
-                    class="center"
-                    src="../../assets/images/logo_transparent.png"
-                    alt="noBrainLogo"
-                    style="width: 200px"
+                  class="center"
+                  src="../../assets/images/logo_transparent.png"
+                  alt="noBrainLogo"
+                  style="width: 200px"
                 />
               </div>
               <div class="text-center">
@@ -88,12 +90,12 @@
                 </v-card-text>
                 <div class="text-center">
                   <v-btn
-                      absolute="true"
-                      tile
-                      outlined
-                      dark
-                      to="/signup"
-                      color="#BBDEFB"
+                    absolute="true"
+                    tile
+                    outlined
+                    dark
+                    to="/signup"
+                    color="#BBDEFB"
                   >
                     Sing up
                   </v-btn>
@@ -109,19 +111,20 @@
 
 <script setup>
 import router from "../../router";
-import {store} from "../../store"
+import { store } from "../../store";
 import Alert from "../../components/alert/Alert.vue";
-import {onMounted, ref, watch} from "vue";
-import {SignInWithGoogle} from "../../api/oauth/OAuthApi";
-import {bookmarkStore} from "../../store/bookmark/bookmark";
-import {useRoute} from "vue-router";
+import { onMounted, ref, watch } from "vue";
+import { SignInWithGoogle } from "../../api/oauth/OAuthApi";
+import { bookmarkStore } from "../../store/bookmark/bookmark";
+import { useRoute } from "vue-router";
 
-const googleSignUrl = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=' +
-    `${import.meta.env.VITE_APP_GOOGLE_CLIENT_ID}` +
-    '&redirect_uri=' +
-    `${import.meta.env.VITE_APP_GOOGLE_REDIRECT_URL}` +
-    '&response_type=code' +
-    '&scope=email profile';
+const googleSignUrl =
+  "https://accounts.google.com/o/oauth2/v2/auth?client_id=" +
+  `${import.meta.env.VITE_APP_GOOGLE_CLIENT_ID}` +
+  "&redirect_uri=" +
+  `${import.meta.env.VITE_APP_GOOGLE_REDIRECT_URL}` +
+  "&response_type=code" +
+  "&scope=email profile";
 
 const userData = ref({
   loginId: "",
@@ -139,15 +142,18 @@ const isRememberId = ref(true);
 const isError = ref(false);
 const oauthUserInfo = ref({});
 
-const signIn = async() => {
-  await store.dispatch('signIn', userData.value).then((response) => {
-    router.replace(`/${response.username}`);
-  }).catch((error) => {
-    console.log(error);
-    errorObj.value.title = "로그인 오류";
-    errorObj.value.text = error.response.data.message;
-    isError.value = true;
-  })
+const signIn = async () => {
+  await store
+    .dispatch("signIn", userData.value)
+    .then((response) => {
+      router.replace(`/${response.username}`);
+    })
+    .catch((error) => {
+      console.log(error);
+      errorObj.value.title = "로그인 오류";
+      errorObj.value.text = error.response.data.message;
+      isError.value = true;
+    });
 };
 
 onMounted(async () => {
@@ -156,14 +162,28 @@ onMounted(async () => {
     await sigInInWithGoogle(code);
     // router.push(`/${oauthUserInfo.value.name}`);
   }
-})
+});
 const sigInInWithGoogle = async (code) => {
-  await SignInWithGoogle('google', code).then((response) => {
-    oauthUserInfo.value = response.data.data;
-  }).catch((error) => {
+  await SignInWithGoogle("google", code)
+    .then((response) => {
+      oauthUserInfo.value = response.data.data;
+    })
+    .catch((error) => {});
+};
 
-  })
-}
+const openPopup = () => {
+  const screenWidth = window.screen.width;
+  const screenHeight = window.screen.height;
+  const centerX = (screenWidth - 500) / 2;
+  const centerY = (screenHeight - 500) / 2;
+
+  // Open a small sub-window with the desired URL at the center of the screen
+  window.open(
+    "https://www.google.com",
+    "popupWindow",
+    `width=500,height=500,left=${centerX},top=${centerY}`
+  );
+};
 </script>
 
 <style scoped>
@@ -201,7 +221,13 @@ const sigInInWithGoogle = async (code) => {
 
 .btn-line {
   margin: 17px 0 10px 0;
-  background-image: repeating-linear-gradient(to right, transparent, transparent 10px, black 10px, black 20px);
+  background-image: repeating-linear-gradient(
+    to right,
+    transparent,
+    transparent 10px,
+    black 10px,
+    black 20px
+  );
   height: 1px;
   border-spacing: 10px;
   text-align: center;
@@ -246,5 +272,4 @@ const sigInInWithGoogle = async (code) => {
   position: absolute;
   width: 100%;
 }
-
 </style>
