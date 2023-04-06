@@ -57,10 +57,12 @@
               </v-btn>
               <!--            :href="googleSignUrl"-->
 
+
+            <div class="body-card-oauth-button mt-8">
               <a
-                class="caption text"
                 id="forgetPassword"
-                href="/forget-password"
+                 href="/find"
+                @click="setWindow"
               >
                 아이디 찾기 / 비밀번호 찾기
               </a>
@@ -124,13 +126,18 @@ const signIn = async () => {
     });
 };
 
-const googleSignUrl =
-  "https://accounts.google.com/o/oauth2/v2/auth?client_id=" +
-  `${import.meta.env.VITE_APP_GOOGLE_CLIENT_ID}` +
-  "&redirect_uri=" +
-  `${import.meta.env.VITE_APP_GOOGLE_REDIRECT_URL}` +
-  "&response_type=code" +
-  "&scope=email profile";
+
+const setWindow = () => {
+  store.state.window = "forgetPassword";
+};
+
+const googleSignUrl = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=' +
+    `${import.meta.env.VITE_APP_GOOGLE_CLIENT_ID}` +
+    '&redirect_uri=' +
+    `${import.meta.env.VITE_APP_GOOGLE_REDIRECT_URL}` +
+    '&response_type=code' +
+    '&scope=email profile';
+
 
 const route = useRoute();
 const isRememberId = ref(true);

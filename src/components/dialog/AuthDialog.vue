@@ -12,6 +12,7 @@
       <v-row style="margin-top: 8%" class="field">
         <v-col col="12" sm="8">
           <v-text-field
+              class="ml-4"
               v-model="authObj.authCode"
               label="인증번호"
               bg-color="white"
@@ -29,7 +30,7 @@
         </v-col>
       </v-row>
       <v-row class="field">
-        <v-col col="12" sm="12"> 남은시간 : {{ timeCount.timeStr }}</v-col>
+        <v-col col="12" sm="12" class="ml-4"> 남은시간 : {{ timeCount.timeStr }}</v-col>
       </v-row>
     </v-card>
   </v-dialog>
@@ -63,7 +64,7 @@ const startTimer = () => {
     timeCount.value.timeStr = prettyTimer(timeCount.value.restSec);
     timeCount.value.restSec--;
 
-    if (timeCount.value.restSec == 0) {
+    if (timeCount.value.restSec === 0) {
       timerStop(timerObj);
     }
   }, 1000);
