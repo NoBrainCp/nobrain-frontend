@@ -1,7 +1,7 @@
 <template>
   <div>
     <Header class="header" />
-    <Body class="body" />
+    <Body/>
     <Function />
     <Footer />
   </div>
@@ -19,7 +19,4 @@ import Footer from "../components/start/Footer.vue";
   align-content: center;
 }
 
-.body {
-  opacity: 0.3;
-}
 </style>

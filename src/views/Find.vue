@@ -2,7 +2,8 @@
   <v-parallax
       class="parallax"
       src="/../src/assets/images/start-page-header.jpg"
-  >
+      :style="{opacity: opacity}"
+  />
     <v-window
         class="window"
         v-model="windowValue">
@@ -19,21 +20,32 @@
         </v-window-item>
       </v-card>
     </v-window>
-  </v-parallax>
+
 </template>
 
 <script setup>
 
-import {ref, watch} from "vue";
+import {onMounted, ref, watch} from "vue";
 import {store} from "../store";
 import ForgetPassword from "../components/find/ForgetPassword.vue";
 import FindByInfo from "../components/find/FindByInfo.vue";
 import ChangePassword from "../components/find/ChangePassword.vue";
 
 const windowValue = ref("");
-
+const opacity = ref(0);
 watch(() => store.state.window, (newValue) => {
   windowValue.value = newValue;
+});
+
+onMounted(() => {
+  let opt = 0;
+  const intervalId = setInterval(() => {
+    opt += 0.1;
+    if (opt >= 1) {
+      clearInterval(intervalId);
+    }
+    opacity.value = opt;
+  }, 100);
 });
 
 </script>
@@ -42,6 +54,7 @@ watch(() => store.state.window, (newValue) => {
 .parallax {
   height: 100vh;
   position: relative;
+  transition: opacity 1s;
 }
 
 .window {

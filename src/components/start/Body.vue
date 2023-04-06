@@ -2,6 +2,7 @@
   <v-parallax
     class="parallax"
     src="/../src/assets/images/start-page-header.jpg"
+    :style="{opacity: opacity}"
   >
     <v-row class="d-flex">
       <v-col cols="12" sm="7">
@@ -93,7 +94,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import {onMounted, ref} from "vue";
 import { useRoute } from "vue-router";
 import { store } from "../../store";
 import router from "../../router";
@@ -138,10 +139,17 @@ const route = useRoute();
 const isRememberId = ref(true);
 const isError = ref(false);
 const oauthUserInfo = ref({});
+const opacity = ref(0);
 
 onMounted(() => {
-  let parallax = document.querySelector(".parallax");
-  console.log(parallax);
+  let opt = 0;
+  const intervalId = setInterval(() => {
+    opt += 0.1;
+    if (opt >= 1) {
+      clearInterval(intervalId);
+    }
+    opacity.value = opt;
+  }, 100);
 });
 </script>
 
@@ -149,7 +157,7 @@ onMounted(() => {
 .parallax {
   height: 100vh;
   position: relative;
-  transition: all 3s;
+  transition: opacity 1s;
 }
 
 .body-text {
