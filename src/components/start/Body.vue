@@ -1,8 +1,8 @@
 <template>
   <v-parallax
-    class="parallax"
-    src="/../src/assets/images/start-page-header.jpg"
-    :style="{opacity: opacity}"
+      class="parallax"
+      src="/../src/assets/images/start-page-header.jpg"
+      :style="{opacity: opacity}"
   >
     <v-row class="d-flex">
       <v-col cols="12" sm="7">
