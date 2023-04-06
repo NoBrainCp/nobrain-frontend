@@ -28,8 +28,11 @@
           class="logo ml-10 mr-10"
           @click="kakaoLogin"
       />
-      <div>
-        <v-icon class="mdi mdi-account-arrow-up-outline flex-column"/>
+      <div
+          @click="moveSignUpPage"
+          style="cursor: pointer;"
+      >
+        <v-icon class="ml-6 mdi mdi-account-arrow-up-outline flex-column"/>
         <h3>회원 가입</h3>
       </div>
 
@@ -61,7 +64,7 @@ const home = () => {
 .mainLogo {
   cursor: pointer;
   height: 125px;
-  width: 165px;
+  width: 150px;
   filter: invert(55%) sepia(22%) saturate(7378%) hue-rotate(167deg) brightness(99%) contrast(98%);
 }
 

@@ -214,7 +214,7 @@ const logout = () => {
 
 const closeConfirmDialog = () => {
   confirmObj.value.dialog = false;
-;}
+};
 
 </script>
 

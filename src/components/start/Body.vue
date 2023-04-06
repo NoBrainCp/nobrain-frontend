@@ -15,8 +15,8 @@
       </div>
     </v-col>
     <v-col cols="12" sm="5">
-      <v-card class="body-card d-flex">
 
+      <v-card class="body-card d-flex">
         <v-card-text>
           <h2 class="body-card-title text-h3 font-weight-bold text-center mt-10">Nobrain</h2>
           <div class="body-card-text">
@@ -34,6 +34,7 @@
                 color="blue"
                 type="password"
                 variant="outlined"
+                @keydown.enter="signIn"
                 v-model="userData.password"
             />
             <v-row class="mt-2 mb-5">
@@ -49,6 +50,7 @@
                 class="mt-2 mb-3 login-button"
                 variant="outlined"
                 block
+                @click="signIn"
             >
               로그인
             </v-btn>
@@ -64,36 +66,28 @@
             <div class="body-card-oauth-button mt-8">
               <img
                   src="src/assets/images/google-logo.png"
-                  style="cursor: pointer;"
-                  class="logo"
+                  class="google-logo"
                   alt="google"
                   @click="googleLogin"
               />
               <img
                   src="src/assets/images/naver-logo.png"
-                  style="cursor: pointer;"
-                  class="logo ml-10"
+                  class="naver-logo"
                   alt="naver"
                   @click="naverLogin"
               />
               <img
                   src="src/assets/images/kakao-logo.png"
-                  style="cursor: pointer;"
-                  class="logo ml-10 mr-10"
+                  class="kakao-logo"
                   alt="kakao"
                   @click="kakaoLogin"
               />
             </div>
-
           </div>
-
         </v-card-text>
       </v-card>
     </v-col>
-
   </v-row>
-
-
   </v-parallax>
   <div class="space"/>
 
@@ -102,6 +96,8 @@
 <script setup>
 import {ref} from "vue";
 import {useRoute} from "vue-router";
+import {store} from "../../store";
+import router from "../../router";
 
 
 const userData = ref({
@@ -114,6 +110,17 @@ const errorObj = ref({
   title: "",
   text: "",
 });
+
+const signIn = async() => {
+  await store.dispatch('signIn', userData.value).then((response) => {
+    router.replace(`/${response.username}`);
+  }).catch((error) => {
+    console.log(error);
+    errorObj.value.title = "로그인 오류";
+    errorObj.value.text = error.response.data.message;
+    isError.value = true;
+  })
+};
 
 const googleSignUrl = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=' +
     `${import.meta.env.VITE_APP_GOOGLE_CLIENT_ID}` +
@@ -164,7 +171,7 @@ const oauthUserInfo = ref({});
 }
 
 .space {
-  height: 140px
+  height: 100px
 }
 
 .login-button {
@@ -172,13 +179,30 @@ const oauthUserInfo = ref({});
 }
 
 .body-card-oauth-button {
-  position: absolute;
+
   left: 20%;
 
 }
 
-.logo {
+.google-logo {
+  position: absolute;
   height: 50px;
+  cursor: pointer;
+  left: 25%;
+}
+
+.naver-logo {
+  position: absolute;
+  height: 50px;
+  cursor: pointer;
+  left: 45%;
+}
+
+.kakao-logo {
+  position: absolute;
+  height: 50px;
+  cursor: pointer;
+  left: 65%;
 }
 
 </style>
