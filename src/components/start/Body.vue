@@ -1,7 +1,8 @@
 <template>
   <v-parallax
-    class="parallax"
-    src="/../src/assets/images/start-page-header.jpg"
+      class="parallax"
+      src="/../src/assets/images/start-page-header.jpg"
+      :style="{opacity: opacity}"
   >
     <v-row class="d-flex">
       <v-col cols="12" sm="7">
@@ -16,67 +17,76 @@
         <v-card class="body-card d-flex">
           <v-card-text>
             <h2
-              class="body-card-title text-h3 font-weight-bold text-center mt-10"
+                class="body-card-title text-h3 font-weight-bold text-center mt-10"
             >
               Nobrain
             </h2>
             <div class="body-card-text">
-              <v-text-field
-                label="Id"
-                bg-color="white"
-                color="blue"
-                variant="outlined"
-                v-model="userData.loginId"
-              />
-              <v-text-field
-                class="mt-1"
-                label="Password"
-                bg-color="white"
-                color="blue"
-                type="password"
-                variant="outlined"
-                @keydown.enter="signIn"
-                v-model="userData.password"
-              />
+              <form>
+                <v-text-field
+                    v-model="userData.loginId"
+                    label="Id"
+                    color="blue"
+                    autocomplete="loginId"
+                    variant="outlined"
+                />
+                <v-text-field
+                    v-model="userData.password"
+                    class="mt-1"
+                    label="Password"
+                    color="blue"
+                    type="password"
+                    variant="outlined"
+                    autocomplete="current-password"
+                    @keydown.enter="signIn"
+                />
+              </form>
+
               <v-row class="mt-2 mb-5">
                 <v-checkbox
-                  label="로그인 상태 유지"
-                  class="mt-n5"
-                  color="blue"
-                  v-model="isRememberId"
+                    label="로그인 상태 유지"
+                    class="mt-n5"
+                    color="blue"
+                    v-model="isRememberId"
                 />
               </v-row>
               <v-btn
-                color="blue"
-                class="mt-2 mb-3 login-button"
-                variant="outlined"
-                block
-                @click="signIn"
+                  color="blue"
+                  class="mt-2 mb-3 login-button"
+                  variant="outlined"
+                  block
+                  @click="signIn"
               >
                 로그인
               </v-btn>
-              <!--            :href="googleSignUrl"-->
-              <a class="caption text" href="/find" @click="setWindow">
+
+              <a
+                  class="caption text"
+                  href="/find"
+                  @click="setWindow"
+              >
                 아이디 찾기 / 비밀번호 찾기
               </a>
               <div class="body-card-oauth-button mt-8">
                 <img
+
                   src="src/assets/images/google-logo.png"
                   class="google-logo"
                   alt="google"
                   @click="googleLogin"
+
                 />
                 <img
-                  src="src/assets/images/naver-logo.png"
-                  class="naver-logo"
-                  alt="naver"
-                  @click="naverLogin"
+                    src="src/assets/images/naver-logo.png"
+                    class="naver-logo"
+                    alt="naver"
+                    @click="naverLogin"
                 />
                 <img
-                  src="src/assets/images/kakao-logo.png"
-                  class="kakao-logo"
-                  alt="kakao"
-                  @click="kakaoLogin"
+                    src="src/assets/images/kakao-logo.png"
+                    class="kakao-logo"
+                    alt="kakao"
+                    @click="kakaoLogin"
                 />
               </div>
             </div>
@@ -85,13 +95,13 @@
       </v-col>
     </v-row>
   </v-parallax>
-  <div class="space" />
+  <div class="space"/>
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
-import { store } from "../../store";
+import {onMounted, ref} from "vue";
+import {useRoute} from "vue-router";
+import {store} from "../../store";
 import router from "../../router";
 
 const userData = ref({
@@ -107,16 +117,16 @@ const errorObj = ref({
 
 const signIn = async () => {
   await store
-    .dispatch("signIn", userData.value)
-    .then((response) => {
-      router.replace(`/${response.username}`);
-    })
-    .catch((error) => {
-      console.log(error);
-      errorObj.value.title = "로그인 오류";
-      errorObj.value.text = error.response.data.message;
-      isError.value = true;
-    });
+      .dispatch("signIn", userData.value)
+      .then((response) => {
+        router.replace(`/${response.username}`);
+      })
+      .catch((error) => {
+        console.log(error);
+        errorObj.value.title = "로그인 오류";
+        errorObj.value.text = error.response.data.message;
+        isError.value = true;
+      });
 };
 
 const setWindow = () => {
@@ -135,10 +145,17 @@ const route = useRoute();
 const isRememberId = ref(true);
 const isError = ref(false);
 const oauthUserInfo = ref({});
+const opacity = ref(0);
 
 onMounted(() => {
-  let parallax = document.querySelector(".parallax");
-  console.log(parallax);
+  let opt = 0;
+  const intervalId = setInterval(() => {
+    opt += 0.1;
+    if (opt >= 1) {
+      clearInterval(intervalId);
+    }
+    opacity.value = opt;
+  }, 100);
 });
 </script>
 
@@ -146,7 +163,7 @@ onMounted(() => {
 .parallax {
   height: 90vh;
   position: relative;
-  transition: all 3s;
+  transition: opacity 1s;
 }
 
 .body-text {
@@ -207,4 +224,5 @@ onMounted(() => {
   cursor: pointer;
   left: 65%;
 }
+
 </style>

@@ -30,8 +30,8 @@
               </v-col>
               <v-col cols="12" sm="4">
                 <v-btn
-                    class="ml-2 mt-2"
-                    color="blue"
+                    class="ml-n8 mt-2"
+                    color="black"
                     variant="outlined"
                     @click="sendAuthCodeFromPhoneNumber(user.phoneNumber)"
                 >
@@ -69,8 +69,8 @@
 
               <v-col cols="12" sm="4">
                 <v-btn
-                    class="ml-2 mt-2"
-                    color="blue"
+                    class="ml-n8 mt-2"
+                    color="black"
                     variant="outlined"
                     @click="sendAuthCodeFromEmail(user.email)">
                   인증번호 받기
