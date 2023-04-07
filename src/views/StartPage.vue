@@ -15,7 +15,7 @@ import Footer from "../components/start/Footer.vue";
 
 <style scoped>
 .header {
-  height: 100px;
+  height: 130px;
   align-content: center;
 }
 
