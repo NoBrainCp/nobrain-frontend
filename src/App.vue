@@ -20,7 +20,7 @@
 
 @font-face {
   font-family: 'doveFont';
-  src: url('src/assets/fonts/doveMayo.ttf') format('woff2');
+  src: url('src/assets/fonts/doveFont.ttf') format('woff2');
   font-weight: normal;
   font-style: normal;
 }
