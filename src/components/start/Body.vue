@@ -59,6 +59,7 @@
               >
                 로그인
               </v-btn>
+
               <a
                   class="caption text"
                   href="/find"
@@ -68,10 +69,12 @@
               </a>
               <div class="body-card-oauth-button mt-8">
                 <img
-                    src="src/assets/images/google-logo.png"
-                    class="google-logo"
-                    alt="google"
-                    @click="googleLogin"
+
+                  src="src/assets/images/google-logo.png"
+                  class="google-logo"
+                  alt="google"
+                  @click="googleLogin"
+
                 />
                 <img
                     src="src/assets/images/naver-logo.png"
@@ -130,12 +133,13 @@ const setWindow = () => {
   store.state.window = "forgetPassword";
 };
 
-const googleSignUrl = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=' +
-    `${import.meta.env.VITE_APP_GOOGLE_CLIENT_ID}` +
-    '&redirect_uri=' +
-    `${import.meta.env.VITE_APP_GOOGLE_REDIRECT_URL}` +
-    '&response_type=code' +
-    '&scope=email profile';
+const googleSignUrl =
+  "https://accounts.google.com/o/oauth2/v2/auth?client_id=" +
+  `${import.meta.env.VITE_APP_GOOGLE_CLIENT_ID}` +
+  "&redirect_uri=" +
+  `${import.meta.env.VITE_APP_GOOGLE_REDIRECT_URL}` +
+  "&response_type=code" +
+  "&scope=email profile";
 
 const route = useRoute();
 const isRememberId = ref(true);
@@ -157,7 +161,7 @@ onMounted(() => {
 
 <style scoped>
 .parallax {
-  height: 100vh;
+  height: 90vh;
   position: relative;
   transition: opacity 1s;
 }
