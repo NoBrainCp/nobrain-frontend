@@ -4,7 +4,7 @@
       src="/../src/assets/images/sign-up-background.jpg"
   >
     <img
-        src="src/assets/images/logo_transparent.png"
+        src="../assets/images/logo_transparent.png"
         alt="nobrain-logo"
         class="mainLogo ml-16 mt-n7"
         @click="home"
@@ -135,10 +135,10 @@
 </template>
 
 <script setup>
-import {signUpUser} from "../../api/user/userApi";
-import {existsUsername} from "../../api/user/userApi";
+import {signUpUser} from "../api/user/userApi";
+import {existsUsername} from "../api/user/userApi";
 import {onMounted, ref, watch} from "vue";
-import router from "../../router";
+import router from "../router";
 
 const isShow = ref(false);
 const user = ref({
@@ -240,7 +240,7 @@ const signUp = async () => {
   })
 };
 const home = () => {
-  router.push("/start");
+  router.push("/");
 };
 </script>
 

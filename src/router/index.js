@@ -1,20 +1,17 @@
 import {createRouter, createWebHistory} from "vue-router";
-import SignUp from "../views/sign/SignUp.vue";
-import SignIn from "../views/sign/SignIn.vue";
-import MainView from "../views/MainView.vue";
-import NotFound from "../views/NotFound.vue";
 import {getAccessTokenFromCookie, getUsernameFromCookie} from "../utils/cookies";
-import StartPage from "../views/StartPage.vue";
-import Find from "../views/Find.vue";
+import SignUp from "../views/SignUpView.vue";
+import MainView from "../views/MainView.vue";
+import Find from "../views/FindView.vue";
+import LoginPage from "../views/LoginView.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
-            path: "/sign-in",
-            name: "signin",
-            component: SignIn,
-            alias: "/"
+            path: "/",
+            name: "loginPage",
+            component: LoginPage,
         },
         {
             path: "/sign-up",
@@ -22,21 +19,16 @@ const router = createRouter({
             component: SignUp,
         },
         {
+            path: "/find",
+            name: "Find",
+            component: Find,
+        },
+        {
             path: "/:username",
             name: "main",
             alias: "/:username/:category?",
             component: MainView,
             props: true,
-        },
-        {
-            path: "/start",
-            name: "StartPage",
-            component: StartPage,
-        },
-        {
-            path: "/find",
-            name: "Find",
-            component: Find,
         },
         // {
         //     path:"/:catchAll(.*)",

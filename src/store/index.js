@@ -4,8 +4,7 @@ import {
     getEmailFromCookie,
     getLoginIdFromCookie, getRefreshTokenFromCookie, getUserIdFromCookie,
     getUsernameFromCookie,
-    saveAccessTokenToCookie, saveUserInfoToCookie,
-    saveUsernameToCookie
+    saveUserInfoToCookie,
 } from "../utils/cookies";
 import {signInUser} from "../api/user/userApi";
 

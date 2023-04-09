@@ -22,7 +22,7 @@ import router from "../../router";
 
 const home = () => {
   window.location.reload();
-  router.push(`/start`);
+  router.push(`/`);
 };
 
 const moveSignUpPage = () => {
@@ -46,7 +46,4 @@ const moveSignUpPage = () => {
   filter: invert(55%) sepia(22%) saturate(7378%) hue-rotate(167deg) brightness(99%) contrast(98%);
 }
 
-.logo {
-  height: 50px;
-}
 </style>

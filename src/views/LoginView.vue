@@ -7,10 +7,10 @@
   </div>
 </template>
 <script setup>
-import Header from "../components/start/Header.vue";
-import Body from "../components/start/Body.vue";
-import Function from "../components/start/Function.vue";
-import Footer from "../components/start/Footer.vue";
+import Header from "../components/login/Header.vue";
+import Body from "../components/login/Body.vue";
+import Function from "../components/login/Function.vue";
+import Footer from "../components/login/Footer.vue";
 </script>
 
 <style scoped>
