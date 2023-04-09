@@ -244,6 +244,7 @@ const checkAuthCode = async () => {
   width: 90%;
   left: 5%;
   height: 60%;
+  border-radius: 1rem;
   position: relative;
 }
 
