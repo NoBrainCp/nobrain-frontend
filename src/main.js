@@ -1,29 +1,16 @@
 import { createApp } from "vue";
-import { createStore } from "vuex";
 import App from "./App.vue";
 import router from "./router";
 import vueCookies from "vue-cookies"
 import vuetify from "./plugins/vuetify";
 import Vue3TagsInput from 'vue3-tags-input'
 import axios from "axios";
-
-const store = createStore({
-    state() {
-        return {
-            count: 0
-        }
-    },
-    mutations: {
-        increment (state) {
-            state.count++
-        }
-    }
-})
+import {store} from "./store";
 
 const app = createApp(App)
     .use(router)
-    .use(vueCookies)
     .use(store)
+    .use(vueCookies)
     .use(vuetify)
     .component('vue3-tags-input', Vue3TagsInput);
 
