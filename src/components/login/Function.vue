@@ -72,7 +72,7 @@ const items = ref([
       "URL을 기억하거나 페이지를 다시 검색할 필요 없이 <b class='text-blue'>즐겨찾기</b> 버튼을 클릭하여 저장된 북마크의 개인 컬렉션에 페이지를 추가할 수 있습니다.<br><br>" +
       "또한 즐겨찾기를 친구나 동료와 공유할 수도 있으므로 협업 및 검색을 위한 훌륭한 도구로 사용하세요.<br/><br/>" +
       "Nobrain 서비스의 <b class='text-blue'>즐겨찾기</b> 기능을 사용하면 정리된 상태를 유지하고 시간을 절약하며 새롭고 흥미로운 콘텐츠를 발견할 수 있습니다.<br><br>",
-    img: "src/assets/images/start-page-favorite.png",
+    img: "src/assets/images/login-page-favorite.png",
   },
   {
     color: "amber-lighten-1",
@@ -83,7 +83,7 @@ const items = ref([
       "즉, 개인 메모, 민감한 정보 또는 혼자만 보관하고 싶은 연구 자료와 같이 다른 사람과 공유하고 싶지 않은 웹 페이지를 저장할 수 있습니다.<br><br>" +
       "북마크를 다른 사람과 공유하기로 결정한 경우 언제든지 공유할 북마크와 비공개로 유지할 북마크를 선택할 수 있습니다. <br><br>" +
       "이렇게 하면 저장된 콘텐츠를 완벽하게 제어할 수 있으므로 필요에 가장 적합한 방식으로 소셜 북마크 서비스를 사용할 수 있습니다.<br><br>",
-    img: "src/assets/images/start-page-public.png",
+    img: "src/assets/images/login-page-public.png",
   },
   {
     color: "cyan-lighten-1",
@@ -95,7 +95,7 @@ const items = ref([
       "특히 유용할 수 있습니다.<br><br>" +
       "전반적으로 태그 설정 기능은 정리를 유지하고 시간을 절약하며 새로운 콘텐츠를 발견하는 데 도움이 되는 정말 강력한 도구입니다. <br><br>" +
       "지금 당장 저장된 북마크에 태그를 추가해 보세요.<br><br>",
-    img: "src/assets/images/start-page-tag.png",
+    img: "src/assets/images/login-page-tag.png",
   },
   {
     color: "green-accent-2",
@@ -106,7 +106,7 @@ const items = ref([
       " 북마크 서비스에서 팔로우 서비스를 통해 사용자는 다른 사용자를 팔로우하고 저장된 북마크를 볼 수 있습니다. 이를 통해 사용자는 다른 사람이 저장한 북마크를 기반으로 새로운 콘텐츠를 발견하고 북마크 서비스에 소셜 측면을 만들 수 있습니다.<br><br>" +
       "팔로우 서비스는 북마크 서비스의 사회적 측면을 강화하고 사용자가 새로운 콘텐츠를 발견하도록 도울 수 있는 강력한 기능입니다. <br><br>" +
       "지금 당장 다양한 사람들과 팔로우 서비스를 통해 피드를 공유해 보세요.<br><br>",
-    img: "src/assets/images/start-page-follow.png",
+    img: "src/assets/images/login-page-follow.png",
   },
   {
     color: "blue-accent-2",
@@ -116,7 +116,7 @@ const items = ref([
       "<b class='text-blue'>My: </b>이 카테고리에서는 사용자가 개인적으로 저장한 책갈피를 검색할 수 있습니다. 사용자는 키워드 또는 태그를 사용하여 개인 컬렉션에 저장한 북마크를 검색할 수 있습니다.<br><br>" +
       " <b class='text-blue'>Follow: </b> 팔로잉 중인 사용자가 저장한 북마크를 검색할 수 있는 카테고리입니다. 사용자는 키워드나 태그를 사용하여 자신이 팔로우하는 다른 사용자가 저장한 북마크를 검색할 수 있습니다.<br><br>" +
       "<b class='text-blue'>All: </b>이 범주에서는 사용자가 북마크 서비스의 데이터베이스에 있는 모든 북마크를 검색할 수 있습니다. 사용자는 키워드 또는 태그를 사용하여 서비스의 모든 사용자가 저장한 북마크를 검색할 수 있습니다. <br><br>",
-    img: "src/assets/images/start-page-search.png",
+    img: "src/assets/images/login-page-search.png",
   },
 ]);
 
