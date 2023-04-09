@@ -38,8 +38,9 @@ const windowValue = ref("");
 const opacity = ref(0);
 
 const home = () => {
-  router.push("/start");
-}
+  router.push("/");
+};
+
 watch(() => store.state.window, (newValue) => {
   windowValue.value = newValue;
 });
