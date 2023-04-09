@@ -15,6 +15,10 @@ export function existsLoginId(loginId) {
     return instance.get(`/user/login-id/${loginId}/exists`);
 }
 
+export function existsEmail(email) {
+    return instance.get(`/email/${email}/exists`);
+}
+
 export function getUserInfo(username) {
     return user.get(`/${username}/info`);
 }
