@@ -41,7 +41,7 @@ const moveSignUpPage = () => {
 
 .mainLogo {
   cursor: pointer;
-  height: 200px;
+  height: 180px;
   width: 160px;
   filter: invert(55%) sepia(22%) saturate(7378%) hue-rotate(167deg) brightness(99%) contrast(98%);
 }

@@ -3,7 +3,13 @@
       class="parallax"
       src="/../src/assets/images/start-page-header.jpg"
       :style="{opacity: opacity}"
-  />
+  > <img
+      src="src/assets/images/logo_transparent.png"
+      alt="nobrain-logo"
+      class="mainLogo mt-n8 ml-14"
+      @click="home"
+  /></v-parallax>
+
     <v-window
         class="window"
         v-model="windowValue">
@@ -14,9 +20,6 @@
         </v-window-item>
         <v-window-item value="findByInfo">
           <FindByInfo/>
-        </v-window-item>
-        <v-window-item value="changePassword">
-          <ChangePassword/>
         </v-window-item>
       </v-card>
     </v-window>
@@ -29,10 +32,14 @@ import {onMounted, ref, watch} from "vue";
 import {store} from "../store";
 import ForgetPassword from "../components/find/ForgetPassword.vue";
 import FindByInfo from "../components/find/FindByInfo.vue";
-import ChangePassword from "../components/find/ChangePassword.vue";
+import router from "../router";
 
 const windowValue = ref("");
 const opacity = ref(0);
+
+const home = () => {
+  router.push("/start");
+}
 watch(() => store.state.window, (newValue) => {
   windowValue.value = newValue;
 });
@@ -55,6 +62,12 @@ onMounted(() => {
   height: 100vh;
   position: relative;
   transition: opacity 1s;
+}
+
+.mainLogo {
+  height: 170px;
+  cursor: pointer;
+  position: absolute;
 }
 
 .window {
