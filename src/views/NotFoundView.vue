@@ -38,12 +38,7 @@
 <script setup>
 import router from "../router";
 import {getAccessTokenFromCookie, getUsernameFromCookie} from "../utils/cookies";
-import {ref} from "vue";
 
-const Position = ref({
-  xPosition: "",
-  yPosition: "",
-})
 const backPage = () => {
   router.go(-2);
 }
@@ -52,9 +47,9 @@ const goMainPage = () => {
   if (getAccessTokenFromCookie()) {
     router.push(`/${getUsernameFromCookie()}`);
   } else {
-    router.push(`/sign-in`);
+    router.push(`/`);
   }
-}
+};
 
 </script>
 
