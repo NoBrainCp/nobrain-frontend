@@ -1,331 +1,295 @@
 <template>
-  <v-container>
-    <v-row align-content="center" justify="center" id="all">
-      <v-col cols="12" sm="10">
-        <v-card class="elevation-6 mt-8" id="back">
-          <v-row>
-            <v-col cols="12" md="2" class="blue rounded-br-xl"></v-col>
-            <v-col cols="12" md="8">
-              <v-card-text class="mt-12">
-                <h1 class="text-center">Sign Up for an Account</h1>
-                <br/>
-                <v-row align-center justify="center">
-                  <v-col cols="12" sm="12">
-                    <v-row>
-                      <v-col col="12" sm="10">
-                        <v-text-field
-                            v-model="user.name"
-                            label="Nickname"
-                            bg-color="white"
-                            color="blue"
-                            maxlength="15"
-                            clearable
-                            :rules="[rules.name]"
-                        />
-                      </v-col>
-                      <v-col col="12" sm="2">
-                        <v-btn
-                            color="#BBDEFB"
-                            class="mt-2"
-                            @click="validateUsername(user.name)"
-                        >
-                          check
-                          <!-- nameCheck dialog -->
-                          <SignUpDialog :dialogObj="dialogObj"/>
-                        </v-btn>
-                      </v-col>
-                    </v-row>
-                    <v-text-field
-                        v-model="user.email"
-                        label="E-mail"
-                        bg-color="white"
-                        color="blue"
-                        clearable
-                        :rules="[rules.email]"
-                    />
-                    <v-row>
-                      <v-col col="12" sm="10">
-                        <v-text-field
-                            v-model="user.loginId"
-                            label="Id"
-                            bg-color="white"
-                            color="blue"
-                            maxlength="20"
-                            clearable
-                            :rules="[rules.loginId]"
-                        />
-                      </v-col>
-                      <v-col col="12" sm="2">
-                        <v-btn
-                            color="#BBDEFB"
-                            class="mt-2"
-                            @click="validateLoginId(user.loginId)"
-                        >
-                          check
-                          <!-- idCheck dialog -->
-                          <SignUpDialog :dialogObj="dialogObj"/>
-                        </v-btn>
-                      </v-col>
-                    </v-row>
-                    <v-text-field
-                        v-model="user.password"
-                        label="Password"
-                        bg-color="white"
-                        hint="숫자와 특수문자를 포함한 8글자 이상"
-                        color="blue"
-                        type="password"
-                        maxlength="25"
-                        clearable
-                        :rules="[rules.password]"
-                    />
-                    <v-text-field
-                        v-model="user.passwordCheck"
-                        label="Password check"
-                        bg-color="white"
-                        color="blue"
-                        type="password"
-                        maxlength="25"
-                        clearable
-                    />
+  <v-parallax
+      class="parallax"
+      src="/../src/assets/images/sign-up-background.jpg"
+  >
+    <img
+        src="src/assets/images/logo_transparent.png"
+        alt="nobrain-logo"
+        class="mainLogo ml-16 mt-n7"
+        @click="home"
+    />
+    <div id="mainText"></div>
 
-                    <v-text-field
-                        v-model="user.phoneNumber"
-                        label="Phone number"
-                        bg-color="white"
-                        hint="-를 제외한 핸드폰 번호"
-                        color="blue"
-                        maxlength="15"
-                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
-                        clearable
-                        :rules="[rules.phoneNumber]"
-                    />
-                    <v-row>
-                      <label
-                          for="Date"
-                          class="ma-5"
-                          style="font-size: 22px; color: #363636"
-                      >BirthDay</label
-                      >
-                      <input
-                          type="date"
-                          name="currentDate"
-                          id="date"
-                          style="margin: 0 5px; float: right"
-                      />
-                    </v-row>
-                    <div style="padding: 10px 0"></div>
-                    <v-btn color="blue" dark block tile @click="signUp()"
-                    >Sign up
-                      <v-dialog v-model="dialog" activator="parent">
-                        <!-- 로그인 실패: (id or name) not check  -->
-                        <v-card
-                            v-if="isExistsName === true"
-                            class="mx-auto"
-                            max-width="500"
-                            style="width: 500px; height: 200px"
-                        >
-                          <v-card-title
-                              class="text-center"
-                              style="margin-top: 10%"
-                          >
-                            닉네임 체크를 해주세요.
-                          </v-card-title>
-                          <v-card-actions style="margin-top: 10%">
-                            <v-btn color="primary" block @click="dialog = false"
-                            >Close
-                            </v-btn
-                            >
-                          </v-card-actions>
-                        </v-card>
-                        <v-card
-                            v-if="isExistsId === true"
-                            class="mx-auto"
-                            max-width="500"
-                            style="width: 500px; height: 200px"
-                        >
-                          <v-card-title
-                              class="text-center"
-                              style="margin-top: 10%"
-                          >
-                            아이디 체크를 해주세요.
-                          </v-card-title>
-                          <v-card-actions style="margin-top: 10%">
-                            <v-btn color="primary" block @click="dialog = false"
-                            >Close
-                            </v-btn
-                            >
-                          </v-card-actions>
-                        </v-card>
-                        <!-- 이메일 중복, 전화번호 중복, 패스워드 불일치 -->
-                        <v-card
-                            v-if="isError === 400"
-                            class="mx-auto"
-                            max-width="500"
-                            style="width: 500px; height: 200px"
-                        >
-                          <v-card-title
-                              class="text-center"
-                              style="margin-top: 10%"
-                          >
-                            {{ errorMessage }}
-                          </v-card-title>
-                          <v-card-actions style="margin-top: 10%">
-                            <v-btn color="primary" block @click="dialog = false"
-                            >Close
-                            </v-btn
-                            >
-                          </v-card-actions>
-                        </v-card>
-
-                        <!-- 로그인 성공 -->
-                        <v-card
-                            v-if="
-                            isSubmit === true &&
-                            isExistsId === false &&
-                            isExistsName === false
-                          "
-                            class="mx-auto"
-                            max-width="500"
-                            style="width: 500px; height: 200px"
-                        >
-                          <v-card-title
-                              class="text-center"
-                              style="margin-top: 10%"
-                          >
-                            Welcome!
-                          </v-card-title>
-                          <v-card-actions style="margin-top: 10%">
-                            <v-btn
-                                color="primary"
-                                block
-                                @click="dialog = false"
-                                to="/sign-in"
-                            >로그인 창으로 이동
-                            </v-btn
-                            >
-                          </v-card-actions>
-                        </v-card>
-                      </v-dialog>
-                    </v-btn>
-                    <div style="padding: 10px 0"></div>
-                  </v-col>
-                </v-row>
-              </v-card-text>
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+    <v-card class="card"
+            v-if="isShow"
+            :style="{opacity: opacity}"
+    >
+      <v-card-text>
+        <div class="card-text1 ml-1 mb-3"> 닉네임을 입력해주세요</div>
+        <v-row>
+          <v-col cols="12" sm="8">
+            <v-text-field
+                append-inner-icon="mdi mdi-rename-outline"
+                class="text-field"
+                v-model="user.name"
+                label="닉네임"
+                variant="outlined"
+                color="black"
+                maxlength="15"
+                clearable
+                :rules="[rules.name]"
+            />
+          </v-col>
+          <v-col cols="12" sm="4">
+            <v-btn
+                color="black"
+                variant="outlined"
+                class="mt-2"
+                @click="validateUsername(user.name)"
+            > 확인
+            </v-btn>
+            <v-icon
+                v-if="!isCheckName"
+                size="30"
+                class="ml-4 mt-2 mdi mdi-check-circle"
+                color="green"/>
+          </v-col>
+        </v-row>
+        <div class="card-text1 ml-1 mb-3" v-if="!isCheckName"> 이메일을 입력해주세요</div>
+        <v-row v-if="!isCheckName">
+          <v-col cols="12" sm="8">
+            <v-text-field
+                append-inner-icon="mdi mdi-email-outline"
+                v-model="user.email"
+                label="Email"
+                variant="outlined"
+                color="black"
+                clearable
+                :rules="[rules.email]"
+            />
+          </v-col>
+          <v-col cols="12" sm="4">
+            <v-btn
+                color="black"
+                variant="outlined"
+                class="mt-2"
+                @click="isCheckEmail=true"
+            > 확인
+            </v-btn>
+            <v-icon
+                v-if="isCheckEmail"
+                size="30"
+                class="ml-4 mt-2 mdi mdi-check-circle"
+                color="green"/>
+          </v-col>
+        </v-row>
+        <div class="card-text1 ml-1 mb-3" v-if="isCheckEmail"> 비밀번호를 입력해주세요</div>
+        <v-row v-if="isCheckEmail">
+          <v-col cols="12" sm="8">
+            <v-text-field
+                v-model="user.password"
+                label="비밀번호"
+                hint="숫자와 특수문자를 포함한 8글자 이상"
+                color="black"
+                type="password"
+                variant="outlined"
+                maxlength="25"
+                clearable
+                :rules="[rules.password]"/>
+          </v-col>
+        </v-row>
+        <v-row v-if="isCheckEmail">
+          <div class="ml-5 mb-1"><Strong>비밀번호 강도:</strong></div>
+          <div id=password-strength class="ml-1"><Strong> {{ passwordStrength }} </strong></div>
+        </v-row>
+        <v-row v-if="isCheckPassword">
+          <v-col cols="12" sm="8">
+            <v-text-field
+                v-model="user.passwordCheck"
+                label="비밀번호 확인"
+                color="black"
+                type="password"
+                maxlength="25"
+                variant="outlined"
+                clearable/>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" sm="8">
+            <div class="password-text ml-2 mt-n7"
+                 v-if="user.passwordCheck"
+                 :style="{color: isPasswordCheck ? 'green' : 'red'}"
+            >
+              <v-icon
+                  class="mt-n1"
+                  :icon="isPasswordCheck ? 'mdi mdi-check-circle-outline' : 'mdi mdi-alert-circle-outline'"
+              ></v-icon>
+              {{ passwordText }}
+            </div>
+          </v-col>
+        </v-row>
+        <v-row class="justify-center align-center mt-3" v-if="isPasswordCheck">
+          <v-btn
+              class="mb-7"
+              color="black"
+              variant="outlined"
+              @click="signUp"
+          >
+            회원가입
+          </v-btn>
+        </v-row>
+      </v-card-text>
+    </v-card>
+  </v-parallax>
 </template>
 
 <script setup>
-import SignUpDialog from "../../components/dialog/SignUpDialog.vue";
 import {signUpUser} from "../../api/user/userApi";
-import {existsLoginId, existsUsername} from "../../api/user/userApi";
-import {ref} from "vue";
+import {existsUsername} from "../../api/user/userApi";
+import {onMounted, ref, watch} from "vue";
+import router from "../../router";
 
+const isShow = ref(false);
 const user = ref({
   name: "",
   email: "",
-  loginId: "",
   password: "",
   passwordCheck: "",
-  phoneNumber: "",
-  birthDate: "",
 });
 
-const dialogObj = ref({
-  title: "",
-  isShow: false,
-  isExist: false,
-});
+const text = ref("노브레인에 오신 것을 환영합니다.w귀하를 모시게 되어 기쁘게 생각하며w 가능한 최고의 경험을 제공할 수 있기를 기대합니다.");
+const cnt = ref(0);
+const opacity = ref(0);
+const isCheckName = ref(true);
+const isCheckEmail = ref(false);
+const isCheckPassword = ref(false);
+const isPasswordCheck = ref(false);
+const passwordText = ref("");
+const passwordStrength = ref("");
 
-const errorMessage = ref("");
-const isExistsName = ref("");
-const isExistsId = ref("");
-const isSubmit = ref("");
-const isError = ref("");
-const dialog = ref(false);
-
-const rules= ref({
+const rules = ref({
   name: v => !!v || '닉네임은 필수 입력 항목입니다.',
   email: v => !!v || '이메일은 필수 입력 항목입니다.',
-  loginId: v => !!v || '로그인 ID는 필수 입력 항목입니다',
   password: v => !!v || '비밀번호는 필수 입력 항목입니다.',
-  phoneNumber: v => !!v || '핸드폰 번호는 필수 입력 항목입니다.'
 });
 
-const validateUsername = async (name) => {
-  await existsUsername(name).then((response) => {
-    isExistsName.value = response.data.data;
-    dialogObj.value.isExist = response.data.data;
-    if (dialogObj.value.isExist) {
-      dialogObj.value.title = "이미 존재하는 닉네임 입니다.";
-    } else {
-      dialogObj.value.title = "사용 가능한 닉네임 입니다.";
-    }
-  }).catch((error) => {
-    console.log(error);
-    dialogObj.value.isExist = true;
-    dialogObj.value.title = "가입할 수 없는 닉네임 입니다.";
-  });
-};
-
-const validateLoginId = async(loginId) => {
-  await existsLoginId(loginId).then((response) => {
-    isExistsId.value = response.data.data;
-    dialogObj.value.isExist = response.data.data;
-
-    if (dialogObj.value.isExist) {
-      dialogObj.value.title = "이미 존재하는 아이디 입니다.";
-    } else {
-      dialogObj.value.title = "사용 가능한 아이디 입니다.";
-    }
-  }).catch((error) => {
-    console.log(error);
-    dialogObj.value.isExist = true;
-    dialogObj.value.title = "가입할 수 없는 아이디 입니다.";
-  })
-};
-
-const signUp = async () => {
-    isError.value = 200;
-    if (!isExistsId.value && !isExistsName.value) {
-      user.value.birthDate = document.querySelector('#date').value;
-      await signUpUser(user.value).then((response) => {
-        isSubmit.value = response.data.success;
-      }).catch((error) => {
-        isError.value = error.response.data.status;
-        errorMessage.value = error.response.data.message;
-      });
+const textIncrease = async () => {
+  if (cnt.value < text.value.length) {
+    document.querySelector("#mainText").innerHTML +=
+        text.value.charAt(cnt.value) === 'w' ? "<br/>" : text.value.charAt(cnt.value);
+    cnt.value += 1;
+    setTimeout(textIncrease, 100);
+  } else {
+    isShow.value = true;
   }
 };
 
+
+onMounted(() => {
+  textIncrease();
+});
+
+watch(() => isShow.value, () => {
+  let opt = 0;
+  const intervalId = setInterval(() => {
+    opt += 0.1;
+    if (opt >= 1) {
+      clearInterval(intervalId);
+    }
+    opacity.value = opt;
+  }, 100);
+});
+
+//패스워드 8자리 정규식 체크
+watch(() => user.value.password, () => {
+  const checkStrength = new RegExp("(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})");
+  const passwordColor = document.getElementById("password-strength");
+  if (checkStrength.test(user.value.password)) {
+    isCheckPassword.value = true;
+    passwordStrength.value = "안전";
+    passwordColor.style.color = "green";
+  } else {
+    isCheckPassword.value = false;
+    passwordStrength.value = "위험";
+    passwordColor.style.color = "red";
+  }
+});
+
+//패스워드와 패스워크 체크 일치 체크
+watch(() => user.value.passwordCheck, () => {
+  if (user.value.password === user.value.passwordCheck) {
+    passwordText.value = "패스워드가 일치합니다";
+    isPasswordCheck.value = true;
+    return;
+  }
+  passwordText.value = "패스워드가 일치하지 않습니다.";
+  isPasswordCheck.value = false;
+});
+
+
+const validateUsername = async (name) => {
+  await existsUsername(name).then((response) => {
+    isCheckName.value = response.data.data;
+    if (isCheckName.value) {
+      alert("이미 사용중인 닉네임 입니다.");
+    }
+  }).catch((error) => {
+    console.log(error);
+
+  });
+};
+
+const signUp = async () => {
+  await signUpUser(user.value).then(() => {
+    alert("노브레인에 오신 것을 환영합니다.");
+    home();
+  }).catch((error) => {
+    alert("빈칸을 확인해주세요.");
+    console.log(error);
+  })
+};
+const home = () => {
+  router.push("/start");
+};
 </script>
 
 <style scoped>
-#back {
-  width: 100%;
-  height: 100%;
-  text-align: center;
+
+.parallax {
+  height: 100vh;
+  position: relative;
 }
 
-#back::after {
-  width: 100%;
-  height: 100%;
-  content: "";
-  background-image: url("../../assets/images/background.jpg");
-  background-size: cover;
+.mainLogo {
+  height: 190px;
+  cursor: pointer;
+  filter: invert(55%) sepia(22%) saturate(7378%) hue-rotate(167deg) brightness(99%) contrast(98%);
+}
+
+.card {
+  background-image: linear-gradient(to right, #B388FF, #8C9EFF, #84FFFF, #CCFF90);
+  top: 50%;
+  left: 50%;
+  width: 500px;
+  transform: translate(-50%, -50%);
+  border: 1px solid;
+  border-radius: 0.5rem;
   position: absolute;
-  top: 0;
-  left: 0;
-  z-index: -1;
-  opacity: 0.5;
+  transition: opacity 1s;
 }
 
-#all {
-  margin-top: 3%;
+#mainText {
+  font-family: neoFont, serif;
+  min-width: 1rem;
+  font-size: 1rem;
+  top: 15%;
+  left: 50%;
+  text-align: center;
+  padding: 30px 0;
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.card-text1 {
+  color: #3949AB;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.password-text {
+  font-size: 12pt;
+  font-weight: bold;
 }
 
 </style>
