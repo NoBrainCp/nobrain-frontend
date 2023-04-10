@@ -16,7 +16,7 @@
     <v-col cols="12" sm="6">
       <v-img
         class="start-page-body-img d-flex align-center mr-15"
-        src="src/assets/images/start-page-img.png"
+        src="src/assets/images/login-page-img.png"
       />
     </v-col>
   </v-row>

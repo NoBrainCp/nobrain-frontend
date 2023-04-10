@@ -4,7 +4,7 @@
       src="/../src/assets/images/start-page-header.jpg"
       :style="{opacity: opacity}"
   > <img
-      src="src/assets/images/logo_transparent.png"
+      src="/../src/assets/images/logo_transparent.png"
       alt="nobrain-logo"
       class="mainLogo mt-n8 ml-14"
       @click="home"
