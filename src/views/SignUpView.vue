@@ -64,7 +64,7 @@
                 color="black"
                 variant="outlined"
                 class="mt-2"
-                @click="isCheckEmail=true"
+                @click="validateEmail(user.email)"
             > 확인
             </v-btn>
             <v-icon
@@ -135,10 +135,11 @@
 </template>
 
 <script setup>
-import {signUpUser} from "../api/user/userApi";
+import {existsEmail, signUpUser} from "../api/user/userApi";
 import {existsUsername} from "../api/user/userApi";
 import {onMounted, ref, watch} from "vue";
 import router from "../router";
+import {resolvePackageData} from "vite";
 
 const isShow = ref(false);
 const user = ref({
@@ -169,7 +170,7 @@ const textIncrease = async () => {
     document.querySelector("#mainText").innerHTML +=
         text.value.charAt(cnt.value) === 'w' ? "<br/>" : text.value.charAt(cnt.value);
     cnt.value += 1;
-    setTimeout(textIncrease, 100);
+    setTimeout(textIncrease, 10);
   } else {
     isShow.value = true;
   }
@@ -189,6 +190,18 @@ watch(() => isShow.value, () => {
     }
     opacity.value = opt;
   }, 100);
+});
+
+watch(() => user.value.name, () => {
+  if (!isCheckName.value) {
+    isCheckName.value = true;
+  }
+});
+
+watch(() => user.value.email, () => {
+  if (isCheckEmail.value) {
+    isCheckEmail.value = false;
+  }
 });
 
 //패스워드 8자리 정규식 체크
@@ -226,9 +239,15 @@ const validateUsername = async (name) => {
     }
   }).catch((error) => {
     console.log(error);
-
   });
 };
+
+//test
+const validateEmail = async (email) => {
+  await existsEmail(email).then((response) => {
+    console.log(response.data.data);
+  })
+}
 
 const signUp = async () => {
   await signUpUser(user.value).then(() => {
@@ -259,13 +278,14 @@ const home = () => {
 
 .card {
   background-image: linear-gradient(to right, #B388FF, #8C9EFF, #84FFFF, #CCFF90);
+
   top: 22%;
   left: 50%;
   width: 500px;
   transform: translate(-50%, 0%);
   border: 1px solid;
   border-radius: 0.5rem;
-  position: absolute;
+  position: fixed;
   transition: opacity 1s;
 }
 
