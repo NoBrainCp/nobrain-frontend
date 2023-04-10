@@ -1,7 +1,7 @@
 <template>
   <v-parallax
       class="parallax"
-      src="/../src/assets/images/start-page-header.jpg"
+      src="/../src/assets/images/login-page-header.jpg"
       :style="{opacity: opacity}"
   >
     <v-row class="d-flex">

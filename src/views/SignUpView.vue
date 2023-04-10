@@ -259,10 +259,10 @@ const home = () => {
 
 .card {
   background-image: linear-gradient(to right, #B388FF, #8C9EFF, #84FFFF, #CCFF90);
-  top: 50%;
+  top: 22%;
   left: 50%;
   width: 500px;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, 0%);
   border: 1px solid;
   border-radius: 0.5rem;
   position: absolute;
