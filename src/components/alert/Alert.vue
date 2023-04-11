@@ -10,7 +10,7 @@
 
 <script setup>
 
-const props = defineProps({
+defineProps({
   alertObj: {
     type: null,
     title: String,
