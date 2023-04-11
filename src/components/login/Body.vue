@@ -22,12 +22,10 @@
               Nobrain
             </h2>
             <div class="body-card-text">
-              <form>
                 <v-text-field
-                    v-model="userData.loginId"
-                    label="Id"
+                    v-model="userData.username"
+                    label="name"
                     color="blue"
-                    autocomplete="loginId"
                     variant="outlined"
                 />
                 <v-text-field
@@ -37,17 +35,15 @@
                     color="blue"
                     type="password"
                     variant="outlined"
-                    autocomplete="current-password"
                     @keydown.enter="signIn"
                 />
-              </form>
 
               <v-row class="mt-2 mb-5">
                 <v-checkbox
+                    v-model="userData.isKeepLoggedIn"
                     label="로그인 상태 유지"
                     class="mt-n5"
                     color="blue"
-                    v-model="isRememberId"
                 />
               </v-row>
               <v-btn
@@ -69,7 +65,6 @@
               </a>
               <div class="body-card-oauth-button mt-8">
                 <img
-
                   src="src/assets/images/google-logo.png"
                   class="google-logo"
                   alt="google"
@@ -100,51 +95,41 @@
 
 <script setup>
 import {onMounted, ref} from "vue";
-import {useRoute} from "vue-router";
 import {store} from "../../store";
 import router from "../../router";
+import {getUsernameFromCookie} from "../../utils/cookies";
 
 const userData = ref({
-  loginId: "",
+  username: "",
   password: "",
+  isKeepLoggedIn: false,
 });
 
-const errorObj = ref({
-  type: "error",
-  title: "",
-  text: "",
-});
 
 const signIn = async () => {
   await store
       .dispatch("signIn", userData.value)
-      .then((response) => {
-        router.replace(`/${response.username}`);
+      .then(() => {
+        router.replace(`/${getUsernameFromCookie()}`);
       })
       .catch((error) => {
         console.log(error);
-        errorObj.value.title = "로그인 오류";
-        errorObj.value.text = error.response.data.message;
-        isError.value = true;
+        alert("로그인에 실패하였습니다.");
       });
 };
 
 const setWindow = () => {
   store.state.window = "forgetPassword";
 };
+//
+// const googleSignUrl =
+//   "https://accounts.google.com/o/oauth2/v2/auth?client_id=" +
+//   `${import.meta.env.VITE_APP_GOOGLE_CLIENT_ID}` +
+//   "&redirect_uri=" +
+//   `${import.meta.env.VITE_APP_GOOGLE_REDIRECT_URL}` +
+//   "&response_type=code" +
+//   "&scope=email profile";
 
-const googleSignUrl =
-  "https://accounts.google.com/o/oauth2/v2/auth?client_id=" +
-  `${import.meta.env.VITE_APP_GOOGLE_CLIENT_ID}` +
-  "&redirect_uri=" +
-  `${import.meta.env.VITE_APP_GOOGLE_REDIRECT_URL}` +
-  "&response_type=code" +
-  "&scope=email profile";
-
-const route = useRoute();
-const isRememberId = ref(true);
-const isError = ref(false);
-const oauthUserInfo = ref({});
 const opacity = ref(0);
 
 onMounted(() => {
