@@ -17,19 +17,14 @@ function createAuthInstance(url) {
     return setAuthInterceptors(instance);
 }
 
-function temp(url) {
-    return axios.create({
-        baseURL: `${import.meta.env.VITE_APP_API_URL}${url}`,
-    });
-}
-
 const authInstance = createAuthInstance('/api');
 
-export const instance = createInstance('/api');
-export const user = createAuthInstance('/api/user');
-export const category = authInstance;
-export const bookmark = authInstance;
-export const tag = authInstance;
-export const follow = authInstance;
-export const mail = createAuthInstance('/api/mail');
-export const oauth = createInstance('/app');
+export const noAuthInstance = createInstance('/api/v1');
+export const user = createAuthInstance('/api/v1/users');
+export const category = createAuthInstance('/api/v1/categories');
+export const bookmark = createAuthInstance('/api/v1/bookmarks');
+export const bookmarkTag = createAuthInstance('/api/v1/bookmark-tags');
+export const tag = createAuthInstance('/api/v1/tags');
+export const mail = createAuthInstance('/api/v1/mails');
+export const auth = createAuthInstance('/api/v1/auth');
+export const oauth = createAuthInstance('/api/v1/oauth2');
