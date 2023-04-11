@@ -15,7 +15,7 @@
           <v-row>
             <v-col cols="12">
               <v-text-field
-                  v-model="categoryDialogObj.name"
+                  v-model="categoryDialogObj.category.name"
                   label="카테고리 이름"
                   prepend-icon="mdi-rename"
                   :rules="[rules.name]"
@@ -24,16 +24,16 @@
             </v-col>
             <v-col cols="12">
               <v-text-field
-                  v-model="categoryDialogObj.description"
+                  v-model="categoryDialogObj.category.description"
                   label="설명"
                   type="text"
                   prepend-icon="mdi-tooltip-text"
                   required/>
               <v-checkbox
-                  v-model="categoryDialogObj.isPublic"
-                  :label="categoryDialogObj.isPublic ? '공개' : '비공개'"
+                  v-model="categoryDialogObj.category.isPublic"
+                  :label="categoryDialogObj.category.isPublic ? '공개' : '비공개'"
                   color="info"
-                  :prepend-icon="categoryDialogObj.isPublic ? 'mdi mdi-lock-open-variant' : 'mdi mdi-lock'"
+                  :prepend-icon="categoryDialogObj.category.isPublic ? 'mdi mdi-lock-open-variant' : 'mdi mdi-lock'"
                   hide-details/>
             </v-col>
           </v-row>
@@ -67,9 +67,11 @@ const props = defineProps({
     btnName: String,
     dialog: false,
     originName: String,
-    name: String,
-    description: String,
-    isPublic: Boolean,
+    category: {
+      name: String,
+      description: String,
+      isPublic: Boolean,
+    },
   }
 });
 
@@ -80,7 +82,7 @@ const rules = ref({
 const emit = defineEmits(['submit', 'close']);
 
 const submit = () => {
-  emit('submit', props.categoryDialogObj);
+  emit('submit', props.categoryDialogObj.category);
 };
 
 const closeDialog = () => {
@@ -88,7 +90,7 @@ const closeDialog = () => {
 };
 
 const handleCategoryName = () => {
-  props.categoryDialogObj.name = props.categoryDialogObj.name.replace(" ", "_");
+  props.categoryDialogObj.name = props.categoryDialogObj.category.name.replace(" ", "_");
 }
 </script>
 
