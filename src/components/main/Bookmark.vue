@@ -175,7 +175,7 @@ const loadData = async () => {
       alert("즐겨찾기 북마크 조회 데이터를 가져올 수 없습니다.");
     });
   } else if (categoryName === 'private') {
-    await getPrivateBookmarks(username).then((response) => {
+    await getPrivateBookmarks().then((response) => {
       bookmarks.value = response.data.list;
     }).catch((error) => {
       console.log(error);
@@ -219,7 +219,7 @@ const clickEditBookmarkBtn = async (bookmark, bookmarkId) => {
 
   bookmarkDialogObj.value.categoryNames = categoryListResp.data.list.map(({name}) => name);
   bookmarkDialogObj.value.bookmark.tags = tagsResp.data.list.map(({tagName}) => tagName);
-  bookmarkDialogObj.value.bookmark.tagList = allTagsResp.data.list.map(({tag}) => tag.name);
+  bookmarkDialogObj.value.bookmark.tagList = allTagsResp.data.list.map(({tagName}) => tagName);
 };
 
 const updateBookmarkData = async (bookmark) => {
