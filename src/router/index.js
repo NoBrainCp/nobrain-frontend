@@ -4,6 +4,7 @@ import SignUp from "../views/SignUpView.vue";
 import MainView from "../views/MainView.vue";
 import Find from "../views/FindView.vue";
 import LoginPage from "../views/LoginView.vue";
+import OauthSignIn from "../components/login/OauthSignIn.vue"
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -30,6 +31,12 @@ const router = createRouter({
             component: MainView,
             props: true,
         },
+        {
+            path: "/oauth2/:provider",
+            name: "oauth",
+            component: OauthSignIn,
+            props: true,
+        }
         // {
         //     path:"/:catchAll(.*)",
         //     name: "notFound",
