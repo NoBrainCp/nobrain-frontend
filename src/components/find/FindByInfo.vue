@@ -12,14 +12,15 @@
 </template>
 
 <script setup>
-import FindByCertifiedCard from "../certifiedcard/FindByCertifiedCard.vue";
 import {onMounted, ref} from "vue";
 import {store} from "../../store";
+import FindByCertifiedCard from "../certifiedcard/FindByCertifiedCard.vue";
+
 const infoText = ref("");
 
 onMounted(() => {
-  if (!store.state.loginId) {
-    infoText.value = "아이디 찾기";
+  if (!store.state.username) {
+    infoText.value = "닉네임 찾기";
   } else {
     infoText.value = "비밀번호 찾기";
   }
