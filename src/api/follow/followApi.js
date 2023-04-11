@@ -1,23 +1,22 @@
-import {follow} from "../index";
-import {store} from "../../store";
+import {user} from "../index";
 
 export function getFollowCount(username) {
-    return follow.get(`/user/${username}/follow-cnt`);
+    return user.get(`/${username}/follow-cnt`);
 }
 
 export function isFollow(toUserId) {
-    return follow.get(`/user/${toUserId}/is-follow`);
+    return user.get(`/${toUserId}/is-follow`);
 }
 
 export function getFollowerList(username) {
-    return follow.get(`/user/${username}/follower-cards`);
+    return user.get(`/${username}/follower-cards`);
 }
 
 export function getFollowingList(username) {
-    return follow.get(`/user/${username}/following-cards`);
+    return user.get(`/${username}/following-cards`);
 }
 
 export function followAndUnfollow(toUserId) {
-    return follow.post(`/user/${toUserId}/follow`);
+    return user.post(`/${toUserId}/follow`);
 }
 
