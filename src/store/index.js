@@ -1,4 +1,4 @@
-import { createStore } from 'vuex'
+import {createStore} from 'vuex'
 import {
     getAccessTokenFromCookie,
     getEmailFromCookie,
@@ -6,7 +6,10 @@ import {
     getUsernameFromCookie,
     saveUserInfoToCookie,
 } from "../utils/cookies";
-import {signInUser} from "../api/user/userApi";
+import {login} from "../api/auth/authApi";
+import {oauth} from "../api";
+import {oauthLogin} from "../api/oauth/OAuthApi";
+import {resetPassword} from "../api/user/userApi";
 
 export const store = createStore({
     state: {
@@ -20,9 +23,9 @@ export const store = createStore({
     },
 
     getters: {
-      isLogin(state) {
-          return state.username !== '';
-      }
+        isLogin(state) {
+            return state.username !== '';
+        }
     },
 
     mutations: {
@@ -48,7 +51,8 @@ export const store = createStore({
             state.userId = userInfo.userId;
             state.email = userInfo.email;
             state.username = userInfo.username;
-            state.accessToken = userInfo.accessToken;
+            state.accessToken = userInfo.tokenDto.accessToken;
+            state.refreshToken = userInfo.tokenDto.refreshToken;
         },
         setWindow(state, window) {
             state.window = window;
@@ -56,15 +60,22 @@ export const store = createStore({
     },
 
     actions: {
-        async signIn({commit} , userData) {
-            try {
-                const { data } = await signInUser(userData);
-                commit('setUserInfo', data.data);
-                saveUserInfoToCookie(data.data);
-                return data.data;
-            } catch (error) {
-                throw error;
-            }
+        async signIn({commit}, userData) {
+            await login(userData)
+                .then((response) => {
+                    console.log(response.data.data);
+                    commit('setUserInfo', response.data.data);
+                    saveUserInfoToCookie(response.data.data);
+                    return response.data.data;
+                })
+        },
+
+        async oauthSignIn({commit}, type, code) {
+            await oauthLogin(type, code).then((response) => {
+                commit('setUserInfo', response.data);
+                saveUserInfoToCookie(response.data);
+                return response.data;
+            });
         }
     }
 })
