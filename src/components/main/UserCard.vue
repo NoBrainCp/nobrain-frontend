@@ -67,6 +67,7 @@ const username = ref(route.params.username);
 const myName = ref(getUsernameFromCookie());
 const followUsers = ref([]);
 
+
 const getUserFollowers = async (username) => {
   await getFollowerList(username).then((response) => {
     followUsers.value = response.data.list;
@@ -114,7 +115,7 @@ const moveToUser = (username) => {
 };
 
 const clickFollow = async (userId) => {
-  await followAndUnfollow(userId.value).then(() => {
+  await followAndUnfollow(userId).then(() => {
     const followUser = followUsers.value.find(follow => follow.userId === userId);
     followUser.isFollow = !followUser.isFollow;
     followStore.state.status = !followStore.state.status;
