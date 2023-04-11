@@ -40,14 +40,14 @@
             > 확인
             </v-btn>
             <v-icon
-                v-if="!isCheckName"
                 size="30"
-                class="ml-4 mt-2 mdi mdi-check-circle"
-                color="green"/>
+                class="ml-4 mt-2"
+                :icon="isCheckName ? 'mdi mdi-alert-circle-outline' :  'mdi mdi-check-circle-outline'"
+                :color="isCheckName ? 'red' : 'green'"/>
           </v-col>
         </v-row>
-        <div class="card-text1 ml-1 mb-3" v-if="!isCheckName"> 이메일을 입력해주세요</div>
-        <v-row v-if="!isCheckName">
+        <div class="card-text1 ml-1 mb-3" v-if="openEmail"> 이메일을 입력해주세요</div>
+        <v-row v-if="openEmail">
           <v-col cols="12" sm="8">
             <v-text-field
                 append-inner-icon="mdi mdi-email-outline"
@@ -64,18 +64,19 @@
                 color="black"
                 variant="outlined"
                 class="mt-2"
-                @click="isCheckEmail=true"
+                @click="validateEmail(user.email)"
             > 확인
             </v-btn>
             <v-icon
-                v-if="isCheckEmail"
+                v-if="openEmail"
                 size="30"
-                class="ml-4 mt-2 mdi mdi-check-circle"
-                color="green"/>
+                class="ml-4 mt-2"
+                :icon="isCheckEmail ?'mdi mdi-alert-circle-outline' :  'mdi mdi-check-circle-outline'"
+                :color="isCheckEmail ? 'red' : 'green'"/>
           </v-col>
         </v-row>
-        <div class="card-text1 ml-1 mb-3" v-if="isCheckEmail"> 비밀번호를 입력해주세요</div>
-        <v-row v-if="isCheckEmail">
+        <div class="card-text1 ml-1 mb-3" v-if="openPassword"> 비밀번호를 입력해주세요</div>
+        <v-row v-if="openPassword">
           <v-col cols="12" sm="8">
             <v-text-field
                 v-model="user.password"
@@ -89,9 +90,9 @@
                 :rules="[rules.password]"/>
           </v-col>
         </v-row>
-        <v-row v-if="isCheckEmail">
-          <div class="ml-5 mb-1"><Strong>비밀번호 강도:</strong></div>
-          <div id=password-strength class="ml-1"><Strong> {{ passwordStrength }} </strong></div>
+        <v-row v-if="openPassword">
+          <div class="ml-5 mb-1 font-weight-bold">비밀번호 강도:</div>
+          <div id=password-strength class="ml-1 font-weight-bold"> {{ passwordStrength }}</div>
         </v-row>
         <v-row v-if="isCheckPassword">
           <v-col cols="12" sm="8">
@@ -119,7 +120,7 @@
             </div>
           </v-col>
         </v-row>
-        <v-row class="justify-center align-center mt-3" v-if="isPasswordCheck">
+        <v-row class="justify-center align-center mt-3" v-if="openSignUp">
           <v-btn
               class="mb-7"
               color="black"
@@ -135,8 +136,7 @@
 </template>
 
 <script setup>
-import {existsEmail, signUpUser} from "../api/user/userApi";
-import {existsUsername} from "../api/user/userApi";
+import {existsEmail, noAuthExistsUsername, signUpUser} from "../api/user/userApi";
 import {onMounted, ref, watch} from "vue";
 import router from "../router";
 
@@ -148,13 +148,20 @@ const user = ref({
   passwordCheck: "",
 });
 
-const text = ref("노브레인에 오신 것을 환영합니다.w귀하를 모시게 되어 기쁘게 생각하며w 가능한 최고의 경험을 제공할 수 있기를 기대합니다.");
+const text = ref("No brain에 오신 것을 환영합니다.w귀하를 모시게 되어 기쁘게 생각하며w 가능한 최고의 경험을 제공할 수 있기를 기대합니다.");
 const cnt = ref(0);
 const opacity = ref(0);
-const isCheckName = ref(true);
-const isCheckEmail = ref(false);
+const isCheckName = ref(true);  //존재하면 true
+const openEmail = ref(false);
+
+const isCheckEmail = ref(true); //존재하면 true
+const openPassword = ref(false);
+
 const isCheckPassword = ref(false);
 const isPasswordCheck = ref(false);
+const openSignUp = ref(false);
+
+
 const passwordText = ref("");
 const passwordStrength = ref("");
 
@@ -169,7 +176,7 @@ const textIncrease = async () => {
     document.querySelector("#mainText").innerHTML +=
         text.value.charAt(cnt.value) === 'w' ? "<br/>" : text.value.charAt(cnt.value);
     cnt.value += 1;
-    setTimeout(textIncrease, 100);
+    setTimeout(textIncrease, 10);
   } else {
     isShow.value = true;
   }
@@ -210,6 +217,7 @@ watch(() => user.value.password, () => {
 watch(() => user.value.passwordCheck, () => {
   if (user.value.password === user.value.passwordCheck) {
     passwordText.value = "패스워드가 일치합니다";
+    openSignUp.value = true;
     isPasswordCheck.value = true;
     return;
   }
@@ -224,28 +232,46 @@ watch(() => user.value.name, () => {
 });
 
 watch(() => user.value.email, () => {
-  if (isCheckEmail.value) {
-    isCheckEmail.value = false;
+  if (!isCheckEmail.value) {
+    isCheckEmail.value = true;
   }
 });
+
 const validateUsername = async (name) => {
-  await existsUsername(name).then((response) => {
-    console.log(response);
+  await noAuthExistsUsername(name).then((response) => {
     isCheckName.value = response.data.data;
     if (isCheckName.value) {
       alert("이미 사용중인 닉네임 입니다.");
+    } else {
+      openEmail.value = true;
     }
   }).catch((error) => {
     console.log(error);
-
   });
 };
+
+const validateEmail = async (email) => {
+  await existsEmail(email).then((response) => {
+    isCheckEmail.value = response.data.data;
+    if (isCheckEmail.value) {
+      alert("이미 사용중인 이메일 입니다.");
+    } else {
+      openPassword.value = true;
+    }
+  }).catch((error) => {
+    console.log(error);
+  })
+};
+
 const signUp = async () => {
   await signUpUser(user.value).then(() => {
-    alert("노브레인에 오신 것을 환영합니다.");
+    if (isCheckName.value || isCheckEmail.value || !isPasswordCheck.value) {
+      alert("검증이 되지 않은 항목이 존재합니다.");
+      return;
+    }
+    alert("No brain에 오신 것을 환영합니다.");
     home();
   }).catch((error) => {
-    alert("빈칸을 확인해주세요.");
     console.log(error);
   })
 };
