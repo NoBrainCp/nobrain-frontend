@@ -115,7 +115,7 @@
   </v-app-bar>
   <ConfirmDialog
       :confirmObj="confirmObj"
-      @delete="logout"
+      @delete="userLogout"
       @close="closeConfirmDialog"
   ></ConfirmDialog>
 </template>
@@ -130,7 +130,13 @@ import ConfirmDialog from "../dialog/ConfirmDialog.vue";
 import {getMyProfile} from "../../api/user/userApi";
 import {onMounted, ref, watch} from "vue";
 import {searchBookmark} from "../../api/bookmark/bookmarkApi";
-import {deleteAccessTokenFromCookie, getUsernameFromCookie} from "../../utils/cookies";
+import {
+  clearCookie,
+  deleteAccessTokenFromCookie,
+  getRefreshTokenFromCookie,
+  getUsernameFromCookie
+} from "../../utils/cookies";
+import {logout} from "../../api/auth/authApi";
 
 const searchConditions = ref([
   {title: "MY"},
@@ -205,11 +211,18 @@ const clickProfile = () => {
   store.commit('setWindow', 'profile');
 };
 
-const logout = () => {
-  deleteAccessTokenFromCookie();
-  confirmObj.value.dialog = false;
-  alert("로그아웃이 완료되었습니다.");
-  router.push('/sign-in');
+const userLogout = async () => {
+  const refreshToken = getRefreshTokenFromCookie();
+  console.log(refreshToken);
+  await logout({
+        refreshToken: refreshToken
+      }
+  ).finally(() => {
+    clearCookie();
+    closeConfirmDialog();
+    alert("로그아웃이 완료되었습니다.");
+    router.push('/');
+  })
 };
 
 const closeConfirmDialog = () => {
