@@ -1,8 +1,8 @@
 <template>
   <v-parallax
-      class="parallax"
-      src="/../src/assets/images/login-page-header.jpg"
-      :style="{opacity: opacity}"
+    class="parallax"
+    src="/../src/assets/images/login-page-header.jpg"
+    :style="{ opacity: opacity }"
   >
     <v-row class="d-flex">
       <v-col cols="12" sm="7">
@@ -17,72 +17,72 @@
         <v-card class="body-card d-flex">
           <v-card-text>
             <h2
-                class="body-card-title text-h3 font-weight-bold text-center mt-10"
+              class="body-card-title text-h3 font-weight-bold text-center mt-10"
             >
               Nobrain
             </h2>
             <div class="body-card-text">
-                <v-text-field
-                    v-model="userData.username"
-                    label="name"
-                    color="blue"
-                    variant="outlined"
-                />
-                <v-text-field
-                    v-model="userData.password"
-                    class="mt-1"
-                    label="Password"
-                    color="blue"
-                    type="password"
-                    variant="outlined"
-                    @keydown.enter="signIn"
-                />
+              <v-text-field
+                v-model="userData.username"
+                label="name"
+                color="blue"
+                variant="outlined"
+              />
+              <v-text-field
+                v-model="userData.password"
+                class="mt-1"
+                label="Password"
+                color="blue"
+                type="password"
+                variant="outlined"
+                @keydown.enter="signIn"
+              />
 
               <v-row class="mt-2 mb-5">
                 <v-checkbox
-                    v-model="userData.isKeepLoggedIn"
-                    label="로그인 상태 유지"
-                    class="mt-n5"
-                    color="blue"
+                  v-model="userData.isKeepLoggedIn"
+                  label="로그인 상태 유지"
+                  class="mt-n5"
+                  color="blue"
                 />
               </v-row>
               <v-btn
-                  color="blue"
-                  class="mt-2 mb-3 login-button"
-                  variant="outlined"
-                  block
-                  @click="signIn"
+                color="blue"
+                class="mt-2 mb-3 login-button"
+                variant="outlined"
+                block
+                @click="signIn"
               >
                 로그인
               </v-btn>
 
-              <a
-                  class="caption text"
-                  href="/find"
-                  @click="setWindow"
-              >
+              <a class="caption text" href="/find" @click="setWindow">
                 아이디 찾기 / 비밀번호 찾기
               </a>
               <div class="body-card-oauth-button mt-8">
-                <img
-                  src="src/assets/images/google-logo.png"
-                  class="google-logo"
-                  alt="google"
-                  @click="googleLogin"
+                <a :href="githubSignUrl">
+                  <img
+                    src="src/assets/images/github-logo.png"
+                    class="github-logo"
+                    alt="github-logo"
+                  />
+                </a>
 
-                />
-                <img
+                <a :href="googleSignUrl">
+                  <img
+                    src="src/assets/images/google-logo.png"
+                    class="google-logo"
+                    alt="google"
+                  />
+                </a>
+
+                <a :href="naverSignUrl">
+                  <img
                     src="src/assets/images/naver-logo.png"
                     class="naver-logo"
                     alt="naver"
-                    @click="naverLogin"
-                />
-                <img
-                    src="src/assets/images/kakao-logo.png"
-                    class="kakao-logo"
-                    alt="kakao"
-                    @click="kakaoLogin"
-                />
+                  />
+                </a>
               </div>
             </div>
           </v-card-text>
@@ -90,14 +90,23 @@
       </v-col>
     </v-row>
   </v-parallax>
-  <div class="space"/>
+  <div class="space" />
 </template>
 
 <script setup>
-import {onMounted, ref} from "vue";
-import {store} from "../../store";
+import { onMounted, ref, watch } from "vue";
+import { store } from "../../store";
 import router from "../../router";
-import {getUsernameFromCookie} from "../../utils/cookies";
+import { getUsernameFromCookie } from "../../utils/cookies";
+
+const githubSignUrl =
+  "https://github.com/login/oauth/authorize?client_id=66b0a35fa47a34ffe333&scope=id,name,email,avatar_url";
+
+const googleSignUrl =
+  "https://accounts.google.com/o/oauth2/v2/auth?scope=https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email&client_id=573015715079-dkk4mjkmq900jaj3u2gncptag1nocdb1.apps.googleusercontent.com&response_type=code&redirect_uri=http://localhost:5173/oauth2/google&access_type=offline";
+
+const naverSignUrl =
+  "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=sYs05laPxAT1aByTYXLm&redirect_uri=http://localhost:5173/oauth2/naver";
 
 const userData = ref({
   username: "",
@@ -105,30 +114,21 @@ const userData = ref({
   isKeepLoggedIn: false,
 });
 
-
 const signIn = async () => {
   await store
-      .dispatch("signIn", userData.value)
-      .then(() => {
-        router.replace(`/${getUsernameFromCookie()}`);
-      })
-      .catch((error) => {
-        console.log(error);
-        alert("로그인에 실패하였습니다.");
-      });
+    .dispatch("signIn", userData.value)
+    .then(() => {
+      router.replace(`/${getUsernameFromCookie()}`);
+    })
+    .catch((error) => {
+      console.log(error);
+      alert("로그인에 실패하였습니다.");
+    });
 };
 
 const setWindow = () => {
   store.state.window = "forgetPassword";
 };
-//
-// const googleSignUrl =
-//   "https://accounts.google.com/o/oauth2/v2/auth?client_id=" +
-//   `${import.meta.env.VITE_APP_GOOGLE_CLIENT_ID}` +
-//   "&redirect_uri=" +
-//   `${import.meta.env.VITE_APP_GOOGLE_REDIRECT_URL}` +
-//   "&response_type=code" +
-//   "&scope=email profile";
 
 const opacity = ref(0);
 
@@ -189,25 +189,24 @@ onMounted(() => {
   left: 20%;
 }
 
-.google-logo {
+.github-logo {
   position: absolute;
   height: 50px;
   cursor: pointer;
   left: 25%;
 }
 
-.naver-logo {
+.google-logo {
   position: absolute;
   height: 50px;
   cursor: pointer;
   left: 45%;
 }
 
-.kakao-logo {
+.naver-logo {
   position: absolute;
   height: 50px;
   cursor: pointer;
   left: 65%;
 }
-
 </style>
