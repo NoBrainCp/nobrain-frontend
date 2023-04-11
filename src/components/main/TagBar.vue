@@ -38,12 +38,12 @@
 
       <v-chip
           v-for="(tag) in data.tags"
-          :key="tag.id"
-          :value="tag.id"
+          :key="tag.tagId"
+          :value="tag.tagId"
           filter
           elevation="2"
       >
-        {{ tag.name }}
+        {{ tag.tagName }}
       </v-chip>
     </v-chip-group>
   </v-navigation-drawer>
@@ -52,24 +52,22 @@
 <script setup>
 import {onMounted, reactive, ref,  watch} from "vue";
 import {useRoute} from "vue-router";
-import {getBookmarksByTags, getTags} from "../../api/tag/tagApi";
+import {getTags} from "../../api/tag/tagApi";
 import {bookmarkStore} from "../../store/bookmark/bookmark";
+import {getBookmarksByTags} from "../../api/bookmark_tag/bookmarkTagApi";
 
 const route = useRoute();
 const drawer = ref(true);
 const rail = ref(true);
 const username = ref(route.params.username);
 const data = reactive({
-  bookmarks: [],
   tags: [],
   selectedTags: []
 });
 
 const findAllTagsByUser = async () => {
   await getTags(username.value).then(response => {
-    const list = response.data.list;
-    data.tags = list.map(t => t.tag);
-    data.bookmarks = list.map(b => b.bookmark);
+    data.tags = response.data.list;
   });
 };
 
