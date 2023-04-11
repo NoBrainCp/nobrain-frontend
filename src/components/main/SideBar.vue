@@ -174,7 +174,11 @@ const categoryDialogObj = ref({
   dialog: false,
   title: "카테고리 추가",
   btnName: "추가",
-  isPublic: true
+  category: {
+    name: "",
+    description: "",
+    isPublic: true
+  },
 });
 const categoryList = ref("");
 
@@ -244,9 +248,9 @@ const showFollowCount = async () => {
 };
 
 const addCategoryByUser = async (category) => {
-  await addCategory(getUsernameFromCookie(), category).then(() => {
+  await addCategory(category).then(() => {
     categoryStore.state.status = !categoryStore.state.status;
-    categoryDialogObj.value.dialog = false;
+    closeCategoryDialog();
   }).catch(() => {
     alert("빈 문자열 혹은 동일한 카테고리 이름을 생성 할 수 없습니다.")
   });
@@ -254,9 +258,11 @@ const addCategoryByUser = async (category) => {
 
 const closeCategoryDialog = () => {
   categoryDialogObj.value.dialog = false;
-  categoryDialogObj.value.name = "";
-  categoryDialogObj.value.description = "";
-  categoryDialogObj.value.isPublic = true;
+  categoryDialogObj.value.category = {
+    name: "",
+    description: "",
+    isPublic: true,
+  };
 };
 
 const clickFollowButton = async (isFollow) => {
@@ -277,7 +283,7 @@ const getStarredCount = async () => {
 };
 
 const getPrivateCount = async () => {
-  await getPrivateBookmarksCount(username.value).then((privateCnt) => {
+  await getPrivateBookmarksCount().then((privateCnt) => {
     countData.value.privateCount = privateCnt.data.data;
   }).catch((error) => {
     console.log(error);
@@ -350,13 +356,12 @@ const clickAddBookmarkBtn = async () => {
     getTags(username.value),
   ]);
   bookmarkDialogObj.value.categoryNames = categoriesResponse.data.list.map(c => c.name);
-  bookmarkDialogObj.value.bookmark.tagList = tagsResponse.data.list.map(t => t.tag.name);
+  bookmarkDialogObj.value.bookmark.tagList = tagsResponse.data.list.map(t => t.tagName);
 };
 
 const addBookmarkData = async (bookmark) => {
-  bookmarkDialogObj.value.dialog = false;
-  await addBookmark(username.value, bookmark).then(() => {
-    bookmarkDialogInit();
+  await addBookmark(bookmark).then(() => {
+    closeBookmarkDialog();
     router.push(`/${username.value}/${bookmark.categoryName}`);
     categoryStore.state.status = !categoryStore.state.status;
     bookmarkStore.state.status = !bookmarkStore.state.status;
@@ -409,14 +414,6 @@ const clickFollow = async () => {
   })
 };
 
-const bookmarkDialogInit = () => {
-  bookmarkDialogObj.value.bookmark = {
-    url: "",
-    title: "",
-    description: "",
-    tags: []
-  }
-};
 </script>
 
 <style scoped>
