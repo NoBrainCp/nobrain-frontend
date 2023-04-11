@@ -1,29 +1,29 @@
 import {category} from "../index";
 
 export function getCategory(username, categoryName) {
-    return category.get(`user/${username}/category/${categoryName}`);
+    return category.get(`/${categoryName}/users/${username}`);
 }
 
 export function getCategories(username) {
-    return category.get(`/user/${username}/categories`);
+    return category.get(`/users/${username}`);
 }
 
 export function getCategoryByBookmarkId(bookmarkId) {
-    return category.get(`/bookmark/${bookmarkId}/category`);
+    return category.get(`/bookmarks/${bookmarkId}`);
 }
 
 export function getCategoryIsPublic(userId, categoryName) {
-    return category.get(`/user/${userId}/category/${categoryName}/public`);
+    return category.get(`/${categoryName}/public/users/${userId}`);
 }
 
-export function addCategory(username, categoryData) {
-    return category.post(`/${username}/category`, categoryData);
+export function addCategory(categoryData) {
+    return category.post(``, categoryData);
 }
 
-export function updateCategory(username, categoryName, categoryData) {
-    return category.put(`/${username}/category/${categoryName}`, categoryData);
+export function updateCategory(categoryName, categoryData) {
+    return category.put(`/${categoryName}`, categoryData);
 }
 
-export function deleteCategory(username, categoryName) {
-    return category.delete(`/${username}/category/${categoryName}`);
+export function deleteCategory(categoryName) {
+    return category.delete(`${categoryName}`);
 }
