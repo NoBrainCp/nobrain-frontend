@@ -26,15 +26,20 @@ function saveAccessTokenToCookie(tokenType, accessToken) {
     document.cookie = `accessToken=${tokenType} ${accessToken};${expires}`;
 }
 
-function saveRefreshTokenToCookie(tokenType, refreshToken) {
-    document.cookie = `refreshToken=${tokenType} ${refreshToken}`;
+function saveRefreshTokenToCookie(refreshToken) {
+    let expirationSeconds = 3600 * 24 * 14;  // 2 week
+    let d = new Date();
+    d.setTime(d.getTime() + (expirationSeconds * 1000));
+    let expires = "expires="+ d.toUTCString();
+    document.cookie = `refresh_token=${refreshToken}; ${expires}`;
 }
 
 function saveUserInfoToCookie(userInfo) {
     saveUserIdToCookie(userInfo.userId);
     saveEmailToCookie(userInfo.email);
     saveUsernameToCookie(userInfo.username);
-    saveAccessTokenToCookie(userInfo.tokenType, userInfo.accessToken);
+    saveAccessTokenToCookie(userInfo.tokenDto.tokenType, userInfo.tokenDto.accessToken);
+    saveRefreshTokenToCookie(userInfo.tokenDto.refreshToken);
 }
 
 
@@ -82,7 +87,7 @@ function getAccessTokenFromCookie() {
 
 function getRefreshTokenFromCookie() {
     return document.cookie.replace(
-        /(?:(?:^|.*;\s*)refreshToken\s*=\s*([^;]*).*$)|^.*$/,
+        /(?:(?:^|.*;\s*)refresh_token\s*=\s*([^;]*).*$)|^.*$/,
         '$1',
     );
 }
