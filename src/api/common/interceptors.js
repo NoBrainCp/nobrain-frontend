@@ -1,7 +1,8 @@
 import {store} from "../../store";
 import router from "../../router";
-import {getAccessTokenFromCookie} from "../../utils/cookies";
+import {getAccessTokenFromCookie, getRefreshTokenFromCookie, saveAccessTokenToCookie} from "../../utils/cookies";
 import {handleError} from "./common";
+import {generateAccessToken} from "../auth/authApi";
 
 
 export function setInterceptors(instance) {
@@ -31,7 +32,7 @@ export function setInterceptors(instance) {
         function (error) {
             // Any status codes that falls outside the range of 2xx cause this function to trigger
             // Do something with response error
-            handleError(error);
+            // handleError(error);
             // router.go(-1);
             return Promise.reject(error);
         },
@@ -45,10 +46,19 @@ export function setAuthInterceptors(axiosService) {
         async function (config) {
             // 요청 전
             const accessToken = getAccessTokenFromCookie();
+            const refreshToken = getRefreshTokenFromCookie();
             // config.headers.Authorization = store.state.accessToken;
             if (accessToken) {
                 config.headers.Authorization = accessToken;
             } else {
+                if (refreshToken) {
+                    await generateAccessToken({
+                        refreshToken: refreshToken
+                    }).then(async (response) => {
+                        await saveAccessTokenToCookie('Bearer', response.data.data);
+                        config.headers.Authorization = response.data.data;
+                    });
+                }
                 // await router.replace(`/sign-in`);
                 // alert("로그인 대기 유효시간이 만료되었습니다.\n다시 로그인을 시도해주시기 바랍니다.");
             }
@@ -70,7 +80,8 @@ export function setAuthInterceptors(axiosService) {
             return response;
         },
         function (error) {
-            handleError(error);
+            // handleError(error);
+
             console.log("RESPONSE ERROR: " + error);
 
             return Promise.reject(error);

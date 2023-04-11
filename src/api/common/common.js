@@ -25,8 +25,8 @@ export function handleError(error) {
         // 	'확인',
         // );
         console.log(2);
-        clearCookie();
-        router.replace('/sign-in');
+        // clearCookie();
+        // router.replace('/sign-in');
     }
     // 404
     else if (error.response && error.response.status == 404) {
