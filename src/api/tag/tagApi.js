@@ -1,15 +1,11 @@
 import {tag} from "../index";
 
 export function getTags(username) {
-    return tag.get(`user/${username}/bookmark-tags`);
+    return tag.get(`users/${username}`);
 }
 
 export function getTagsByBookmarkId(username, bookmarkId) {
-    return tag.get(`user/${username}/bookmark/${bookmarkId}/tags`);
+    return tag.get(`users/${username}/bookmark/${bookmarkId}`);
 }
 
-export function getBookmarksByTags(username, tagIds) {
-    return tag.get(`user/${username}/bookmark-tags/tags`,{
-        params: { tagIds: tagIds.join(',') },
-    });
-}
+
