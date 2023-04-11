@@ -70,10 +70,11 @@ export const store = createStore({
                 })
         },
 
-        async oauthSignIn({commit}, type, code) {
-            await oauthLogin(type, code).then((response) => {
-                commit('setUserInfo', response.data);
-                saveUserInfoToCookie(response.data);
+        async oauthSignIn({commit}, oauthData) {
+            let encodingCode = encodeURI(oauthData.value.code);
+            await oauthLogin(oauthData.value.provider, encodingCode).then((response) => {
+                commit('setUserInfo', response.data.data);
+                saveUserInfoToCookie(response.data.data);
                 return response.data;
             });
         }
