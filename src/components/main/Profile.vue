@@ -294,7 +294,7 @@ import ConfirmDialog from "../dialog/ConfirmDialog.vue";
 import {
   changeName,
   changePassword,
-  changeProfileImage, deactivateAccount,
+  changeProfileImage, deactivateAccount, deleteProfileImage,
   getMyProfile
 } from "../../api/user/userApi";
 import {
@@ -306,7 +306,9 @@ import {
 } from "../../utils/cookies";
 import {onMounted, ref, watch} from "vue";
 import {sendAuthenticationMail, sendEmailAndCode} from "../../api/mail/mailApi";
+import {useRoute} from "vue-router";
 
+const route = useRoute();
 const panel = ref(['name']);
 const buttonState = ref('Open All');
 const name = ref("");
@@ -376,15 +378,18 @@ const information = () => {
 };
 
 const changeUsername = async () => {
-  await changeName(getUserIdFromCookie(), name.value).then(() => {
-    saveUsernameToCookie(name);
+  await changeName({
+    newName: name.value
+  }).then(() => {
+    saveUsernameToCookie(name.value);
     userStore.state.status = !userStore.state.status;
     userStore.commit('setUsername', name.value);
+    router.replace(`/${name.value}`);
     name.value = "";
     alert("변경이 완료되었습니다.");
   }).catch((error) => {
-    alert("동일한 닉네임이 존재합니다.");
     console.log(error);
+    alert("동일한 닉네임이 존재합니다.");
   })
 };
 
@@ -407,11 +412,16 @@ const updateProfileImg = async () => {
   })
 };
 
-//이미지 삭제 로직 추가해야함
-//watchEffect로 delete 메서드 감지?
-const deleteProfileImg = () => {
-  myInfo.value.urlProfileImage = "src/assets/images/nobrain-no-image.png";
-}
+const deleteProfileImg = async () => {
+  await deleteProfileImage().then(() => {
+    myInfo.value.urlProfileImage = null;
+    userStore.commit("setProfileImage", myInfo.value.urlProfileImage);
+    alert("삭제가 완료되었습니다.");
+  }).catch((error) => {
+    alert("이미지 삭제 실패");
+    console.log(error);
+  })
+};
 
 const sendAuthentication = async() => {
   authObj.value.dialog = true;
