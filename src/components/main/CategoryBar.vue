@@ -27,7 +27,7 @@
     />
     <v-btn
         v-if="isMe && !isAll"
-        class="btn"
+        class="btn mr-15"
         color="red-accent-4"
         elevation="3"
         prepend-icon="mdi mdi-delete"
@@ -107,7 +107,6 @@ const getCategoryList = async() => {
   }
 
   await getCategory(username, categoryName).then((response) => {
-    console.log(response.data.data);
     category.value = response.data.data;
     isAll.value = false;
   }).catch((error) => {
@@ -139,8 +138,10 @@ const updateCategoryData = async(categoryObj) => {
   const categoryOriginName = category.value.name;
   category.value = categoryObj;
   category.value.public = categoryObj.isPublic;
-  await updateCategory(categoryOriginName, categoryObj).then(async () => {
-    if (!categoryObj.isPublic) {
+  const categoryData = categoryObj;
+  categoryData.name = categoryObj.name.trimEnd();
+  await updateCategory(categoryOriginName, categoryData).then(async () => {
+    if (!categoryData.isPublic) {
         updateAllBookmarksToPrivate(categoryOriginName);
     }
     closeCategoryDialog();
@@ -207,7 +208,4 @@ const closeConfirmDialog = () => {
   margin-right: 10px;
 }
 
-.v-toolbar__content > .v-btn:last-child {
-  margin-right: 50px;
-}
 </style>
