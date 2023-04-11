@@ -64,7 +64,7 @@
                 color="black"
                 variant="outlined"
                 class="mt-2"
-                @click="validateEmail(user.email)"
+                @click="isCheckEmail=true"
             > 확인
             </v-btn>
             <v-icon
@@ -217,9 +217,20 @@ watch(() => user.value.passwordCheck, () => {
   isPasswordCheck.value = false;
 });
 
+watch(() => user.value.name, () => {
+  if (!isCheckName.value) {
+    isCheckName.value = true;
+  }
+});
 
+watch(() => user.value.email, () => {
+  if (isCheckEmail.value) {
+    isCheckEmail.value = false;
+  }
+});
 const validateUsername = async (name) => {
   await existsUsername(name).then((response) => {
+    console.log(response);
     isCheckName.value = response.data.data;
     if (isCheckName.value) {
       alert("이미 사용중인 닉네임 입니다.");
@@ -229,7 +240,6 @@ const validateUsername = async (name) => {
 
   });
 };
-
 const signUp = async () => {
   await signUpUser(user.value).then(() => {
     alert("노브레인에 오신 것을 환영합니다.");
