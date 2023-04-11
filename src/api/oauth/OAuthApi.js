@@ -1,5 +1,5 @@
-import {oauth} from "../index";
+import {noAuthInstance} from "../index";
 
 export function oauthLogin(socialLoginType, code) {
-    return oauth.get(`/login/${socialLoginType}/?code=${code}`);
+    return noAuthInstance.get(`/oauth2/login/${socialLoginType}?code=${code}`);
 }
