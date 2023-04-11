@@ -73,9 +73,11 @@ const categoryDialogObj = ref({
   dialog: false,
   title: "카테고리 수정",
   btnName: "수정",
-  name: "",
-  description: "",
-  isPublic: "",
+  category: {
+    name: "",
+    description: "",
+    isPublic: "",
+  },
 });
 
 const category = ref({
@@ -103,7 +105,9 @@ const getCategoryList = async() => {
     isAll.value = true;
     return;
   }
+
   await getCategory(username, categoryName).then((response) => {
+    console.log(response.data.data);
     category.value = response.data.data;
     isAll.value = false;
   }).catch((error) => {
@@ -122,21 +126,25 @@ onMounted(() => {
 
 const updateClick = () => {
   categoryDialogObj.value.dialog = true;
-  categoryDialogObj.value.name = category.value.name;
-  categoryDialogObj.value.description = category.value.description;
-  categoryDialogObj.value.isPublic = category.value.public;
+  categoryDialogObj.value.category = {
+    name: category.value.name,
+    description: category.value.description,
+    isPublic: category.value.public,
+    }
+
 };
 
 const updateCategoryData = async(categoryObj) => {
   const username = getUsernameFromCookie();
   const categoryOriginName = category.value.name;
-  category.value.name = categoryObj.name;
-  category.value.description = categoryObj.description;
+  category.value = categoryObj;
   category.value.public = categoryObj.isPublic;
-  await updateCategory(username, categoryOriginName, categoryObj).then(() => {
-    updateAllBookmarksToPrivate(userId.value, categoryOriginName);
-    categoryDialogObj.value.dialog = false;
-    router.push(`/${username}/${category.value.name}`);
+  await updateCategory(categoryOriginName, categoryObj).then(async () => {
+    if (!categoryObj.isPublic) {
+        updateAllBookmarksToPrivate(categoryOriginName);
+    }
+    closeCategoryDialog();
+    await router.push(`/${username}/${category.value.name}`);
     categoryStore.state.status = !categoryStore.state.status;
     bookmarkStore.state.status = !bookmarkStore.state.status;
     privatesStore.state.status = !privatesStore.state.status;
@@ -149,12 +157,12 @@ const closeCategoryDialog = () => {
 };
 
 const deleteCategoryData = async() => {
-  await deleteCategory(getUsernameFromCookie(), category.value.name).then(() => {
+  await deleteCategory(category.value.name).then(() => {
     router.push(`/${getUsernameFromCookie()}`);
     categoryStore.state.status = !categoryStore.state.status;
     favoritesStore.state.status = !favoritesStore.state.status;
     privatesStore.state.status = !privatesStore.state.status;
-    confirmObj.value.dialog = false;
+    closeConfirmDialog();
   }).catch((error) => {
     alert(error.response.data.message);
   })
