@@ -72,7 +72,13 @@
     </div>
 
     <div class="side-bar-content">
-      <v-list density="compact" nav>
+      <v-list
+          density="compact"
+          nav
+          v-model="isActive"
+          mandatory
+          active-color="blue"
+      >
         <div class="category-header-container" v-if="!rail">
           <v-list-subheader class="category-header">카테고리</v-list-subheader>
           <v-btn
@@ -91,7 +97,10 @@
         </div>
 
         <v-divider v-if="!rail"/>
-        <v-list-item @click="showStarredBookmarks">
+        <v-list-item
+            @click="showStarredBookmarks"
+            value="starred"
+        >
           <template v-slot:prepend>
             <v-icon color="light-blue" icon="mdi mdi-star-box"></v-icon>
           </template>
@@ -104,7 +113,11 @@
                 inline/>
           </template>
         </v-list-item>
-        <v-list-item @click="showPrivateBookmarks" v-if="data.user.username === myName">
+        <v-list-item
+            value="private"
+            @click="showPrivateBookmarks"
+            v-if="data.user.username === myName"
+        >
           <template v-slot:prepend>
             <v-icon color="light-blue" icon="mdi mdi-eye-lock-outline"></v-icon>
           </template>
@@ -168,7 +181,7 @@ const myName = ref(getUsernameFromCookie());
 const username = ref(route.params.username);
 const drawer = ref(true);
 const rail = ref(false);
-
+const isActive = ref("");
 // activeIndex: null,
 const categoryDialogObj = ref({
   dialog: false,
@@ -219,7 +232,7 @@ const data = reactive({
 const followObj = ref({
   followerCount: 0,
   followingCount: 0,
-  follow: Boolean,
+  follow: false,
 
   followButton: {
     text: '',
@@ -248,7 +261,10 @@ const showFollowCount = async () => {
 };
 
 const addCategoryByUser = async (category) => {
-  await addCategory(category).then(() => {
+  const categoryData = category;
+  categoryData.name = category.name.trimEnd();
+
+  await addCategory(categoryData).then(() => {
     categoryStore.state.status = !categoryStore.state.status;
     closeCategoryDialog();
   }).catch(() => {
@@ -304,7 +320,7 @@ watch(() => (userStore.state.profileImage), (newValue) => {
   data.user.profileImage = newValue;
 });
 
-//t
+
 watch(() => followObj.value.follow, (newValue) => {
   clickFollowButton(newValue);
 });
@@ -331,14 +347,12 @@ onMounted(async () => {
     console.log(error);
     alert("팔로우 정보를 가져올 수 없습니다.");
   });
+
   await updateCategories();
   await showFollowCount();
   await getStarredCount();
   await getPrivateCount();
 
-  // const category = route.params.category;
-  // data.activeIndex = data.categories.findIndex(c => c.name === category);
-  // console.log(data.activeIndex);
 });
 
 const clickAddBookmarkBtn = async () => {
@@ -398,10 +412,12 @@ const showAllBookmarks = () => {
 };
 
 const showStarredBookmarks = () => {
+  isActive.value="starred";
   router.push(`/${username.value}/starred`);
 };
 
 const showPrivateBookmarks = () => {
+  isActive.value="private";
   router.push((`/${username.value}/private`));
 };
 
@@ -417,16 +433,6 @@ const clickFollow = async () => {
 </script>
 
 <style scoped>
-/*.category-active {*/
-/*  background: #03A9F4;*/
-/*}*/
-
-/*.side-bar-header {*/
-/*  background: white;*/
-/*  position: relative;*/
-/*  z-index: 1;*/
-/*}*/
-
 .side-bar-content {
 }
 
