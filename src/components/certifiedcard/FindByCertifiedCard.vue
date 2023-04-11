@@ -109,7 +109,6 @@ import AuthDialog from "../dialog/AuthDialog.vue";
 
 const user = ref({
   email: "",
-  password: "",
   phoneNumber: "",
 });
 
@@ -147,12 +146,12 @@ const sendAuthCodeFromEmail = async (email) => {
   });
 };
 
-const findPasswordByPhoneNumber = async (loginId, phoneNumber, authCode) => {
+//**
+const findPasswordByPhoneNumber = async (username, phoneNumber, authCode) => {
   await sendMessageAndPassword(phoneNumber, authCode).then((response) => {
     const isSuccess = response.data.success;
     if (isSuccess) {
-      alert("인증이 완료 되었습니다.");
-      router.push("/change-password/" + loginId);
+      alert("고민 중");
     } else {
       alert(response.data.message);
     }
@@ -161,12 +160,11 @@ const findPasswordByPhoneNumber = async (loginId, phoneNumber, authCode) => {
   })
 };
 
-const findPasswordByEmail = async (loginId, email, authCode) => {
+const findPasswordByEmail = async (username, email, authCode) => {
   await sendMailAndPassword(email, authCode).then((response) => {
     const isSuccess = response.data.success;
     if (isSuccess) {
-      alert("인증이 완료 되었습니다.");
-      router.push("/change-password/" + loginId);
+      alert("고민 중");
     } else {
       alert(response.data.message);
     }
@@ -179,7 +177,7 @@ const findIdByPhoneNumber = async (phoneNumber, authCode) => {
   await sendMessageAndLoginId(phoneNumber, authCode).then((response) => {
     const isSuccess = response.data.success;
     if (isSuccess) {
-      alert("인증한 휴대전화로 본인의 아이디가 전송되었습니다.");
+      alert("인증한 휴대전화로 본인의 닉네임이 전송되었습니다.");
       router.push(`/`);
     } else {
       alert(response.data.data);
@@ -193,8 +191,8 @@ const findIdByEmail = async (email, authCode) => {
   await sendEmailAndLoginId(email, authCode).then((response) => {
     const isSuccess = response.data.success;
     if (isSuccess) {
-      alert("인증한 이메일로 본인의 아이디가 전송되었습니다.");
-      router.push(`/start`);
+      alert("인증한 이메일로 본인의 닉네임이 전송되었습니다.");
+      router.push(`/`);
     } else {
       alert(response.data.data);
     }
@@ -204,14 +202,14 @@ const findIdByEmail = async (email, authCode) => {
 };
 
 const checkAuthCode = async () => {
-  const loginId = store.state.loginId
-  const authCode = authObj.value.authCode
+  const username = store.state.username;
+  const authCode = authObj.value.authCode;
 
-  if (loginId) {
+  if (username) {
     if (radios.value === "radioPhoneNumber") {
-      await findPasswordByPhoneNumber(loginId, user.value.phoneNumber, authCode);
+      await findPasswordByPhoneNumber(username, user.value.phoneNumber, authCode);
     } else {
-      await findPasswordByEmail(loginId, user.value.email, authCode);
+      await findPasswordByEmail(username, user.value.email, authCode);
     }
   } else {
     if (radios.value === "radioPhoneNumber") {
