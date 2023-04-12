@@ -34,13 +34,13 @@ function saveRefreshTokenToCookie(refreshToken) {
     document.cookie = `refresh_token=${refreshToken}; ${expires}`;
 }
 
-function saveUserInfoToCookie(userInfo) {
-    saveUserIdToCookie(userInfo.userId);
-    saveEmailToCookie(userInfo.email);
-    saveUsernameToCookie(userInfo.username);
-    saveAccessTokenToCookie(userInfo.tokenDto.tokenType, userInfo.tokenDto.accessToken);
-    saveRefreshTokenToCookie(userInfo.tokenDto.refreshToken);
-}
+// function saveUserInfoToCookie(userInfo) {
+//     saveUserIdToCookie(userInfo.userId);
+//     saveEmailToCookie(userInfo.email);
+//     saveUsernameToCookie(userInfo.username);
+//     saveAccessTokenToCookie(userInfo.tokenDto.tokenType, userInfo.tokenDto.accessToken);
+//     saveRefreshTokenToCookie(userInfo.tokenDto.refreshToken);
+// }
 
 
 function getUserIdFromCookie() {
@@ -116,27 +116,27 @@ function clearCookie() {
 
 }
 
-export {
-    saveUserIdToCookie,
-    saveUsernameToCookie,
-    saveEmailToCookie,
-    saveLoginIdToCookie,
-    saveCategoryId,
-    saveAccessTokenToCookie,
-    saveRefreshTokenToCookie,
-    saveUserInfoToCookie,
-
-    getUserIdFromCookie,
-    getUsernameFromCookie,
-    getEmailFromCookie,
-    getLoginIdFromCookie,
-    getCategoryIdFromCookie,
-    getAccessTokenFromCookie,
-    getRefreshTokenFromCookie,
-
-    deleteUsernameFromCookie,
-    deleteCategoryIdFromCookie,
-    deleteAccessTokenFromCookie,
-    deleteCookie,
-    clearCookie
-};
+// export {
+//     saveUserIdToCookie,
+//     saveUsernameToCookie,
+//     saveEmailToCookie,
+//     saveLoginIdToCookie,
+//     saveCategoryId,
+//     saveAccessTokenToCookie,
+//     saveRefreshTokenToCookie,
+//     // saveUserInfoToCookie,
+//
+//     getUserIdFromCookie,
+//     getUsernameFromCookie,
+//     getEmailFromCookie,
+//     getLoginIdFromCookie,
+//     getCategoryIdFromCookie,
+//     getAccessTokenFromCookie,
+//     getRefreshTokenFromCookie,
+//
+//     deleteUsernameFromCookie,
+//     deleteCategoryIdFromCookie,
+//     deleteAccessTokenFromCookie,
+//     deleteCookie,
+//     clearCookie
+// };

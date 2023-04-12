@@ -1,6 +1,6 @@
 import {store} from "../../store";
 import router from "../../router";
-import {getAccessTokenFromCookie, getRefreshTokenFromCookie, saveAccessTokenToCookie} from "../../utils/cookies";
+// import {getAccessTokenFromCookie, getRefreshTokenFromCookie, saveAccessTokenToCookie} from "../../utils/cookies";
 import {handleError} from "./common";
 import {generateAccessToken} from "../auth/authApi";
 
@@ -45,8 +45,8 @@ export function setAuthInterceptors(axiosService) {
     axiosService.interceptors.request.use(
         async function (config) {
             // 요청 전
-            const accessToken = getAccessTokenFromCookie();
-            const refreshToken = getRefreshTokenFromCookie();
+            const accessToken = getAccessTokenFromStorage();
+            const refreshToken = getRefreshTokenFromStorage();
             // config.headers.Authorization = store.state.accessToken;
             if (accessToken) {
                 config.headers.Authorization = accessToken;
@@ -55,7 +55,7 @@ export function setAuthInterceptors(axiosService) {
                     await generateAccessToken({
                         refreshToken: refreshToken
                     }).then(async (response) => {
-                        await saveAccessTokenToCookie('Bearer', response.data.data);
+                        await saveAccessTokenToStorage('Bearer', response.data.data);
                         config.headers.Authorization = response.data.data;
                     });
                 }

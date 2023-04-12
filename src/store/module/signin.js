@@ -1,8 +1,8 @@
-import axios from "axios";
-import VueCookies from 'vue-cookies';
-import {getUsernameFromCookie, saveAccessTokenToCookie} from "../../utils/cookies";
-import {signInUser} from "../../api";
-import {store} from "../index";
+// import axios from "axios";
+// import VueCookies from 'vue-cookies';
+// import {getUsernameFromCookie, saveAccessTokenToCookie} from "../../utils/cookies";
+// import {signInUser} from "../../api";
+// import {store} from "../index";
 
 //로그인 처리 관련 저장소 모듈
 // export const login = {

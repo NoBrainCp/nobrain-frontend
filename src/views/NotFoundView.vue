@@ -37,15 +37,14 @@
 
 <script setup>
 import router from "../router";
-import {getAccessTokenFromCookie, getUsernameFromCookie} from "../utils/cookies";
 
 const backPage = () => {
   router.go(-2);
 }
 
 const goMainPage = () => {
-  if (getAccessTokenFromCookie()) {
-    router.push(`/${getUsernameFromCookie()}`);
+  if (getAccessTokenFromStorage()) {
+    router.push(`/${getUsernameFromStorage()}`);
   } else {
     router.push(`/`);
   }

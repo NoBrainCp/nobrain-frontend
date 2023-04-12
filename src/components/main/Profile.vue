@@ -297,13 +297,6 @@ import {
   changeProfileImage, deactivateAccount, deleteProfileImage,
   getMyProfile
 } from "../../api/user/userApi";
-import {
-  clearCookie,
-  getEmailFromCookie,
-  getUserIdFromCookie,
-  getUsernameFromCookie,
-  saveUsernameToCookie
-} from "../../utils/cookies";
 import {onMounted, ref, watch} from "vue";
 import {sendAuthenticationMail, sendEmailAndCode} from "../../api/mail/mailApi";
 import {useRoute} from "vue-router";
@@ -327,8 +320,8 @@ const confirmObj = ref({
 });
 
 const myInfo = ref({
-  username: getUsernameFromCookie(),
-  email: getEmailFromCookie(),
+  username: getUsernameFromStorage(),
+  email: getEmailFromStorage(),
   profileImage: {},
   urlProfileImage: '',
 });
@@ -381,7 +374,7 @@ const changeUsername = async () => {
   await changeName({
     newName: name.value
   }).then(() => {
-    saveUsernameToCookie(name.value);
+    saveUsernameToStorage(name.value);
     userStore.state.status = !userStore.state.status;
     userStore.commit('setUsername', name.value);
     router.replace(`/${name.value}`);
@@ -459,10 +452,10 @@ const validateUsername = () => {
 };
 
 const deleteAccount = async () => {
-  await deactivateAccount(getUserIdFromCookie()).then(() => {
+  await deactivateAccount(getUserIdFromStorage()).then(() => {
     confirmObj.value.dialog = false;
     alert("회원 탈퇴가 완료되었습니다.");
-    clearCookie();
+    clearStorage();
     router.replace('/');
   }).catch((error) => {
     console.log(error);

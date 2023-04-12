@@ -60,11 +60,10 @@ import {
   getFollowerList,
   getFollowingList,
 } from "../../api/follow/followApi";
-import {getUsernameFromCookie} from "../../utils/cookies";
 
 const route = useRoute();
 const username = ref(route.params.username);
-const myName = ref(getUsernameFromCookie());
+const myName = ref(getUsernameFromStorage());
 const followUsers = ref([]);
 
 

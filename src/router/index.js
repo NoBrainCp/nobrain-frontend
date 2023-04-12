@@ -1,5 +1,5 @@
 import {createRouter, createWebHistory} from "vue-router";
-import {getAccessTokenFromCookie, getUsernameFromCookie} from "../utils/cookies";
+
 import SignUp from "../views/SignUpView.vue";
 import MainView from "../views/MainView.vue";
 import Find from "../views/FindView.vue";
@@ -54,8 +54,8 @@ router.beforeEach(async (to, from, next) => {
      * next() 가 호출되기 전까지 화면 전환되지 않음
      */
     if (!to.params.username && !to.fullPath.includes('not')) {
-        if (getAccessTokenFromCookie()) {
-            await router.replace(`${getUsernameFromCookie()}`);
+        if (getAccessTokenFromStorage()) {
+            await router.replace(`${getUsernameFromStorage()}`);
         }
     }
 

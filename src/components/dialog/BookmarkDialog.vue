@@ -116,7 +116,6 @@
 <script setup>
 
 import {ref, watch} from "vue";
-import {getUserIdFromCookie} from "../../utils/cookies";
 import {getCategoryIsPublic} from "../../api/category/categoryApi";
 
 const props = defineProps({
@@ -147,7 +146,7 @@ const rules = ref({
   title: v => !!v || '이름은 필수 입력 항목입니다.',
 });
 
-const userId = ref(getUserIdFromCookie());
+const userId = ref(getUserIdFromStorage());
 
 watch(() => (props.bookmarkDialogObj.bookmark.categoryName), async (categoryName) => {
   if (!categoryName || categoryName === 'starred') {

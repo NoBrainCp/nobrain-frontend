@@ -1,5 +1,5 @@
 <template>
-  
+
 </template>
 
 <script setup>
@@ -10,6 +10,7 @@ import { store } from "../../store";
 import { saveUserInfoToCookie } from "../../utils/cookies";
 
 const route = useRoute();
+
 const oauthData = ref({});
 
 onMounted(async () => {

@@ -1,4 +1,4 @@
-import {clearCookie} from "../../utils/cookies";
+
 import router from "../../router";
 
 /**
