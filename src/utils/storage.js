@@ -10,8 +10,8 @@ export function saveEmailToStorage(email) {
     localStorage.setItem('email', email);
 }
 
-export function saveAccessTokenToStorage(accessToken) {
-    localStorage.setItem('accessToken', accessToken);
+export function saveAccessTokenToStorage(tokenType, accessToken) {
+    localStorage.setItem('accessToken', tokenType + accessToken);
 }
 
 export function saveRefreshTokenToStorage(refreshToken) {
@@ -22,7 +22,7 @@ export function saveLoginUserInfoToStorage(userInfo) {
     saveUserIdToStorage(userInfo.userId);
     saveUsernameToStorage(userInfo.username);
     saveEmailToStorage(userInfo.email);
-    saveAccessTokenToStorage(userInfo.tokenDto.accessToken);
+    saveAccessTokenToStorage('Bearer ',userInfo.tokenDto.accessToken);
     saveRefreshTokenToStorage(userInfo.tokenDto.refreshToken);
 }
 
