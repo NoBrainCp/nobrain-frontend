@@ -244,9 +244,8 @@ const closeConfirmDialog = () => {
 
 .search-btn {
   width: 160px;
-  height: 50px;
+  height: 52px;
   position: relative;
-  bottom: 1px;
   right: 14px;
   background-color: #03A9F4;
   border-radius: 100px;
