@@ -98,6 +98,7 @@ import { onMounted, ref, watch } from "vue";
 import { store } from "../../store";
 import router from "../../router";
 import { getUsernameFromCookie } from "../../utils/cookies";
+import { getUsernameFromStorage } from "../../utils/storage";
 
 const githubSignUrl =
   "https://github.com/login/oauth/authorize?client_id=66b0a35fa47a34ffe333&scope=id,name,email,avatar_url";
@@ -118,7 +119,7 @@ const signIn = async () => {
   await store
     .dispatch("signIn", userData.value)
     .then(() => {
-      router.replace(`/${getUsernameFromCookie()}`);
+      router.replace(`/${getUsernameFromStorage()}`);
     })
     .catch((error) => {
       console.log(error);
