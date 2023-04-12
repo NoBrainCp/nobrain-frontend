@@ -47,7 +47,6 @@
                   <v-chip
                       class="bookmark-chip mt-1 mdi mdi-dots-horizontal"
                       elevation="1"
-                      @click=""
                       append-icon="mdi-chevron-down"
                       v-bind="props"/>
                 </template>
@@ -122,8 +121,6 @@ import {
 } from "../../api/bookmark/bookmarkApi";
 import {getCategories, getCategoryByBookmarkId} from "../../api/category/categoryApi";
 import {getTags, getTagsByBookmarkId} from "../../api/tag/tagApi";
-import {getUsernameFromCookie} from "../../utils/cookies";
-
 
 const bookmarkId = ref("");
 
@@ -154,7 +151,7 @@ const bookmarkDialogObj = ref({
 
 const route = useRoute();
 const username = ref(route.params.username);
-const isMe = ref(username.value === getUsernameFromCookie());
+const isMe = ref(username.value === getUsernameFromStorage());
 const bookmarks = ref([]);
 const overlay = ref(false);
 const loadData = async () => {
@@ -203,10 +200,10 @@ onMounted(() => {
 const clickEditBookmarkBtn = async (bookmark, bookmarkId) => {
   bookmarkStore.state.status = !bookmarkStore.state.status;
   const [categoryListResp, categoryResp, tagsResp, allTagsResp] = await Promise.all([
-    getCategories(getUsernameFromCookie()),
+    getCategories(getUsernameFromStorage()),
     getCategoryByBookmarkId(bookmarkId),
-    getTagsByBookmarkId(getUsernameFromCookie(), bookmarkId),
-    getTags(getUsernameFromCookie())
+    getTagsByBookmarkId(getUsernameFromStorage(), bookmarkId),
+    getTags(getUsernameFromStorage())
   ]);
   bookmarkDialogObj.value.bookmark = bookmark;
   bookmarkDialogObj.value.dialog = true;

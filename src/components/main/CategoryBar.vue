@@ -53,10 +53,6 @@ import ConfirmDialog from "../dialog/ConfirmDialog.vue";
 import CategoryDialog from "../dialog/CategoryDialog.vue";
 import {onMounted, ref, watch} from "vue";
 import {useRoute} from "vue-router";
-import {
-  getUserIdFromCookie,
-  getUsernameFromCookie
-} from "../../utils/cookies";
 import {deleteCategory, getCategory, updateCategory} from "../../api/category/categoryApi";
 import {updateAllBookmarksToPrivate} from "../../api/bookmark/bookmarkApi";
 
@@ -86,10 +82,10 @@ const category = ref({
   public: "",
 });
 
-const isMe = ref(route.params.username === getUsernameFromCookie());
+const isMe = ref(route.params.username === getUsernameFromStorage());
 const isAll = ref(false);
 
-const userId = ref(getUserIdFromCookie());
+const userId = ref(getUserIdFromStorage());
 const getCategoryList = async() => {
   const username = route.params.username;
   const categoryName = route.params.category;
@@ -134,7 +130,7 @@ const updateClick = () => {
 };
 
 const updateCategoryData = async(categoryObj) => {
-  const username = getUsernameFromCookie();
+  const username = getUsernameFromStorage();
   const categoryOriginName = category.value.name;
   category.value = categoryObj;
   category.value.public = categoryObj.isPublic;
@@ -159,7 +155,7 @@ const closeCategoryDialog = () => {
 
 const deleteCategoryData = async() => {
   await deleteCategory(category.value.name).then(() => {
-    router.push(`/${getUsernameFromCookie()}`);
+    router.push(`/${getUsernameFromStorage()}`);
     categoryStore.state.status = !categoryStore.state.status;
     favoritesStore.state.status = !favoritesStore.state.status;
     privatesStore.state.status = !privatesStore.state.status;

@@ -130,12 +130,7 @@ import ConfirmDialog from "../dialog/ConfirmDialog.vue";
 import {getMyProfile} from "../../api/user/userApi";
 import {onMounted, ref, watch} from "vue";
 import {searchBookmark} from "../../api/bookmark/bookmarkApi";
-import {
-  clearCookie,
-  deleteAccessTokenFromCookie,
-  getRefreshTokenFromCookie,
-  getUsernameFromCookie
-} from "../../utils/cookies";
+
 import {logout} from "../../api/auth/authApi";
 
 const searchConditions = ref([
@@ -198,7 +193,7 @@ const search = async () => {
 };
 
 const home = () => {
-  router.push("/" + getUsernameFromCookie()).then(() => {
+  router.push("/" + getUsernameFromStorage()).then(() => {
     window.location.reload();
   })
 };
@@ -212,13 +207,13 @@ const clickProfile = () => {
 };
 
 const userLogout = async () => {
-  const refreshToken = getRefreshTokenFromCookie();
+  const refreshToken = getRefreshTokenFromStorage();
   console.log(refreshToken);
   await logout({
         refreshToken: refreshToken
       }
   ).finally(() => {
-    clearCookie();
+    clearStorage();
     closeConfirmDialog();
     alert("로그아웃이 완료되었습니다.");
     router.push('/');

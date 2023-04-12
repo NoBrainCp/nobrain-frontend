@@ -1,5 +1,5 @@
 <template>
-  
+
 </template>
 
 <script setup>
@@ -17,7 +17,7 @@ onMounted(async () => {
 
   console.log(oauthData.value.provider);
   console.log(oauthData.value.code);
-  
+
   await store
     .dispatch("oauthSignIn", oauthData)
     .then((response) => {

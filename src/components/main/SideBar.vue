@@ -170,14 +170,13 @@ import {getUserInfo} from "../../api/user/userApi";
 import {onMounted, reactive, ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import {addCategory, getCategories} from "../../api/category/categoryApi";
-import {getUsernameFromCookie} from "../../utils/cookies";
 import {addBookmark, getPrivateBookmarksCount, getStarredBookmarksCount} from "../../api/bookmark/bookmarkApi";
 import {getTags} from "../../api/tag/tagApi";
 import {followAndUnfollow, getFollowCount, isFollow} from "../../api/follow/followApi";
 
 
 const route = useRoute();
-const myName = ref(getUsernameFromCookie());
+const myName = ref(getUsernameFromStorage());
 const username = ref(route.params.username);
 const drawer = ref(true);
 const rail = ref(false);
@@ -213,7 +212,7 @@ const bookmarkDialogObj = ref({
   },
 });
 
-const isMe = ref(username.value === getUsernameFromCookie());
+const isMe = ref(username.value === getUsernameFromStorage());
 const countData = ref({
   starredCount: '',
   privateCount: '',
