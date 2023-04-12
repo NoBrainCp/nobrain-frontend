@@ -156,7 +156,7 @@ const findPasswordByPhoneNumber = async (username, phoneNumber, authCode) => {
       alert(response.data.message);
     }
   }).catch((error) => {
-    alert(error.response);
+    console.log(error);
   })
 };
 
@@ -169,7 +169,7 @@ const findPasswordByEmail = async (username, email, authCode) => {
       alert(response.data.message);
     }
   }).catch((error) => {
-    alert(error.response);
+    console.log(error);
   })
 };
 
@@ -183,7 +183,7 @@ const findIdByPhoneNumber = async (phoneNumber, authCode) => {
       alert(response.data.data);
     }
   }).catch((error) => {
-    alert(error.response);
+    console.log(error);
   })
 };
 
@@ -197,7 +197,7 @@ const findIdByEmail = async (email, authCode) => {
       alert(response.data.data);
     }
   }).catch((error) => {
-    alert(error.response);
+    console.log(error);
   })
 };
 

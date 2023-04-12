@@ -463,7 +463,7 @@ const deleteAccount = async () => {
     confirmObj.value.dialog = false;
     alert("회원 탈퇴가 완료되었습니다.");
     clearCookie();
-    router.replace('/sign-in');
+    router.replace('/');
   }).catch((error) => {
     console.log(error);
   })

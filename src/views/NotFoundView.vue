@@ -56,7 +56,8 @@ const goMainPage = () => {
 <style scoped>
 
 .error-img {
-  background-size: cover;
+  width: 1200px;
+  height: 600px;
 }
 
 .main-text {

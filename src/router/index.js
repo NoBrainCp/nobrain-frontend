@@ -5,6 +5,7 @@ import MainView from "../views/MainView.vue";
 import Find from "../views/FindView.vue";
 import LoginPage from "../views/LoginView.vue";
 import OauthSignIn from "../components/login/OauthSignIn.vue"
+import NotFoundView from "../views/NotFoundView.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -36,13 +37,12 @@ const router = createRouter({
             name: "oauth",
             component: OauthSignIn,
             props: true,
+        },
+        {
+            path:"/not-found",
+            name: "notFound",
+            component: NotFoundView,
         }
-        // {
-        //     path:"/:catchAll(.*)",
-        //     name: "notFound",
-        //     component: NotFound,
-        //     alias: "/not-found"
-        // }
     ],
 });
 

@@ -150,7 +150,7 @@ const updateCategoryData = async(categoryObj) => {
     bookmarkStore.state.status = !bookmarkStore.state.status;
     privatesStore.state.status = !privatesStore.state.status;
   }).catch((error) => {
-    alert(error.response);
+    console.log(error);
   })
 };
 const closeCategoryDialog = () => {
@@ -165,7 +165,7 @@ const deleteCategoryData = async() => {
     privatesStore.state.status = !privatesStore.state.status;
     closeConfirmDialog();
   }).catch((error) => {
-    alert(error.response.data.message);
+    console.log(error);
   })
 };
 

@@ -163,7 +163,6 @@ watch(() => (props.bookmarkDialogObj.bookmark.categoryName), async (categoryName
     }
   }).catch((error) => {
     console.log(error.response.data);
-    alert("카테고리 비공개 설정 여부를 가져올 수 없습니다.");
   })
 });
 

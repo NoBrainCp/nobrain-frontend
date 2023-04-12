@@ -246,7 +246,6 @@ const updateCategories = async () => {
     data.categories = response.data.list;
   }).catch((error) => {
     console.log(error);
-    alert("카테고리에 대한 정보를 가져올 수 없습니다.");
   })
 };
 
@@ -256,7 +255,6 @@ const showFollowCount = async () => {
     followObj.value.followingCount = followCount.data.data.followingCnt;
   }).catch((error) => {
     console.log(error);
-    alert("팔로우/팔로잉 인원 수에 대한 정보를 가져올 수 없습니다.");
   })
 };
 
@@ -294,7 +292,6 @@ const getStarredCount = async () => {
     countData.value.starredCount = starredCnt.data.data;
   }).catch((error) => {
     console.log(error);
-    alert("즐겨찾기 북마크 개수에 대한 정보를 가져올 수 없습니다.");
   })
 };
 
@@ -303,7 +300,6 @@ const getPrivateCount = async () => {
     countData.value.privateCount = privateCnt.data.data;
   }).catch((error) => {
     console.log(error);
-    alert("비공개 북마크 개수에 대한 정보를 가져올 수 없습니다.");
   })
 };
 
@@ -339,13 +335,11 @@ onMounted(async () => {
     }
   }).catch((error) => {
     console.log(error);
-    alert("유저 정보를 가져올 수 없습니다.");
   });
   await isFollow(data.user.userId).then((follow) => {
     followObj.value.follow = follow.data.data;
   }).catch((error) => {
     console.log(error);
-    alert("팔로우 정보를 가져올 수 없습니다.");
   });
 
   await updateCategories();

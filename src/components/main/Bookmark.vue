@@ -165,28 +165,24 @@ const loadData = async () => {
       bookmarks.value = response.data.list;
     }).catch((error) => {
       console.log(error);
-      alert("모든 북마크 조회 데이터를 가져올 수 없습니다.");
     });
   } else if (categoryName === 'starred') {
     await getStarredBookmarks(username).then((response) => {
       bookmarks.value = response.data.list;
     }).catch((error) => {
       console.log(error);
-      alert("즐겨찾기 북마크 조회 데이터를 가져올 수 없습니다.");
     });
   } else if (categoryName === 'private') {
     await getPrivateBookmarks().then((response) => {
       bookmarks.value = response.data.list;
     }).catch((error) => {
       console.log(error);
-      alert("비공개 북마크 조회 데이터를 가져올 수 없습니다.");
     });
   } else {
     await getBookmarks(username, categoryName).then((response) => {
       bookmarks.value = response.data.list;
     }).catch((error) => {
       console.log(error);
-      alert("카테고리 북마크 조회 데이터를 가져올 수 없습니다.");
     });
   }
 };
@@ -231,7 +227,6 @@ const updateBookmarkData = async (bookmark) => {
     privatesStore.state.status = !privatesStore.state.status;
   }).catch((error) => {
     console.log(error);
-    alert("북마크 업데이트에 문제가 발생하였습니다.");
   })
 };
 
@@ -266,7 +261,6 @@ const clickStar = async (bookmark) => {
     favoritesStore.state.status = !favoritesStore.state.status;
   }).catch((error) => {
     console.log(error);
-    alert("즐겨찾기 등록에 문제가 발생하였습니다.");
   })
 };
 
@@ -280,12 +274,10 @@ const clickLock = async (bookmark) => {
         privatesStore.state.status = !privatesStore.state.status;
       }).catch((error) => {
         console.log(error);
-        alert("북마크 비공개 등록에 문제가 발생했습니다.");
       })
     }
   }).catch((error) => {
     console.log(error);
-    alert("해당 북마크의 카테고리 정보 조회에 문제가 발생했습니다.");
   })
 };
 
