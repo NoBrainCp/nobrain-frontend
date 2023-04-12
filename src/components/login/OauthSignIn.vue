@@ -9,18 +9,12 @@ import router from "../../router";
 import { store } from "../../store";
 
 const route = useRoute();
-
 const oauthData = ref({});
 
 onMounted(async () => {
   oauthData.value.provider = route.params.provider;
   oauthData.value.code = route.query.code;
-
-  await store.dispatch('oauthSignIn', oauthData)
-    .then((response) => {
-      console.log(response);
-      // router.replace(`/${response.username}`);
-    });
+  await store.dispatch('oauthSignIn', oauthData);
 })
 </script>
 

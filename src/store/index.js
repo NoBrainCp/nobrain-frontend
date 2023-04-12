@@ -10,6 +10,7 @@ import {
     getUserIdFromStorage,
     getUsernameFromStorage, saveLoginUserInfoToStorage
 } from "../utils/storage";
+import router from '../router';
 
 export const store = createStore({
     state: {
@@ -71,6 +72,7 @@ export const store = createStore({
             await oauthLogin(oauthData.value.provider, encodingCode).then((response) => {
                 commit('setUserInfo', response.data.data);
                 saveLoginUserInfoToStorage(response.data.data);
+                router.replace(`/${response.data.data.username}`);
                 return response.data;
             });
         }
