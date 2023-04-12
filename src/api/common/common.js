@@ -1,45 +1,40 @@
 
 import router from "../../router";
+import {generateAccessToken} from "../auth/authApi";
+import {
+    clearStorage,
+    getAccessTokenFromStorage,
+    getRefreshTokenFromStorage,
+    saveAccessTokenToStorage
+} from "../../utils/storage";
 
 /**
  * 오류 공통처리
  * @param {Error} error
  */
-export function handleError(error) {
-    console.log('handleError:::', error, error.response);
-    if (!error.response && !error.message) {
-        // createCustomAlert(
-        // 	'알림',
-        // 	'서버와의 통신에 문제가 있습니다. </br> 서버 상태를 확인해 주세요.',
-        // 	'확인',
-        // );
-        console.log(1);
-        alert('에러');
-    }
+export async function handleError(error) {
     // 401
-    else if (error.response && error.response.status == 401) {
-        alert('401에러');
-        // createCustomAlert(
-        // 	'알림',
-        // 	`세션이 만료되었거나 다른 브라우저에서 </br> 로그인 하였습니다. 로그인 화면으로 돌아갑니다.`,
-        // 	'확인',
-        // );
-        console.log(2);
-        // clearCookie();
-        // router.replace('/sign-in');
+    if (error.response && error.response.status == 401) {
+        const refreshToken = getRefreshTokenFromStorage();
+        if (refreshToken) {
+            await generateAccessToken({
+                refreshToken: refreshToken
+            }).then(async (response) => {
+                await saveAccessTokenToStorage('Bearer ', response.data.data);
+                error.config.headers.Authorization = getAccessTokenFromStorage();
+            });
+
+            return window.location.reload();
+        }
+        clearStorage();
+        await router.replace('/');
     }
     // 404
     else if (error.response && error.response.status == 404) {
         // createCustomAlert('알림', `${error.response.data.message}`, '확인');
-        alert('404에러');
-        console.log(3);
+        await router.push('/not-found');
     }
-    // else {
-    // 	createCustomAlert(
-    // 		'알림',
-    // 		`오류가 발생했습니다. status : ${error.response.status}`,
-    // 		'확인',
-    // 	);
-    // 	return;
-    // }
+    else {
+    	// alert("서버 에러");
+    }
 }
