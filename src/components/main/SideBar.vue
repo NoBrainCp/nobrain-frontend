@@ -213,7 +213,7 @@ const bookmarkDialogObj = ref({
   },
 });
 
-const isMe = ref(username.value === getUsernameFromStorage());
+const isMe = ref(username.value === myName.value);
 const countData = ref({
   starredCount: '',
   privateCount: '',
@@ -280,10 +280,7 @@ const closeCategoryDialog = () => {
 };
 
 const clickFollowButton = async (isFollow) => {
-  const followButton = followObj.value.followButton;
-  followButton.text = isFollow ? "팔로우 취소" : "팔로우";
-  followButton.color = isFollow ? "#E53935" : "#03A9F4";
-  followButton.icon = isFollow ? "mdi mdi-account-multiple-minus" : "mdi mdi-account-multiple-plus";
+  await isFollowButton(isFollow);
   await showFollowCount();
 };
 
@@ -338,6 +335,7 @@ onMounted(async () => {
   });
   await isFollow(data.user.userId).then((follow) => {
     followObj.value.follow = follow.data.data;
+    isFollowButton(followObj.value.follow);
   }).catch((error) => {
     console.log(error);
   });
@@ -348,6 +346,12 @@ onMounted(async () => {
   await getPrivateCount();
 
 });
+
+const isFollowButton = (isFollow) => {
+  followObj.value.followButton.text = isFollow ? "팔로우 취소" : "팔로우";
+  followObj.value.followButton.color = isFollow ? "#E53935" : "#03A9F4";
+  followObj.value.followButton.icon = isFollow ? "mdi mdi-account-multiple-minus" : "mdi mdi-account-multiple-plus";
+};
 
 const clickAddBookmarkBtn = async () => {
   if (data.categories.length === 0) {
