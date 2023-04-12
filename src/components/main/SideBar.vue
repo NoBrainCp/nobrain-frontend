@@ -418,6 +418,7 @@ const showPrivateBookmarks = () => {
 const clickFollow = async () => {
   await followAndUnfollow(data.user.userId).then(() => {
     followObj.value.follow = !followObj.value.follow;
+    followStore.state.cardStatus = followObj.value.follow;
   }).catch((error) => {
     console.log(error);
     alert("팔로우 버튼에 문제가 발생하였습니다.");
@@ -427,9 +428,6 @@ const clickFollow = async () => {
 </script>
 
 <style scoped>
-.side-bar-content {
-}
-
 .account-item {
   margin-top: 10px;
 }
