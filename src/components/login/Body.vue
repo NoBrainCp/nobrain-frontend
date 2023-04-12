@@ -94,10 +94,9 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref } from "vue";
 import { store } from "../../store";
 import router from "../../router";
-import { getUsernameFromCookie } from "../../utils/cookies";
 import { getUsernameFromStorage } from "../../utils/storage";
 
 const githubSignUrl =

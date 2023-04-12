@@ -7,7 +7,6 @@ import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import router from "../../router";
 import { store } from "../../store";
-import { saveUserInfoToCookie } from "../../utils/cookies";
 
 const route = useRoute();
 

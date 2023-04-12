@@ -37,6 +37,7 @@
 
 <script setup>
 import router from "../router";
+import {getAccessTokenFromStorage, getUsernameFromStorage} from "../utils/storage";
 
 const backPage = () => {
   router.go(-2);

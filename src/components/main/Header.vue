@@ -132,6 +132,7 @@ import {onMounted, ref, watch} from "vue";
 import {searchBookmark} from "../../api/bookmark/bookmarkApi";
 
 import {logout} from "../../api/auth/authApi";
+import {getUsernameFromStorage} from "../../utils/storage";
 
 const searchConditions = ref([
   {title: "MY"},

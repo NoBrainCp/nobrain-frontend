@@ -6,6 +6,7 @@ import Find from "../views/FindView.vue";
 import LoginPage from "../views/LoginView.vue";
 import OauthSignIn from "../components/login/OauthSignIn.vue"
 import NotFoundView from "../views/NotFoundView.vue";
+import {getAccessTokenFromStorage, getUsernameFromStorage} from "../utils/storage";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),

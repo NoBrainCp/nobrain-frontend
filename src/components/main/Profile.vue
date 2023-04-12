@@ -299,9 +299,15 @@ import {
 } from "../../api/user/userApi";
 import {onMounted, ref, watch} from "vue";
 import {sendAuthenticationMail, sendEmailAndCode} from "../../api/mail/mailApi";
-import {useRoute} from "vue-router";
+import {
+  clearStorage,
+  getEmailFromStorage,
+  getUserIdFromStorage,
+  getUsernameFromStorage,
+  saveUsernameToStorage
+} from "../../utils/storage";
 
-const route = useRoute();
+
 const panel = ref(['name']);
 const buttonState = ref('Open All');
 const name = ref("");

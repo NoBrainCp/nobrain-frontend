@@ -3,6 +3,7 @@ import router from "../../router";
 // import {getAccessTokenFromCookie, getRefreshTokenFromCookie, saveAccessTokenToCookie} from "../../utils/cookies";
 import {handleError} from "./common";
 import {generateAccessToken} from "../auth/authApi";
+import {getAccessTokenFromStorage, getRefreshTokenFromStorage, saveAccessTokenToStorage} from "../../utils/storage";
 
 
 export function setInterceptors(instance) {
@@ -49,7 +50,7 @@ export function setAuthInterceptors(axiosService) {
             const refreshToken = getRefreshTokenFromStorage();
             // config.headers.Authorization = store.state.accessToken;
             if (accessToken) {
-                config.headers.Authorization = accessToken;
+                config.headers.Authorization = 'Bearer '+accessToken;
             } else {
                 if (refreshToken) {
                     await generateAccessToken({

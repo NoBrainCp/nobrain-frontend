@@ -4,13 +4,18 @@ import {login} from "../api/auth/authApi";
 import {oauth} from "../api";
 import {oauthLogin} from "../api/oauth/OAuthApi";
 import {resetPassword} from "../api/user/userApi";
+import {
+    getAccessTokenFromStorage,
+    getEmailFromStorage, getRefreshTokenFromStorage,
+    getUserIdFromStorage,
+    getUsernameFromStorage, saveLoginUserInfoToStorage
+} from "../utils/storage";
 
 export const store = createStore({
     state: {
         userId: getUserIdFromStorage() || '',
         username: getUsernameFromStorage() || '',
         email: getEmailFromStorage() || '',
-        loginId: getLoginIdFromStorage() || '',
         accessToken: getAccessTokenFromStorage() || '',
         refreshToken: getRefreshTokenFromStorage() || '',
         window: '',
@@ -31,9 +36,6 @@ export const store = createStore({
         },
         setEmail(state, email) {
             state.email = email;
-        },
-        setLoginId(state, loginId) {
-            state.loginId = loginId;
         },
         setAccessToken(state, accessToken) {
             state.accessToken = accessToken;
@@ -59,7 +61,7 @@ export const store = createStore({
                 .then((response) => {
                     console.log(response.data.data);
                     commit('setUserInfo', response.data.data);
-                    saveUserInfoToStorage(response.data.data);
+                    saveLoginUserInfoToStorage(response.data.data);
                     return response.data.data;
                 })
         },
@@ -68,7 +70,7 @@ export const store = createStore({
             let encodingCode = encodeURI(oauthData.value.code);
             await oauthLogin(oauthData.value.provider, encodingCode).then((response) => {
                 commit('setUserInfo', response.data.data);
-                saveUserInfoToStorage(response.data.data);
+                saveLoginUserInfoToStorage(response.data.data);
                 return response.data;
             });
         }

@@ -38,11 +38,11 @@ export function getEmailFromStorage() {
     return localStorage.getItem('email');
 }
 
-export function getAccessTokenFromCookie() {
+export function getAccessTokenFromStorage() {
     return localStorage.getItem('accessToken');
 }
 
-export function getRefreshTokenFromCookie() {
+export function getRefreshTokenFromStorage() {
     return localStorage.getItem('refreshToken');
 }
 

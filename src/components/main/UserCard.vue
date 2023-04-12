@@ -60,6 +60,7 @@ import {
   getFollowerList,
   getFollowingList,
 } from "../../api/follow/followApi";
+import {getUsernameFromStorage} from "../../utils/storage";
 
 const route = useRoute();
 const username = ref(route.params.username);

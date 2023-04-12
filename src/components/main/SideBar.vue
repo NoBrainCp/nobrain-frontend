@@ -173,6 +173,7 @@ import {addCategory, getCategories} from "../../api/category/categoryApi";
 import {addBookmark, getPrivateBookmarksCount, getStarredBookmarksCount} from "../../api/bookmark/bookmarkApi";
 import {getTags} from "../../api/tag/tagApi";
 import {followAndUnfollow, getFollowCount, isFollow} from "../../api/follow/followApi";
+import {getUsernameFromStorage} from "../../utils/storage";
 
 
 const route = useRoute();

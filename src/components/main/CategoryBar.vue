@@ -55,6 +55,7 @@ import {onMounted, ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import {deleteCategory, getCategory, updateCategory} from "../../api/category/categoryApi";
 import {updateAllBookmarksToPrivate} from "../../api/bookmark/bookmarkApi";
+import {getUserIdFromStorage, getUsernameFromStorage} from "../../utils/storage";
 
 const route = useRoute();
 
