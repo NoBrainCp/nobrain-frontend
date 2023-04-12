@@ -1,11 +1,5 @@
 import {createStore} from 'vuex'
-import {
-    getAccessTokenFromCookie,
-    getEmailFromCookie,
-    getLoginIdFromCookie, getRefreshTokenFromCookie, getUserIdFromCookie,
-    getUsernameFromCookie,
-    saveUserInfoToCookie,
-} from "../utils/cookies";
+
 import {login} from "../api/auth/authApi";
 import {oauth} from "../api";
 import {oauthLogin} from "../api/oauth/OAuthApi";
@@ -13,12 +7,12 @@ import {resetPassword} from "../api/user/userApi";
 
 export const store = createStore({
     state: {
-        userId: getUserIdFromCookie() || '',
-        username: getUsernameFromCookie() || '',
-        email: getEmailFromCookie() || '',
-        loginId: getLoginIdFromCookie() || '',
-        accessToken: getAccessTokenFromCookie() || '',
-        refreshToken: getRefreshTokenFromCookie() || '',
+        userId: getUserIdFromStorage() || '',
+        username: getUsernameFromStorage() || '',
+        email: getEmailFromStorage() || '',
+        loginId: getLoginIdFromStorage() || '',
+        accessToken: getAccessTokenFromStorage() || '',
+        refreshToken: getRefreshTokenFromStorage() || '',
         window: '',
     },
 
@@ -65,7 +59,7 @@ export const store = createStore({
                 .then((response) => {
                     console.log(response.data.data);
                     commit('setUserInfo', response.data.data);
-                    saveUserInfoToCookie(response.data.data);
+                    saveUserInfoToStorage(response.data.data);
                     return response.data.data;
                 })
         },
@@ -74,7 +68,7 @@ export const store = createStore({
             let encodingCode = encodeURI(oauthData.value.code);
             await oauthLogin(oauthData.value.provider, encodingCode).then((response) => {
                 commit('setUserInfo', response.data.data);
-                saveUserInfoToCookie(response.data.data);
+                saveUserInfoToStorage(response.data.data);
                 return response.data;
             });
         }
