@@ -37,7 +37,7 @@
                 v-if="myName !== followUser.username"
                 :color="followUser.isFollow ? '#E53935' : '#03A9F4'"
                 class="follow-btn"
-                @click="clickFollow(followUser.userId)">
+                @click="clickFollow(followUser.userId, followUser.username)">
               <v-icon class="follow-icon">
                 {{ followUser.isFollow ? 'mdi-account-multiple-minus' : 'mdi-account-multiple-plus' }}
               </v-icon>
@@ -57,10 +57,11 @@ import {followStore} from "../../store/follow/follow";
 import router from "../../router";
 import {
   followAndUnfollow,
+  getFollowCount,
   getFollowerList,
   getFollowingList,
 } from "../../api/follow/followApi";
-import {getUsernameFromStorage} from "../../utils/storage";
+import {getUserIdFromStorage, getUsernameFromStorage} from "../../utils/storage";
 
 const route = useRoute();
 const username = ref(route.params.username);
@@ -105,6 +106,17 @@ watch(() => followStore.state.followWindow, (newValue) => {
   setFollowUsers(newValue, username.value);
 });
 
+watch(() => followStore.state.cardStatus, (newValue) => {
+  const username = getUsernameFromStorage();
+  const followUser = followUsers.value.find(follow => follow.username === username);
+
+  if (newValue) {
+    followUser.followingCount++;
+  } else {
+    followUser.followingCount--;
+  }
+});
+
 watch(() => route.params.username, (newUsername) => {
     router.push(`/${newUsername}`);
     window.location.reload();
@@ -114,13 +126,30 @@ const moveToUser = (username) => {
   router.push(`/${username}`);
 };
 
-const clickFollow = async (userId) => {
+const clickFollow = async (userId, username) => {
   await followAndUnfollow(userId).then(() => {
     const followUser = followUsers.value.find(follow => follow.userId === userId);
     followUser.isFollow = !followUser.isFollow;
     followStore.state.status = !followStore.state.status;
-  })
+
+    getFollowCount(username).then((response) => {
+      followUser.followerCount = response.data.data.followerCnt;
+    });
+  });
+
+  setMyFollowingCnt();
 };
+
+const setMyFollowingCnt = () => {
+  const username = getUsernameFromStorage();
+  const followUser = followUsers.value.find(follow => follow.username === username);
+  
+  if (followUser !== undefined) {
+    getFollowCount(username).then((response) => {
+      followUser.followingCount = response.data.data.followingCnt;
+    });
+  }
+}
 
 </script>
 

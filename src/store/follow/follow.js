@@ -2,6 +2,8 @@ import {createStore} from "vuex";
 
 export const followStore = createStore({
     state: {
+        status: Boolean,
+        cardStatus: Boolean,
         followWindow: '',
         userCardWindow: 'follower',
     },
