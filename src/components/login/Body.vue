@@ -28,15 +28,18 @@
                 color="blue"
                 variant="outlined"
               />
-              <v-text-field
-                v-model="userData.password"
-                class="mt-1"
-                label="Password"
-                color="blue"
-                type="password"
-                variant="outlined"
-                @keydown.enter="signIn"
-              />
+              <form>
+                <v-text-field
+                    v-model="userData.password"
+                    class="mt-1"
+                    label="Password"
+                    color="blue"
+                    type="password"
+                    variant="outlined"
+                    autocomplete="password"
+                    @keydown.enter="signIn"
+                />
+              </form>
 
               <v-row class="mt-2 mb-5">
                 <v-checkbox
@@ -111,7 +114,7 @@ const naverSignUrl =
 const userData = ref({
   username: "",
   password: "",
-  isKeepLoggedIn: false,
+  isKeepLoggedIn: true,
 });
 
 const signIn = async () => {
