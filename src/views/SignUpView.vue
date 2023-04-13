@@ -78,16 +78,19 @@
         <div class="card-text1 ml-1 mb-3" v-if="openPassword"> 비밀번호를 입력해주세요</div>
         <v-row v-if="openPassword">
           <v-col cols="12" sm="8">
-            <v-text-field
-                v-model="user.password"
-                label="비밀번호"
-                hint="숫자와 특수문자를 포함한 8글자 이상"
-                color="black"
-                type="password"
-                variant="outlined"
-                maxlength="20"/>
-                clearable
-                :rules="[rules.password]"/>
+            <form>
+              <v-text-field
+                  v-model="user.password"
+                  label="비밀번호"
+                  hint="숫자와 특수문자를 포함한 8글자 이상"
+                  color="black"
+                  type="password"
+                  variant="outlined"
+                  maxlength="20"
+                  clearable
+                  autocomplete="password"
+                  :rules="[rules.password]"/>
+            </form>
           </v-col>
         </v-row>
         <v-row v-if="openPassword" class="mt-n3">
@@ -96,6 +99,7 @@
         </v-row>
         <v-row v-if="isCheckPassword">
           <v-col cols="12" sm="8">
+            <form>
             <v-text-field
                 v-model="user.passwordCheck"
                 label="비밀번호 확인"
@@ -103,7 +107,9 @@
                 type="password"
                 maxlength="20"
                 variant="outlined"
+                autocomplete="password"
                 clearable/>
+            </form>
           </v-col>
         </v-row>
         <v-row>
