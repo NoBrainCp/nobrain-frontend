@@ -72,7 +72,7 @@
           </div>
 
           <v-card-text class="card-text">
-            <div class="text-h6 text-light-blue font-weight-bold mt-3">
+            <div class="boomark-title text-light-blue font-weight-bold mt-5">
               {{ bookmark.title }}
             </div>
             <div class="mt-1">
@@ -331,6 +331,10 @@ const clickLock = async (bookmark) => {
   width: 100%;
   position: absolute;
   bottom: 3px;
+}
+
+.boomark-title {
+  font-size: 1.2rem;
 }
 
 .bookmark-link-tag {
