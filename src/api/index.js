@@ -17,8 +17,6 @@ function createAuthInstance(url) {
     return setAuthInterceptors(instance);
 }
 
-const authInstance = createAuthInstance('/api');
-
 export const noAuthInstance = createInstance('/api/v1');
 export const user = createAuthInstance('/api/v1/users');
 export const category = createAuthInstance('/api/v1/categories');

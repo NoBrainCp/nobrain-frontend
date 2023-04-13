@@ -5,11 +5,11 @@ export function signUpUser(userData) {
 }
 
 export function noAuthExistsUsername(username) {
-    return noAuthInstance.get(`users/username/${username}/exists`);
+    return noAuthInstance.get(`/users/username/${username}/exists`);
 }
 
 export function existsEmail(email) {
-    return noAuthInstance.get(`users/email/${email}/exists`);
+    return noAuthInstance.get(`/users/email/${email}/exists`);
 }
 
 export function existsUsername(username) {
@@ -32,8 +32,8 @@ export function changePassword(passwordData) {
     return user.put(`/password`,passwordData);
 }
 
-export function resetPassword(resetPasswordData) { //**
-    return noAuthInstance.put(`/password/reset`, resetPasswordData);
+export function resetPassword(resetPasswordData) {
+    return noAuthInstance.put(`/users/password/reset`, resetPasswordData);
 }
 
 export function changeProfileImage(profileImage) {
