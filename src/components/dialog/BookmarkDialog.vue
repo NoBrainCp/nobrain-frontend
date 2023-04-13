@@ -26,6 +26,7 @@
 
           <div class="input-row">
             <v-text-field
+                maxlength="40"
                 v-model="bookmarkDialogObj.bookmark.title"
                 label="이름"
                 required
@@ -40,6 +41,7 @@
                 v-model="bookmarkDialogObj.bookmark.description"
                 label="설명"
                 type="text"
+                maxlength="55"
                 prepend-icon="mdi "/>
           </div>
 

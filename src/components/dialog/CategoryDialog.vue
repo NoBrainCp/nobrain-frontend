@@ -17,6 +17,7 @@
               <v-text-field
                   v-model="categoryDialogObj.category.name"
                   label="카테고리 이름"
+                  maxlength="20"
                   prepend-icon="mdi-rename"
                   :rules="[rules.name]"
                   @keyup.space="handleCategoryName"
@@ -27,6 +28,7 @@
                   v-model="categoryDialogObj.category.description"
                   label="설명"
                   type="text"
+                  maxlength="40"
                   prepend-icon="mdi-tooltip-text"
                   required/>
               <v-checkbox
