@@ -1,9 +1,7 @@
 import {createStore} from 'vuex'
 
 import {login} from "../api/auth/authApi";
-import {oauth} from "../api";
 import {oauthLogin} from "../api/oauth/OAuthApi";
-import {resetPassword} from "../api/user/userApi";
 import {
     getAccessTokenFromStorage,
     getEmailFromStorage, getRefreshTokenFromStorage,

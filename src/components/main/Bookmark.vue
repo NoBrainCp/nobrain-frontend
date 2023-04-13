@@ -11,6 +11,7 @@
           <v-img
               :src="bookmark.image === null ? '../src/assets/images/nobrain-no-image.png' : bookmark.image"
               class="bookmark-img"
+              cover
               >
             <v-overlay
                 v-model="overlay"
