@@ -26,7 +26,7 @@
                 label="닉네임"
                 variant="outlined"
                 color="black"
-                maxlength="15"
+                maxlength="8"
                 clearable
                 :rules="[rules.name]"
             />
@@ -85,7 +85,7 @@
                 color="black"
                 type="password"
                 variant="outlined"
-                maxlength="25"
+                maxlength="20"/>
                 clearable
                 :rules="[rules.password]"/>
           </v-col>
@@ -101,7 +101,7 @@
                 label="비밀번호 확인"
                 color="black"
                 type="password"
-                maxlength="25"
+                maxlength="20"
                 variant="outlined"
                 clearable/>
           </v-col>
