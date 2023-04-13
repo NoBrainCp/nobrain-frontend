@@ -3,7 +3,7 @@
     <h2 class="body-card-title text-h3 font-weight-bold text-center mt-3 mb-8">
       Nobrain
     </h2>
-    <h1 class="body-card-sub-title font-weight-regular ml-6 mb-n2">
+    <h1 class="body-card-sub-title font-weight-regular ml-6 mb-n2 mt-12">
       {{infoText}}
     </h1>
 
@@ -44,6 +44,7 @@ onMounted(() => {
 
 .body-card-sub-title {
   left: 2%;
+  top: 2%;
   position: relative;
 }
 
