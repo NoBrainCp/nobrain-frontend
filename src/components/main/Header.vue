@@ -209,7 +209,6 @@ const clickProfile = () => {
 
 const userLogout = async () => {
   const refreshToken = getRefreshTokenFromStorage();
-  console.log(refreshToken);
   await logout({
         refreshToken: refreshToken
       }
