@@ -89,7 +89,7 @@ const findPasswordByEmail = async (username, email, authCode) => {
   await sendMailAndPassword(email, authCode).then((response) => {
     const isSuccess = response.data.success;
     if (isSuccess) {
-      alert("고민 중");
+      store.commit('setWindow', "changePassword");
     } else {
       alert(response.data.message);
     }

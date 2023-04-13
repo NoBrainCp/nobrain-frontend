@@ -21,6 +21,9 @@
         <v-window-item value="findByInfo">
           <FindByInfo/>
         </v-window-item>
+        <v-window-item value="changePassword">
+          <ChangePassword/>
+        </v-window-item>
       </v-card>
     </v-window>
 
@@ -30,9 +33,10 @@
 
 import {onMounted, ref, watch} from "vue";
 import {store} from "../store";
+import router from "../router";
 import ForgetPassword from "../components/find/ForgetPassword.vue";
 import FindByInfo from "../components/find/FindByInfo.vue";
-import router from "../router";
+import ChangePassword from "../components/find/ChangePassword.vue";
 
 const windowValue = ref("");
 const opacity = ref(0);
