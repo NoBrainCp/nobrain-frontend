@@ -139,7 +139,7 @@ const updateCategoryData = async(categoryObj) => {
   categoryData.name = categoryObj.name.trimEnd();
   await updateCategory(categoryOriginName, categoryData).then(async () => {
     if (!categoryData.isPublic) {
-        updateAllBookmarksToPrivate(categoryOriginName);
+        await updateAllBookmarksToPrivate(categoryData.name);
     }
     closeCategoryDialog();
     await router.push(`/${username}/${category.value.name}`);
