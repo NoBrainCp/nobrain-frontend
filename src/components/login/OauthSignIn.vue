@@ -5,7 +5,6 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
-import router from "../../router";
 import { store } from "../../store";
 
 const route = useRoute();
