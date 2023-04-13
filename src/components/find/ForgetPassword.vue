@@ -37,19 +37,21 @@
 
 <script setup>
 import {ref} from "vue";
-import {existsUsername} from "../../api/user/userApi";
+import {noAuthExistsUsername} from "../../api/user/userApi";
 import {store} from "../../store";
 
 const username = ref("");
 
 const checkDuplicationUsername = async (username) => {
-  await existsUsername(username).then((response) => {
+  await noAuthExistsUsername(username).then((response) => {
     if (response.data.data) {
       store.commit('setUsername', username);
       store.commit('setWindow', "findByInfo");
-    } else {
-      alert("아이디를 확인해주세요.");
+      return;
     }
+    store.state.window = "forgetPassword";
+    alert("닉네임을 확인해주세요.");
+
   }).catch((error) => {
     console.log(error);
   })
