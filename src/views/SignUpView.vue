@@ -90,7 +90,7 @@
                 :rules="[rules.password]"/>
           </v-col>
         </v-row>
-        <v-row v-if="openPassword">
+        <v-row v-if="openPassword" class="mt-n3">
           <div class="ml-5 mb-1 font-weight-bold">비밀번호 강도:</div>
           <div id=password-strength class="ml-1 font-weight-bold"> {{ passwordStrength }}</div>
         </v-row>
@@ -209,12 +209,13 @@ watch(() => user.value.password, () => {
   } else {
     isCheckPassword.value = false;
     passwordStrength.value = "위험";
+    user.value.passwordCheck = "";
     passwordColor.style.color = "red";
   }
 });
 
 //패스워드와 패스워크 체크 일치 체크
-watch(() => user.value.passwordCheck, () => {
+watch(() => [user.value.passwordCheck,user.value.password] ,() => {
   if (user.value.password === user.value.passwordCheck) {
     passwordText.value = "패스워드가 일치합니다";
     openSignUp.value = true;
@@ -294,7 +295,7 @@ const home = () => {
 }
 
 .card {
-  background-image: linear-gradient(to right, #B388FF, #8C9EFF, #84FFFF, #CCFF90);
+  background-image: linear-gradient(to right, #B489FF, #8C9EFF);
   top: 22%;
   left: 50%;
   width: 500px;
