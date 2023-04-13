@@ -358,8 +358,8 @@ onMounted(async () => {
     myInfo.value.username = myProfile.data.data.username;
     myInfo.value.email = myProfile.data.data.email;
     myInfo.value.urlProfileImage = myProfile.data.data.profileImage;
-    if (myInfo.value.profileImage === null) {
-      myInfo.value.profileImage = "src/assets/images/nobrain-no-image.png";
+    if (!myInfo.value.urlProfileImage) {
+      myInfo.value.urlProfileImage = "../src/assets/images/user-no-image.png";
     }
   } catch (error) {
     console.log(error);

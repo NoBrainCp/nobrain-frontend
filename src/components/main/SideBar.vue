@@ -182,7 +182,6 @@ const username = ref(route.params.username);
 const drawer = ref(true);
 const rail = ref(false);
 const isActive = ref("");
-// activeIndex: null,
 const categoryDialogObj = ref({
   dialog: false,
   title: "카테고리 추가",
@@ -323,7 +322,7 @@ onMounted(async () => {
     buttonSize.value.buttonWidth = '305px';
     buttonSize.value.buttonHeight = '55px';
   }
-  const noProfileImage = "src/assets/images/user-no-image.png";
+  const noProfileImage = "../src/assets/images/user-no-image.png";
   await getUserInfo(username.value).then((userInfo) => {
     data.user = userInfo.data.data;
 

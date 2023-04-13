@@ -167,7 +167,7 @@ onMounted(async () => {
     myInfo.value.profileImage = myProfile.data.data.profileImage;
 
     if (!myInfo.value.profileImage) {
-      myInfo.value.profileImage = "src/assets/images/user-no-image.png";
+      myInfo.value.profileImage = "../src/assets/images/user-no-image.png";
     }
   }).catch((error) => {
     console.log(error);
