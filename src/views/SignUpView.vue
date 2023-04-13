@@ -176,7 +176,7 @@ const textIncrease = async () => {
     document.querySelector("#mainText").innerHTML +=
         text.value.charAt(cnt.value) === 'w' ? "<br/>" : text.value.charAt(cnt.value);
     cnt.value += 1;
-    setTimeout(textIncrease, 10);
+    setTimeout(textIncrease, 80);
   } else {
     isShow.value = true;
   }
@@ -274,6 +274,7 @@ const signUp = async () => {
     home();
   }).catch((error) => {
     console.log(error);
+    alert("검증이 되지 않은 항목이 존재합니다.");
   })
 };
 const home = () => {
