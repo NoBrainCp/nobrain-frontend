@@ -22,7 +22,7 @@
         color="blue"
         type="password"
         variant="outlined"
-        maxlength="25"
+        maxlength="20"
         clearable
         :rules="[rules.password]"/>
       <v-row class="mt-2 mb-3">
@@ -34,7 +34,7 @@
         label="비밀번호 확인"
         color="black"
         type="password"
-        maxlength="25"
+        maxlength="20"
         variant="outlined"
         @keydown.enter="checkPassword"
         clearable/>
