@@ -94,6 +94,7 @@
   </v-row>
   <ConfirmDialog
       :confirmObj="confirmObj"
+      @close="closeConfirmDialog"
       @delete="deleteBookmark"/>
   <BookmarkDialog
       :bookmarkDialogObj="bookmarkDialogObj"
@@ -228,6 +229,10 @@ const updateBookmarkData = async (bookmark) => {
     console.log(error);
   })
 };
+
+const closeConfirmDialog = () => {
+  confirmObj.value.dialog = false;
+}
 
 const closeBookmarkDialog = () => {
   bookmarkDialogObj.value.dialog = false;
