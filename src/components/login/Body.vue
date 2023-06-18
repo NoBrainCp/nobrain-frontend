@@ -1,8 +1,8 @@
 <template>
   <v-parallax
-    class="parallax"
-    src="/../src/assets/images/login-page-header.jpg"
-    :style="{ opacity: opacity }"
+      class="parallax"
+      src="/../src/assets/images/login-page-header.jpg"
+      :style="{ opacity: opacity }"
   >
     <v-row class="d-flex">
       <v-col cols="12" sm="7">
@@ -17,44 +17,41 @@
         <v-card class="body-card d-flex">
           <v-card-text>
             <h2
-              class="body-card-title text-h3 font-weight-bold text-center mt-10"
+                class="body-card-title text-h3 font-weight-bold text-center mt-10"
             >
               Nobrain
             </h2>
             <div class="body-card-text">
               <v-text-field
-                v-model="userData.username"
-                label="name"
-                color="blue"
-                variant="outlined"
+                  v-model="userData.username"
+                  label="name"
+                  color="blue"
+                  variant="outlined"
               />
-              <form>
-                <v-text-field
-                    v-model="userData.password"
-                    class="mt-1"
-                    label="Password"
-                    color="blue"
-                    type="password"
-                    variant="outlined"
-                    autocomplete="password"
-                    @keydown.enter="signIn"
-                />
-              </form>
-
+              <v-text-field
+                  v-model="userData.password"
+                  class="mt-1"
+                  label="Password"
+                  color="blue"
+                  type="password"
+                  variant="outlined"
+                  autocomplete="password"
+                  @keydown.enter="signIn"
+              />
               <v-row class="mt-2 mb-5">
                 <v-checkbox
-                  v-model="userData.isKeepLoggedIn"
-                  label="로그인 상태 유지"
-                  class="mt-n5"
-                  color="blue"
+                    v-model="userData.isKeepLoggedIn"
+                    label="로그인 상태 유지"
+                    class="mt-n5"
+                    color="blue"
                 />
               </v-row>
               <v-btn
-                color="blue"
-                class="mt-2 mb-3 login-button"
-                variant="outlined"
-                block
-                @click="signIn"
+                  color="blue"
+                  class="mt-2 mb-3 login-button"
+                  variant="outlined"
+                  block
+                  @click="signIn"
               >
                 로그인
               </v-btn>
@@ -65,25 +62,25 @@
               <div class="body-card-oauth-button mt-8">
                 <a :href="githubSignUrl">
                   <img
-                    src="src/assets/images/github-logo.png"
-                    class="github-logo"
-                    alt="github-logo"
+                      src="src/assets/images/github-logo.png"
+                      class="github-logo"
+                      alt="github-logo"
                   />
                 </a>
 
                 <a :href="googleSignUrl">
                   <img
-                    src="src/assets/images/google-logo.png"
-                    class="google-logo"
-                    alt="google"
+                      src="src/assets/images/google-logo.png"
+                      class="google-logo"
+                      alt="google"
                   />
                 </a>
 
                 <a :href="naverSignUrl">
                   <img
-                    src="src/assets/images/naver-logo.png"
-                    class="naver-logo"
-                    alt="naver"
+                      src="src/assets/images/naver-logo.png"
+                      class="naver-logo"
+                      alt="naver"
                   />
                 </a>
               </div>
@@ -93,23 +90,23 @@
       </v-col>
     </v-row>
   </v-parallax>
-  <div class="space" />
+  <div class="space"/>
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
-import { store } from "../../store";
+import {onMounted, ref} from "vue";
+import {store} from "../../store";
 import router from "../../router";
-import { getUsernameFromStorage } from "../../utils/storage";
+import {getUsernameFromStorage} from "../../utils/storage";
 
 const githubSignUrl =
-  "https://github.com/login/oauth/authorize?client_id=66b0a35fa47a34ffe333&scope=id,name,email,avatar_url";
+    "https://github.com/login/oauth/authorize?client_id=66b0a35fa47a34ffe333&scope=id,name,email,avatar_url";
 
 const googleSignUrl =
-  "https://accounts.google.com/o/oauth2/v2/auth?scope=https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email&client_id=573015715079-dkk4mjkmq900jaj3u2gncptag1nocdb1.apps.googleusercontent.com&response_type=code&redirect_uri=http://localhost:5173/oauth2/google&access_type=offline";
+    "https://accounts.google.com/o/oauth2/v2/auth?scope=https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email&client_id=573015715079-dkk4mjkmq900jaj3u2gncptag1nocdb1.apps.googleusercontent.com&response_type=code&redirect_uri=http://localhost:5173/oauth2/google&access_type=offline";
 
 const naverSignUrl =
-  "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=sYs05laPxAT1aByTYXLm&redirect_uri=http://localhost:5173/oauth2/naver";
+    "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=sYs05laPxAT1aByTYXLm&redirect_uri=http://localhost:5173/oauth2/naver";
 
 const userData = ref({
   username: "",
@@ -119,14 +116,14 @@ const userData = ref({
 
 const signIn = async () => {
   await store
-    .dispatch("signIn", userData.value)
-    .then(() => {
-      router.replace(`/${getUsernameFromStorage()}`);
-    })
-    .catch((error) => {
-      console.log(error);
-      alert("로그인에 실패하였습니다.");
-    });
+      .dispatch("signIn", userData.value)
+      .then(() => {
+        router.replace(`/${getUsernameFromStorage()}`);
+      })
+      .catch((error) => {
+        console.log(error);
+        alert("로그인에 실패하였습니다.");
+      });
 };
 
 const setWindow = () => {
