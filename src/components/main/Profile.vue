@@ -413,7 +413,7 @@ const updateProfileImg = async () => {
 
 const deleteProfileImg = async () => {
   await deleteProfileImage().then(() => {
-    myInfo.value.urlProfileImage = null;
+    myInfo.value.urlProfileImage = "../src/assets/images/user-no-image.png";
     userStore.commit("setProfileImage", myInfo.value.urlProfileImage);
     alert("삭제가 완료되었습니다.");
   }).catch((error) => {
