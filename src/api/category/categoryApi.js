@@ -13,7 +13,7 @@ export function getCategoryByBookmarkId(bookmarkId) {
 }
 
 export function getCategoryIsPublic(userId, categoryName) {
-    return category.get(`/${categoryName}/public/users/${userId}`);
+    return category.get(`/${categoryName}/public`);
 }
 
 export function addCategory(categoryData) {
